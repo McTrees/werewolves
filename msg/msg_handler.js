@@ -8,6 +8,6 @@
 module.exports = function(msg, client) {
   // TODO: make this a proper lookup thing and not just a big if/else
   if (msg.content.startsWith("!signup")) {
-    require("../user/user.js").signupCmd(msg, client);
+    require("../user/user").signupCmd(msg, client);
   }
 };
