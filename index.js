@@ -16,4 +16,5 @@ client.on('message', msg => {
   msg_handler(msg, client);
 });
 
+require("./user/user").init()
 client.login(token)
