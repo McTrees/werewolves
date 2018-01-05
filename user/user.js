@@ -1,7 +1,8 @@
-const sqlite3 = require("sqlite3");
 const fs = require("fs");
 
-userdb = new sqlite3.Database("user/user.db")
+const db_fns = require("./db_fns")
+
+const utils = require("../utils.js")
 
 exports.init = function() {
   if (!fs.existsSync("user/user.db")) { //database file doesn't exist
