@@ -28,20 +28,6 @@ exports.getUserId = function (emoji) {
     })
   });
 };
-exports.getUser = function (data) {
-  // returns promise of id for user by emoji/id
-  return new Promise(function(resolve, reject) {
-    userdb.get("select user_id from signed_up_users where emoji = ? or user_id = ?", emoji,emoji, function(err, row) {
-      if (err) throw err;
-      if (row) {
-        resolve(row.user_id)
-      } else {
-        reject()
-      }
-    })
-  });
-};
-
 exports.addUser = function (id, emoji) {
   // if no one else is using that emoji, sign them up
   // or change their emoji
