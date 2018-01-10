@@ -14,7 +14,7 @@ exports.signupCmd = function (msg, client) {
   // TODO: add command parsing in msg_handler and not here!
   splitCmd = msg.content.split(" ");
   if (splitCmd.length !== 2){
-    msg.reply("I'm glad you want to sign up but the correct syntax is `!signup <emoji>`")
+    msg.reply(`I'm glad you want to sign up but the correct syntax is \`${config.bot_prefix}signup <emoji>\``)
   } else {
     msg.react(splitCmd[1]).catch(err=>{
       msg.reply(`${splitCmd[1]} is not a valid emoji...`)
