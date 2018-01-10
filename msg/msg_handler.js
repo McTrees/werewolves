@@ -5,10 +5,11 @@
 */
 
 
+const config = require('../config');
 module.exports = function(msg, client) {
   if (msg.author == client.user) return; //ignore own messages
-  // TODO: make this a proper lookup thing and not just a big if/else
-  if (msg.content.startsWith("!signup")) {
-    require("../user/user").signupCmd(msg, client);
+  switch(true){
+    case msg.content.startsWith(config.bot_prefix+"signup"):
+      require("../user/user").signupCmd(msg, client);break;
   }
 };
