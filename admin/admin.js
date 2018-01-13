@@ -1,5 +1,5 @@
 const discord = require("discord.js")
-const gm_confirm_channel_id = require("../config").gm_confirm_channel_id
+const gm_confirm_channel_id = require("../config").channel_ids.gm_confirm
 
 exports.confirm = function(confirm_msg, client) {
   // posts confirm_msg to the confirm channel
