@@ -1,5 +1,5 @@
 @echo off
-git clone https://github.com/McTrees/werewolves.git
+git pull https://github.com/McTrees/werewolves.git
 if %ERRORLEVEL% == 0 GOTO continue
 if %ERRORLEVEL% == 1 GOTO error
 
