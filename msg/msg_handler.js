@@ -11,7 +11,7 @@ module.exports = function(msg, client) {
   messageContent = msg.content.split(" ");
   if (messageContent[0][0] == config.bot_prefix){
     messageContent[0] = messageContent[0].slice(1);
-    try {messageContent.splice(0,1,aliases[messageContent[0]][0],aliases[messageContent[0]][1]);} catch(err){}
+    try {messageContent = (aliases[messageContent[0]].split(" ").concat(messageContent.slice(1)));} catch(err){}
     switch(messageContent[0]){
       case ("u"):
         require("../user/user.js")[messageContent[1]+"Cmd"](msg, client,messageContent[2]);

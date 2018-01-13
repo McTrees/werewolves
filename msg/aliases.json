@@ -1,3 +1,4 @@
 {
-  "signup": ["u","signup"],
+  "signup": "u signup",
+  "sign": "u signup",
 }
