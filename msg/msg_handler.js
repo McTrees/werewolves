@@ -4,7 +4,6 @@
    it calls functions from other files with the message object
 */
 
-
 const config = require('../config');
 module.exports = function(msg, client) {
   if (msg.author == client.user) return; //ignore own messages
@@ -13,11 +12,10 @@ module.exports = function(msg, client) {
     messageContent[0] = messageContent[0].slice(1);
     switch(messageContent[0]){
       case ("u"):
-        try{
-        console.log(messageContent[1]+"Cmd");
-        }catch(err){
-          console.log("invalid command");
-        }
+        require("../user/user.js")[messageContent[1]+"Cmd"](msg, client,messageContent[2]);
+        break;
+      case ("c"):
+        require("../cc/cc.js")[messageContent[1]+"Cmd"](msg, client,messageContent[2]);
         break;
       default:
         msg.reply(`\`${msg.content}\` is an unknown command...`);
