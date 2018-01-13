@@ -19,6 +19,9 @@ module.exports = function(msg, client) {
           console.log("invalid command");
         }
         break;
+      default:
+        msg.reply(`\`${msg.content}\` is an unknown command...`);
+        break;
       }
   };
 };
