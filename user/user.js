@@ -29,5 +29,5 @@ exports.signupCmd = function (msg, client, content = false) {
     }).catch(err=>{
        msg.reply(`${splitCmd[1]} is not a valid emoji...`)
      })
-   }  }
+   }
 };
