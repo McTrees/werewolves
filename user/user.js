@@ -14,7 +14,7 @@ exports.init = function() {
 
 exports.signupCmd = function (msg, client, content = false) {
   if (splitCmd.length !== 2){
-     msg.reply("I'm glad you want to sign up but the correct syntax is `!signup <emoji>`")
+     msg.reply(`I'm glad you want to sign up but the correct syntax is \`${config.bot_prefix}signup <emoji>\``)
    } else {
     msg.react(splitCmd[1]).then(mr=>{
       db_fns.addUser(msg.author.id, utils.toBase64(splitCmd[1])).then(old=>{
