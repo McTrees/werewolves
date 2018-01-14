@@ -23,7 +23,7 @@ npm i
 
 Edit config.json with required info
 
-Run with `node index.js`
+Run with `node index.js` or by opening `run.bat` (windows only)
 
 ## Running the tests
 
