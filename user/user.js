@@ -13,7 +13,7 @@ exports.init = function() {
 }
 
 exports.signupCmd = function (msg, client, content = false) {
-  if (splitCmd.length !== 2){
+  if (content == false){
      msg.reply(`I'm glad you want to sign up but the correct syntax is \`${config.bot_prefix}signup <emoji>\``)
    } else {
     msg.react(splitCmd[1]).then(mr=>{
