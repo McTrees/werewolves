@@ -6,20 +6,22 @@
 
 const config = require('../config');
 const aliases = require('./aliases');
+/*syntax: "alias" :"defined as",
+all other arguments that get send with the alias get added to the send
+alieses need to be one word
+*/
+
 module.exports = function(msg, client) {
   if (msg.author == client.user) return; //ignore own messages
   messageContent = msg.content.split(" ");
-  if (messageContent[0][0] == config.bot_prefix){
-    messageContent[0] = messageContent[0].slice(1);
-    try {messageContent = (aliases[messageContent[0]].split(" ").concat(messageContent.slice(1)));} catch(err){}
-    switch(messageContent[0]){
+  if (messageContent[0][0] == config.bot_prefix){ //only run if it is a message starting with the bot prefix (if it's a command)
+    messageContent[0] = messageContent[0].slice(1); //remove the prefix from the message
+    try {messageContent = (aliases[messageContent[0]].split(" ").concat(messageContent.slice(1)));} catch(err){} //check aliases
+    switch(messageContent[0]){ //swicth the first part of the command, then run the function of the second part of the command, with any
       case ("u"):
         require("../user/user.js")[messageContent[1]+"Cmd"](msg, client,messageContent[2]);
         break;
-      case ("c"):
-        require("../cc/cc.js")[messageContent[1]+"Cmd"](msg, client,messageContent[2]);
-        break;
-      default:
+      default: //replies if no command found
         msg.reply(`\`${msg.content}\` is an unknown command...`);
         break;
       }
