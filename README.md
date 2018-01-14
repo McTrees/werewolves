@@ -4,7 +4,7 @@ A Discord bot designed to automate the heavy-lifting of game server Werewolves
 
 ## Getting Started
 
-Run the main file with `node index.js`. Any setup functionality will be explained either on stdout or by discord messages.
+Run the main file with `node index.js` or opening `run.bat` (windows only). Any setup functionality will be explained either on stdout or by discord messages.
 
 
 ### Installing
