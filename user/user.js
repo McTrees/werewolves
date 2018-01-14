@@ -17,6 +17,7 @@ exports.signupCmd = function (msg, client, content = false) {
      msg.reply(`I'm glad you want to sign up but the correct syntax is \`${config.bot_prefix}signup <emoji>\``)
    } else {
     msg.react(content).then(mr=>{
+      msg.clearReactions();
       db_fns.addUser(msg.author.id, utils.toBase64(content)).then(old=>{
         if (old) {
           msg.channel.send(`<@${msg.author.id}>'s emoji changed from ${utils.fromBase64(old)} to ${content}`)
