@@ -13,13 +13,21 @@ exports.init = function() {
 }
 
 exports.signupCmd = function (msg, client, content = false) {
-  if (content == false){
-    msg.reply(`I'm glad you want to sign up but the correct syntax is \`${config.bot_prefix}signup <emoji>\``)
-  } else {
-    msg.react(content).catch(err=>{
-      msg.reply(`${content} is not a valid emoji...`)
-    })
-
-  //msg.channel.send("`"+msg.content+"`")
-  }
+  if (splitCmd.length !== 2){
+     msg.reply("I'm glad you want to sign up but the correct syntax is `!signup <emoji>`")
+   } else {
+    msg.react(splitCmd[1]).then(mr=>{
+      db_fns.addUser(msg.author.id, utils.toBase64(splitCmd[1])).then(old=>{
+        if (old) {
+          msg.channel.send(`<@${msg.author.id}>'s emoji changed from ${utils.fromBase64(old)} to ${splitCmd[1]}`)
+        } else {
+          msg.channel.send(`<@${msg.author.id}> signed up with emoji ${utils.fromBase64(splitCmd[1])}`)
+        }
+      }).catch(id=>{
+        msg.channel.send(`Sorry but <@${id}> is already using that emoji!`)
+      })
+    }).catch(err=>{
+       msg.reply(`${splitCmd[1]} is not a valid emoji...`)
+     })
+   }  }
 };
