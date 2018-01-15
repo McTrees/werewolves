@@ -1,5 +1,4 @@
 {
-  "token": "insert token here!",
   "bot_prefix" : "!",
   "channel_ids": {
     "gm_confirm": "400350702138032140",
