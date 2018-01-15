@@ -174,7 +174,7 @@ exports.endPollCmd = function(msg, client, id){//I need the client because that'
 					txt += " were disqualified as they cast multiple votes.";
 				}
 			}
-			message.channel.send(txt);
+			msg.channel.send(txt);
 			//TODO - Now I still need to add the code to return the data.
 		});
 	});
