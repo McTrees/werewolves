@@ -56,7 +56,7 @@ exports.startPollCmd = function(msg, client, data){
 			messages:msgs,
 			options:options
 		};
-		fs.writeFile("./poll/polls.json", JSON.stringify(polls), (err) => {
+		fs.writeFile("./poll/polls.json", JSON.stringify(polls, null, 2), (err) => {
 			if (err) console.error(err)
 		});
 		const gm_confirm_channel_id = require("../config").channel_ids.gm_confirm
