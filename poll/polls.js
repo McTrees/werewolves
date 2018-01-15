@@ -2,7 +2,10 @@ const discord = require("discord.js");
 const fs = require("fs");
 let polls = JSON.parse(fs.readFileSync("./poll/polls.json", "utf8"));
 
-exports.startPollCmd = function(ch, msg_text, options){
+exports.startPollCmd = function(msg,client, msg_text){
+	var json = (`[{"txt":"@Lord of Galaxy","emoji":"💩"},{"txt":"@Poll Bot","emoji":"😃"}]`);
+	options = JSON.parse(json);
+	var ch = msg.client;
 	var nm = (options.length - ((options.length-1)%20 + 1))/20 + 1;
 	var txt = new Array(nm);
 	for(i = 0; i < nm; i++){
@@ -16,7 +19,7 @@ exports.startPollCmd = function(ch, msg_text, options){
 	}
 	var promises = new Array(nm);
 	for(i = 0; i < nm; i++){
-		promises[i] = ch.send(txt[i]);
+		promises[i] = msg.channel.send(txt[i]);
 	}
 	Promise.all(promises).then(values => {
 		msgs = new Array(values.length);
@@ -42,7 +45,7 @@ exports.startPollCmd = function(ch, msg_text, options){
 		//Here I'm saving some stuff twice. It makes my work easier, but it's not storage efficient.
 		//Though again, an extra kilobyte or two isn't much
 		polls["polls"][num] = {
-			channel:ch.id,
+			channel:msg.channel.id,
 			messages:msgs,
 			options:options
 		};
@@ -53,7 +56,7 @@ exports.startPollCmd = function(ch, msg_text, options){
 	return polls["num"]+1;
 }
 
-exports.checkPollCmd = function(id, client){
+exports.checkPollCmd = function(msg, client, id){
 	if(!polls["polls"][id]){
 		console.log("The poll with id " + id + " doesn't exist, sadly. I haven't thought of what to do in that case.");
 		return;
@@ -62,7 +65,7 @@ exports.checkPollCmd = function(id, client){
 	var ch = client.channels.get(poll["channel"]);
 	var promises = new Array(poll["messages"].length);
 	for(i = 0; i < promises.length; i++){
-		promises[i] = ch.fetchMessage(poll["messages"][i].id);
+		promises[i] = msg.channel.fetchMessage(poll["messages"][i].id);
 	}
 	Promise.all(promises).then(msgs => {
 		for(i = 0; i < poll["messages"].length; i++){
@@ -75,7 +78,7 @@ exports.checkPollCmd = function(id, client){
 	}).catch(console.error);
 }
 
-exports.endPollCmd = function(id, client){//I need the client because that's how I'm gonna find the channel. I should make this better sometime.
+exports.endPollCmd = function(msg, client, id){//I need the client because that's how I'm gonna find the channel. I should make this better sometime.
 	if(!polls["polls"][id]){
 		console.log("The poll with id " + id + " doesn't exist, sadly. I haven't thought of what to do in that case.");
 		return;
@@ -84,7 +87,7 @@ exports.endPollCmd = function(id, client){//I need the client because that's how
 	var ch = client.channels.get(poll["channel"]);
 	var promises = new Array(poll["messages"].length);
 	for(i = 0; i < promises.length; i++){
-		promises[i] = ch.fetchMessage(poll["messages"][i].id);
+		promises[i] = msg.channel.fetchMessage(poll["messages"][i].id);
 	}
 	Promise.all(promises).then(msgs => {
 		var promises = new Array(poll["options"].length);
@@ -164,7 +167,7 @@ exports.endPollCmd = function(id, client){//I need the client because that's how
 					txt += " were disqualified as they cast multiple votes.";
 				}
 			}
-			ch.send(txt);
+			message.channel.send(txt);
 			//TODO - Now I still need to add the code to return the data.
 		});
 	});
