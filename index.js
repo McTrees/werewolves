@@ -1,8 +1,7 @@
 /* werewolves bot */
 
 const config = require('./config');
-const tokenFile = require('./token');
-const token = tokenFile.token;
+const token = require('./token').token;
 
 const discord = require('discord.js');
 const client = new discord.Client();
