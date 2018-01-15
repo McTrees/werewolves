@@ -2,10 +2,17 @@ const discord = require("discord.js");
 const fs = require("fs");
 let polls = JSON.parse(fs.readFileSync("./poll/polls.json", "utf8"));
 
-exports.startPollCmd = function(msg,client, msg_text){
-	var json = (`[{"txt":"@Lord of Galaxy","emoji":"💩"},{"txt":"@Poll Bot","emoji":"😃"}]`);
-	options = JSON.parse(json);
-	var ch = msg.client;
+exports.startPollCmd = function(msg, client, data){
+	//Test code
+	var json = (`[{"txt":"Option 1","emoji":"💩"},{"txt":"Option 2","emoji":"😃"}]`);
+	var options = JSON.parse(json);
+	var msg_text = "Vote for your favorite!";
+	//Actual code
+	/**
+	var options = data.options;
+	var msg_text = data.msg_text;
+	*/
+	var ch = msg.channel;
 	var nm = (options.length - ((options.length-1)%20 + 1))/20 + 1;
 	var txt = new Array(nm);
 	for(i = 0; i < nm; i++){
