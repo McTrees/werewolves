@@ -2,18 +2,18 @@ const discord = require("discord.js");
 const fs = require("fs");
 let polls = JSON.parse(fs.readFileSync("./poll/polls.json", "utf8"));
 
-exports.startPoll = function(ch, msg_text, options){
+exports.startPollCmd = function(ch, msg_text, options){
 	var nm = (options.length - ((options.length-1)%20 + 1))/20 + 1;
 	var txt = new Array(nm);
 	for(i = 0; i < nm; i++){
 		txt[i] = "";
 		if(i === 0)txt[0] = msg_text+"-\n";
-		for(j = 0; j < 20; j++){	
+		for(j = 0; j < 20; j++){
 			txt[i] += options[i*20 + j].emoji + " - " + options[i*20 + j].txt;
 			if(i*20 + j >= options.length-1)break;
 			txt[i] += "\n";
 		}
-	}	
+	}
 	var promises = new Array(nm);
 	for(i = 0; i < nm; i++){
 		promises[i] = ch.send(txt[i]);
@@ -35,7 +35,7 @@ exports.startPoll = function(ch, msg_text, options){
 				});
 				opts.push(options[i*20+j]);
 			}
-			msgs[i]["options"] = opts;		
+			msgs[i]["options"] = opts;
 		}
 		polls["num"]++;
 		var num = polls["num"];
@@ -53,7 +53,7 @@ exports.startPoll = function(ch, msg_text, options){
 	return polls["num"]+1;
 }
 
-exports.checkPoll = function(id, client){
+exports.checkPollCmd = function(id, client){
 	if(!polls["polls"][id]){
 		console.log("The poll with id " + id + " doesn't exist, sadly. I haven't thought of what to do in that case.");
 		return;
@@ -71,16 +71,16 @@ exports.checkPoll = function(id, client){
 				if(!r || !r.me)msgs[i].react(poll["messages"][i]["options"][j]["emoji"]).catch("Not again! :(");
 			}
 		}
-		
+
 	}).catch(console.error);
 }
 
-exports.endPoll = function(id, client){//I need the client because that's how I'm gonna find the channel. I should make this better sometime.
+exports.endPollCmd = function(id, client){//I need the client because that's how I'm gonna find the channel. I should make this better sometime.
 	if(!polls["polls"][id]){
 		console.log("The poll with id " + id + " doesn't exist, sadly. I haven't thought of what to do in that case.");
 		return;
 	}
-	var poll = polls["polls"][id]; 
+	var poll = polls["polls"][id];
 	var ch = client.channels.get(poll["channel"]);
 	var promises = new Array(poll["messages"].length);
 	for(i = 0; i < promises.length; i++){
@@ -123,9 +123,9 @@ exports.endPoll = function(id, client){//I need the client because that's how I'
 						values[i].delete(item[0]);
 					}
 				});
-			}						
+			}
 			for(i = 0; i < values.length; i++){
-				var users = Array.from(values[i]);	
+				var users = Array.from(values[i]);
 				users.forEach(function(item){
 					if(disqualified.find(element => {
 						return element == item[1].id;
@@ -133,7 +133,7 @@ exports.endPoll = function(id, client){//I need the client because that's how I'
 				});
 			}
 			var ranked = new Array(0);
-			for(i = 0; i < values.length; i++){	
+			for(i = 0; i < values.length; i++){
 				if(values[i].size === 0)continue;
 				ranked.push({
 					id:i,
@@ -165,7 +165,7 @@ exports.endPoll = function(id, client){//I need the client because that's how I'
 				}
 			}
 			ch.send(txt);
-			//TODO - Now I still need to add the code to return the data. 
+			//TODO - Now I still need to add the code to return the data.
 		});
 	});
 }

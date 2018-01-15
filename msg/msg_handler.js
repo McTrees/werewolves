@@ -21,6 +21,9 @@ module.exports = function(msg, client) {
       case ("u"):
         require("../user/user.js")[messageContent[1]+"Cmd"](msg, client,messageContent[2]);
         break;
+      case ("p"):
+        require("../poll/polls.js")[messageContent[1]+"Cmd"](msg.channel, messageContent[2] ,messageContent[3]);
+        break;
       default: //replies if no command found
         msg.reply(`\`${msg.content}\` is an unknown command...`);
         break;
