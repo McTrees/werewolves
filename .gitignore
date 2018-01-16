@@ -3,4 +3,3 @@ node_modules/
 token.json
 poll/polls.json
 config.json
-package-lock.json
