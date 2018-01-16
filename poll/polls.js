@@ -56,7 +56,7 @@ exports.startPollCmd = function(msg, client, data){
 			messages:msgs,
 			options:options
 		};
-		fs.writeFile("./poll/polls.json", JSON.stringify(polls), (err) => {
+		fs.writeFile("./poll/polls.json", JSON.stringify(polls, null, 2), (err) => {
 			if (err) console.error(err)
 		});
 		const gm_confirm_channel_id = require("../config").channel_ids.gm_confirm
@@ -92,13 +92,13 @@ exports.endPollCmd = function(msg, client, id){//I need the client because that'
 		console.log("The poll with id " + id + " doesn't exist, sadly. I haven't thought of what to do in that case.");
 		return;
 	}
-	var poll = polls["polls"][id];
+	var poll = polls["polls"][id]; 
 	var ch = client.channels.get(poll["channel"]);
 	var promises = new Array(poll["messages"].length);
 	for(i = 0; i < promises.length; i++){
-		promises[i] = msg.channel.fetchMessage(poll["messages"][i].id);
+		promises[i] = ch.fetchMessage(poll["messages"][i].id);
 	}
-	Promise.all(promises).then(msgs => {
+	return Promise.all(promises).then(msgs => {
 		var promises = new Array(poll["options"].length);
 		var s = 0;
 		for(i = 0; i < poll["messages"].length; i++){
@@ -109,13 +109,12 @@ exports.endPollCmd = function(msg, client, id){//I need the client because that'
 			}
 		}
 		//WARNING - This code is not as efficient as it should be
-		Promise.all(promises).then(function(values){
+		return Promise.all(promises).then(function(values){
 			var txt = "Results of the polls:\n";
-			/*
-			values.sort(function(a, b){
-				return b.size - a.size;
-			});
-			*/
+			var results = {
+				id:id,
+				options:poll["options"]
+			};
 			var disqualified = new Array(0);
 			var voted = new Array(0);
 			for(i = 0; i < values.length; i++){
@@ -135,9 +134,9 @@ exports.endPollCmd = function(msg, client, id){//I need the client because that'
 						values[i].delete(item[0]);
 					}
 				});
-			}
+			}						
 			for(i = 0; i < values.length; i++){
-				var users = Array.from(values[i]);
+				var users = Array.from(values[i]);	
 				users.forEach(function(item){
 					if(disqualified.find(element => {
 						return element == item[1].id;
@@ -145,7 +144,8 @@ exports.endPollCmd = function(msg, client, id){//I need the client because that'
 				});
 			}
 			var ranked = new Array(0);
-			for(i = 0; i < values.length; i++){
+			for(i = 0; i < values.length; i++){	
+				results.options[i].votes = values[i].size;
 				if(values[i].size === 0)continue;
 				ranked.push({
 					id:i,
@@ -176,8 +176,119 @@ exports.endPollCmd = function(msg, client, id){//I need the client because that'
 					txt += " were disqualified as they cast multiple votes.";
 				}
 			}
-			msg.channel.send(txt);
-			//TODO - Now I still need to add the code to return the data.
+			ch.send(txt);
+			
+			delete polls["polls"][id];
+			fs.writeFile("./poll/polls.json", JSON.stringify(polls, null, 2), (err) => {
+				if (err) console.error(err)
+			});
+			
+			for(i = 0; i < msgs.length; i++){
+				msgs[i].delete();
+			}
+			//Return the data
+			return results;
+		});
+	});if(!polls["polls"][id]){
+		console.log("The poll with id " + id + " doesn't exist, sadly. I haven't thought of what to do in that case.");
+		return;
+	}
+	var poll = polls["polls"][id]; 
+	var ch = client.channels.get(poll["channel"]);
+	var promises = new Array(poll["messages"].length);
+	for(i = 0; i < promises.length; i++){
+		promises[i] = ch.fetchMessage(poll["messages"][i].id);
+	}
+	return Promise.all(promises).then(msgs => {
+		var promises = new Array(poll["options"].length);
+		var s = 0;
+		for(i = 0; i < poll["messages"].length; i++){
+			for(j = 0; j < poll["messages"][i]["options"].length; j++){
+				var r = msgs[i].reactions.find(val => val.emoji.name === poll["messages"][i]["options"][j]["emoji"]);
+				promises[s] = r.fetchUsers();
+				s++;
+			}
+		}
+		//WARNING - This code is not as efficient as it should be
+		return Promise.all(promises).then(function(values){
+			var txt = "Results of the polls:\n";
+			var results = {
+				id:id,
+				options:poll["options"]
+			};
+			var disqualified = new Array(0);
+			var voted = new Array(0);
+			for(i = 0; i < values.length; i++){
+				var users = Array.from(values[i]);
+				users.forEach(function(item){
+					if(item[1].id !== client.user.id){
+						if(voted.find(element => {
+							return element == item[1].id;
+						})){
+							if(!disqualified.find(element => {
+								return element == item[1].id;
+							}))disqualified.push(item[1].id);
+						}else{
+							voted.push(item[1].id);
+						}
+					}else{
+						values[i].delete(item[0]);
+					}
+				});
+			}						
+			for(i = 0; i < values.length; i++){
+				var users = Array.from(values[i]);	
+				users.forEach(function(item){
+					if(disqualified.find(element => {
+						return element == item[1].id;
+					}))values[i].delete(item[0]);
+				});
+			}
+			var ranked = new Array(0);
+			for(i = 0; i < values.length; i++){	
+				results.options[i].votes = values[i].size;
+				if(values[i].size === 0)continue;
+				ranked.push({
+					id:i,
+					num:values[i].size
+				});
+			}
+			ranked.sort(function(a, b){
+				return b.num - a.num;
+			});
+			for(k = 0; k < ranked.length; k++){
+				var i = ranked[k].id;
+				var users = Array.from(values[i]);
+				txt += "\n" + (users.length + " voted for " + poll["options"][i]["txt"] + " (" + poll["options"][i]["emoji"] + "):\n");
+				for(j = 0; j < users.length; j++){
+					txt += ("\t<@" + users[j][1].id + ">\n");
+				}
+			}
+			if(disqualified.length !== 0){
+				txt += "\n";
+				if(disqualified.length === 1){
+					txt += "<@" + disqualified[0] + "> was disqualified as they cast multiple votes.";
+				}else{
+					disqualified.forEach(function(item, index){
+						txt += "<@" + item + ">";
+						if(index === disqualified.length - 2)txt += " and ";
+						else if(index !== disqualified.length -1)txt += ", "
+					});
+					txt += " were disqualified as they cast multiple votes.";
+				}
+			}
+			ch.send(txt);
+			
+			delete polls["polls"][id];
+			fs.writeFile("./poll/polls.json", JSON.stringify(polls, null, 2), (err) => {
+				if (err) console.error(err)
+			});
+			
+			for(i = 0; i < msgs.length; i++){
+				msgs[i].delete();
+			}
+			//Return the data
+			return results;
 		});
 	});
 }

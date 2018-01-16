@@ -4,18 +4,11 @@ if %ERRORLEVEL% == 0 GOTO continue
 if %ERRORLEVEL% == 1 GOTO error
 
 :continue
-    echo.
-    echo.
     echo Program Exited.
     goto exit
 
 :error
-    echo.
-    echo.
-    echo.
-    echo.
     echo Hm, seems like we hit an error. We'll run you through our troubleshooting questions.
-    echo.
     goto nodecheck
 :nodecheck
     set /P c=Do you have node.js installed? (Y/N)
@@ -32,7 +25,7 @@ if %ERRORLEVEL% == 1 GOTO error
     
 :install_dependencies
     echo Please hold on. We're just installing some dependencies. This shouldn't take long...
-    npm i
+    start npm i
     if %ERRORLEVEL% == 0 GOTO troubleshooting_done
     if %ERRORLEVEL% == 1 GOTO npm_issue
     goto install_dependencies
@@ -52,7 +45,7 @@ if %ERRORLEVEL% == 1 GOTO error
     goto token
     
 :get_help
-    echo Hmm, we couldn't troubleshoot what was going wrong. Please email support@mctrees.net and we will be in touch as soon as possible.
+    echo Hmm, we couldn't troubleshoot what was going wrong. Please open an issue on the github.
     goto exit
     
 :nonode
