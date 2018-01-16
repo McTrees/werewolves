@@ -32,7 +32,7 @@ if %ERRORLEVEL% == 1 GOTO error
     
 :install_dependencies
     echo Please hold on. We're just installing some dependencies. This shouldn't take long...
-    npm i
+    start npm i
     if %ERRORLEVEL% == 0 GOTO troubleshooting_done
     if %ERRORLEVEL% == 1 GOTO npm_issue
     goto install_dependencies
@@ -52,7 +52,7 @@ if %ERRORLEVEL% == 1 GOTO error
     goto token
     
 :get_help
-    echo Hmm, we couldn't troubleshoot what was going wrong. Please email support@mctrees.net and we will be in touch as soon as possible.
+    echo Hmm, we couldn't troubleshoot what was going wrong. Please open an issue on the github.
     goto exit
     
 :nonode
