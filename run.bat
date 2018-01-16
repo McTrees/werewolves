@@ -4,18 +4,11 @@ if %ERRORLEVEL% == 0 GOTO continue
 if %ERRORLEVEL% == 1 GOTO error
 
 :continue
-    echo.
-    echo.
     echo Program Exited.
     goto exit
 
 :error
-    echo.
-    echo.
-    echo.
-    echo.
     echo Hm, seems like we hit an error. We'll run you through our troubleshooting questions.
-    echo.
     goto nodecheck
 :nodecheck
     set /P c=Do you have node.js installed? (Y/N)
