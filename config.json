@@ -1,7 +1,8 @@
 {
-  "bot_prefix" : "!",
-  "channel_ids": {
-    "gm_confirm": "400350702138032140",
-    "story_time": "401767386400948225"
-  }
+	"bot_prefix" : "!",
+	"channel_ids": {
+		"gm_confirm": "400350702138032140",
+		"story_time": "401767386400948225",
+		"voting_booth": "402127047478083584"
+	}
 }
