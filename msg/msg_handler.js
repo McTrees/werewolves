@@ -18,10 +18,10 @@ module.exports = function(msg, client) {
     try {messageContent = (aliases[messageContent[0]].split(" ").concat(messageContent.slice(1)));} catch(err){} //check aliases
     switch(messageContent[0]){ //swicth the first part of the command, then run the function of the second part of the command, with any
       case ("u"):
-        require("../user/user.js")[messageContent[1]+"Cmd"](msg, client,messageContent[2]);
+        require("../user/user.js")[messageContent[1]+"Cmd"](msg, client,messageContent.slice(2));
         break;
       case ("p"):
-        require("../poll/polls.js")[messageContent[1]+"Cmd"](msg, client, messageContent[2]);
+        require("../poll/polls.js")[messageContent[1]+"Cmd"](msg, client, messageContent.slice(2));
         break;
       default: //replies if no command found
         msg.reply(`\`${msg.content}\` is an unknown command...`);
