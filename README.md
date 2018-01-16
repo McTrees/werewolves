@@ -1,5 +1,5 @@
 # Werewolves Bot
-
+[![Build Status](https://travis-ci.org/McTrees/werewolves.png)](https://travis-ci.org/McTrees/werewolves)
 A Discord bot designed to automate the heavy-lifting of game server Werewolves
 
 ## Getting Started
