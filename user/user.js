@@ -24,8 +24,6 @@ exports.signupCmd = function (msg, client, content = false) {
         // already in use
         msg.channel.send(`Sorry but <@${id}> is already using that emoji!`)
       }).catch(()=>{
-        msg.reply("your signup request has been sent to the game masters for confirmation!")
-        admin.confirm(`<@${msg.author.id}> wants to sign up with emoji ${content}`)
         db_fns.addUser(msg.author.id, utils.toBase64(content)).then(old=>{
           if (old) {
             msg.channel.send(`<@${msg.author.id}>'s emoji changed from ${utils.fromBase64(old)} to ${content}`)
