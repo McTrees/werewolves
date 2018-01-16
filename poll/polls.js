@@ -176,7 +176,15 @@ exports.endPollCmd = function(msg, client, id){//I need the client because that'
 					txt += " were disqualified as they cast multiple votes.";
 				}
 			}
-			msg.channel.send(txt);
+			//msg.channel.send(txt);
+			ch.send(txt);//I think results are sent to same channel as the poll was in.
+			delete polls["polls"][id];
+			fs.writeFile("./poll/polls.json", JSON.stringify(polls, null, 2), (err) => {
+				if (err) console.error(err)
+			});
+			for(i = 0; i < msgs.length; i++){
+				msgs[i].delete();
+			}
 			//TODO - Now I still need to add the code to return the data.
 		});
 	});
