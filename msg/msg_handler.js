@@ -10,6 +10,8 @@ all other arguments that get send with the alias get added to the send
 alieses need to be one word
 */
 
+//0 [prefix], 1 [comand], 2 [arg], 3 [arg], 4[arg]...
+
 module.exports = function(msg, client) {
   if (msg.author == client.user) return; //ignore own messages
   messageContent = msg.content.split(" ");
@@ -17,11 +19,14 @@ module.exports = function(msg, client) {
     messageContent[0] = messageContent[0].slice(1); //remove the prefix from the message
     try {messageContent = (aliases[messageContent[0]].split(" ").concat(messageContent.slice(1)));} catch(err){} //check aliases
     switch(messageContent[0]){ //swicth the first part of the command, then run the function of the second part of the command, with any
-      case ("u"):
+      case ("u"): //users
         require("../user/user.js")[messageContent[1]+"Cmd"](msg, client,messageContent[2]);
         break;
-      case ("p"):
+      case ("p"): //polls
         require("../poll/polls.js")[messageContent[1]+"Cmd"](msg, client, messageContent[2]);
+        break;
+      case ("c"): // cc
+        require("../cc/ccs.js")[messageContent[1]+"Cmd"](msg, client, messageContent.slice(2)); //run cc function with all arguments 
         break;
       default: //replies if no command found
         msg.reply(`\`${msg.content}\` is an unknown command...`);
