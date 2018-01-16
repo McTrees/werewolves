@@ -1,4 +1,7 @@
 {
   "signup": "u signup",
-  "signuppoop": "u signup 💩"
+  "signuppoop": "u signup 💩",
+  "startPoll": "p startPoll",
+  "endPoll": "p endPoll",
+  "checkPoll": "p checkPoll"
 }
