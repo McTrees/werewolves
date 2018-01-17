@@ -92,7 +92,7 @@ exports.endPollCmd = function(msg, client, id){//I need the client because that'
 		console.log("The poll with id " + id + " doesn't exist, sadly. I haven't thought of what to do in that case.");
 		return;
 	}
-	var poll = polls["polls"][id];
+	var poll = polls["polls"][id]; 
 	var ch = client.channels.get(poll["channel"]);
 	var promises = new Array(poll["messages"].length);
 	for(i = 0; i < promises.length; i++){
@@ -134,9 +134,9 @@ exports.endPollCmd = function(msg, client, id){//I need the client because that'
 						values[i].delete(item[0]);
 					}
 				});
-			}
+			}						
 			for(i = 0; i < values.length; i++){
-				var users = Array.from(values[i]);
+				var users = Array.from(values[i]);	
 				users.forEach(function(item){
 					if(disqualified.find(element => {
 						return element == item[1].id;
@@ -144,7 +144,7 @@ exports.endPollCmd = function(msg, client, id){//I need the client because that'
 				});
 			}
 			var ranked = new Array(0);
-			for(i = 0; i < values.length; i++){
+			for(i = 0; i < values.length; i++){	
 				results.options[i].votes = values[i].size;
 				if(values[i].size === 0)continue;
 				ranked.push({
@@ -177,12 +177,12 @@ exports.endPollCmd = function(msg, client, id){//I need the client because that'
 				}
 			}
 			ch.send(txt);
-
+			
 			delete polls["polls"][id];
 			fs.writeFile("./poll/polls.json", JSON.stringify(polls, null, 2), (err) => {
 				if (err) console.error(err)
 			});
-
+			
 			for(i = 0; i < msgs.length; i++){
 				msgs[i].delete();
 			}
@@ -193,7 +193,7 @@ exports.endPollCmd = function(msg, client, id){//I need the client because that'
 		console.log("The poll with id " + id + " doesn't exist, sadly. I haven't thought of what to do in that case.");
 		return;
 	}
-	var poll = polls["polls"][id];
+	var poll = polls["polls"][id]; 
 	var ch = client.channels.get(poll["channel"]);
 	var promises = new Array(poll["messages"].length);
 	for(i = 0; i < promises.length; i++){
@@ -235,9 +235,9 @@ exports.endPollCmd = function(msg, client, id){//I need the client because that'
 						values[i].delete(item[0]);
 					}
 				});
-			}
+			}						
 			for(i = 0; i < values.length; i++){
-				var users = Array.from(values[i]);
+				var users = Array.from(values[i]);	
 				users.forEach(function(item){
 					if(disqualified.find(element => {
 						return element == item[1].id;
@@ -245,7 +245,7 @@ exports.endPollCmd = function(msg, client, id){//I need the client because that'
 				});
 			}
 			var ranked = new Array(0);
-			for(i = 0; i < values.length; i++){
+			for(i = 0; i < values.length; i++){	
 				results.options[i].votes = values[i].size;
 				if(values[i].size === 0)continue;
 				ranked.push({
@@ -278,12 +278,12 @@ exports.endPollCmd = function(msg, client, id){//I need the client because that'
 				}
 			}
 			ch.send(txt);
-
+			
 			delete polls["polls"][id];
 			fs.writeFile("./poll/polls.json", JSON.stringify(polls, null, 2), (err) => {
 				if (err) console.error(err)
 			});
-
+			
 			for(i = 0; i < msgs.length; i++){
 				msgs[i].delete();
 			}

@@ -2,3 +2,4 @@ node_modules/
 *.db
 token.json
 poll/polls.json
+config.json
