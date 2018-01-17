@@ -24,6 +24,8 @@ module.exports = function(msg, client) {
         case ("p"):
           require("../poll/polls.js")[messageContent[1]+"Cmd"](msg, client, messageContent.slice(2));
           break;
+        case ("g"):
+          require("../game/game.js")[messageContent[1]+"Cmd"](msg, client, messageContent.slice(2));
         default: //replies if no command found
           msg.reply(`\`${msg.content}\` is an unknown command...`);
           break;
