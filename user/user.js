@@ -16,12 +16,12 @@ exports.init = function() {
   }
 }
 
-exports.signupCmd = function (msg, client, content = false) {
+exports.signupCmd = function (msg, client, content) {
   if (game.is_started()) {
     msg.reply('Sorry, but a game is already in progress! Please wait for next season to start.')
   }
   else {
-    if (content == false || content.len!=1){
+    if (!content){
       msg.reply(`I'm glad you want to sign up but the correct syntax is \`${config.bot_prefix}signup <emoji>\``)
     } else {
       msg.react(content).then(mr=>{
