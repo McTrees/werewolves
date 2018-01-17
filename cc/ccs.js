@@ -14,7 +14,7 @@ function makeChannel(message, name){//function to create
     name = "S" + config.season + "_CC_" + name; //phrase name of catgory
 
     server.createChannel(name, "text").then(channel => //creates channels
-      channel.setParent(server.channels.get(currentcatgory))).then(channel => //move new channel into currentcatgory
+      channel.setParent(server.channels.get(configcc.CC_curent_id))).then(channel => //move new channel into currentcatgory
         channel.send(config.defaultMessage)); //sends defaut message
 
   }else{
