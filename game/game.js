@@ -27,6 +27,11 @@ exports.startseasonCmd = function (msg, client) {
   if (exports.is_started()) {
     msg.reply("It appears that we are already in a game... -_-")
   } else {
-
+    startgame()
   }
 };
+
+function startgame() {
+  fs.writeFile("game.dat", "GAME", err => if (err) throw err)
+  
+}
