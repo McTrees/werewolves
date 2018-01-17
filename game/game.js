@@ -1,6 +1,7 @@
 const events = require("events")
 const config = require("../config")
 const fs = require("fs")
+const user = require("../user/user")
 
 class Game extends events.EventEmitter {
   constructor(season_number) {
@@ -32,6 +33,6 @@ exports.startseasonCmd = function (msg, client) {
 };
 
 function startgame() {
-  fs.writeFile("game.dat", "GAME", err => if (err) throw err)
-  
+  //fs.writeFile("game.dat", "GAME", err => if (err) throw err)
+  user.all_signed_up().then(console.log)
 }
