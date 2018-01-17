@@ -44,3 +44,17 @@ exports.signupCmd = function (msg, client, content = false) {
     }
   }
 }
+
+exports.all_signed_up = function() {
+  // returns promise of a list of all signed up users' ids
+  //intentionally does not include emojis to prevent this being used for polls etc
+  return new Promise(function(resolve, reject) {
+    db.all("select user_id from signed_up_users", [], function(err, rows){
+      if (err) {
+        throw err
+      } else {
+        resolve(rows)
+      }
+    })
+  });
+}
