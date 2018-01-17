@@ -18,7 +18,7 @@ function makeChannel(message, name){//function to create
         channel.send(config.defaultMessage)); //sends defaut message
 
   }else{
-    message.reply("lol syntax brov")
+    message.reply("Incorenct syntax; you must specify a name *note: it cant start with `@`*")
   }
 
 }
