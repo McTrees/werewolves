@@ -7,10 +7,13 @@ exports.createCmd = function(msg, clinet, args){//mgs = message obdj, client = b
 }
 
 function makeChannel(message, name){//function to create
-    var server = message.guild.catgory; //set server to the server message was sent from
+    var server = message.guild; //set server to the server message was sent from
     //var server = message.catgory; //set server to the server message was sent from
-    name = "S" + config.season + "_CC_" + name
-    server.createChannel(name, "text");
-    var thing = client.channels.find("name",name)
-    trhing.setParent(402933080119312398);
+    name = "S" + config.season + "_CC_" + name;
+    var defaultMessage = "welcome to the new channel";
+    var currentcatgory = "402933080119312398";
+
+    server.createChannel(name, "text").then(channel =>
+      channel.setParent(server.channels.get(currentcatgory))).then(channel =>
+        channel.send(config.defaultMessage));
 }
