@@ -24,14 +24,21 @@ module.exports = function(msg, client) {
         case ("p"):
           require("../poll/polls.js")[messageContent[1]+"Cmd"](msg, client, messageContent.slice(2));
           break;
+<<<<<<< HEAD
         case ("g"):
           require("../game/game.js")[messageContent[1]+"Cmd"](msg, client, messageContent.slice(2));
+=======
+        case ("c"):
+          require("../cc/ccs.js")[messageContent[1]+"Cmd"](msg, client, messageContent.slice(2));
+          break;
+>>>>>>> 1d987a43d0d9cda9c1261e0ece0688ee631a3769
         default: //replies if no command found
           msg.reply(`\`${msg.content}\` is an unknown command...`);
           break;
         }
       } catch(err){
-        msg.reply(`\`${msg.content}\` is an unknown command...`);
+        msg.reply(`an error occured or\`${msg.content}\` is an unknown command...`);
+        console.log(err);
       }
   };
 };
