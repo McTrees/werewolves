@@ -20,7 +20,6 @@ module.exports = function(msg, client) {
       switch(messageContent[0]){ //swicth the first part of the command, then run the function of the second part of the command, with any
         case ("u"):
           require("../user/user.js")[messageContent[1]+"Cmd"](msg, client,messageContent.slice(2));
-          console.log(invalidvar)
           break;
         case ("p"):
           require("../poll/polls.js")[messageContent[1]+"Cmd"](msg, client, messageContent.slice(2));
