@@ -1,18 +1,49 @@
 const discord = require("discord.js");
 const fs = require("fs");
-let polls = JSON.parse(fs.readFileSync("./poll/polls.json", "utf8"));
+const config = require("../config");
+const aliases = require('./polls_aliases')
+const polls = require("./polls");
+//The above is self-explanatory, I think
 
-exports.startPollCmd = function(msg, client, data){
+//PS - I haven't actually finished anything much, only a base.
+exports.startPollCmd = function(msg, client, args){
+	var type = args[0].toLowerCase();//The type of poll - so far "lynch" (alias 'l'), "werewolves" (alias 'w'), "cult" (alias 'c')
+	var txt = args.slice(1).join(" ");//The text thats displayed at the top of the polls
+	if(aliases[type])type = aliases[type];//Convert full name to the alias
+	var id = -1;//Poll ID
+	switch(type){
+		case ("l"):
+			//The daily lynch
+			
+			break;
+		case ("w"):
+			//The werewolves choose whom to kill
+			
+			break;
+		case ("c"):
+			//The cultists choose whom to kill
+			
+			break;
+		default:
+			msg.reply("I'm sorry, but `" + type + "` is not a valid poll");
+	}
+	//Send message informing GMs of new poll
+	if(id !== -1)client.channels.get(config.channel_ids.gm_confirm).send("A new Poll, ``"+txt+"`` (id: "+num+") was created.");
+}
+
+exports.startPollActual = function(msg, client, data){
 	//Test code
+	/**
 	var json = (`[{"txt":"Option 1","emoji":"💩"},{"txt":"Option 2","emoji":"😃"}]`);
 	var options = JSON.parse(json);
 	var msg_text = "Vote for your favorite!";
+	*/
 	//Actual code
-	/**
+	
 	var options = data.options;
 	var msg_text = data.msg_text;
-	*/
-	var ch = msg.channel;
+	
+	var ch = client.channels.get(data.channel_id);
 	var nm = (options.length - ((options.length-1)%20 + 1))/20 + 1;
 	var txt = new Array(nm);
 	for(i = 0; i < nm; i++){
@@ -59,8 +90,6 @@ exports.startPollCmd = function(msg, client, data){
 		fs.writeFile("./poll/polls.json", JSON.stringify(polls, null, 2), (err) => {
 			if (err) console.error(err)
 		});
-		const gm_confirm_channel_id = require("../config").channel_ids.gm_confirm
-		client.channels.get(gm_confirm_channel_id).send("A new Poll, ``"+msg_text+"`` (id: "+num+") was created.");
 	}).catch(console.error);
 	return polls["num"]+1;
 }
