@@ -39,6 +39,9 @@ module.exports = function(msg, client) {
           msg.reply(`\`${msg.content}\` is an unknown command...`);
         } else {
           msg.reply(`an error occurred...`)
+          if (msg.member.roles.has(msg.guild.roles.find("name", "Developer").id)){
+            msg.channel.send("the error was: *(this only shows if the user who typed the command is a developer)*```"+err+"```")
+          }
           console.log(err);
         }
       }
