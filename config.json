@@ -2,6 +2,12 @@
 	"bot_prefix" : "!",
 	"season" : "5",
 	"defaultMessage" : "heyyy come here offten? (this can be the message that it says lol)",
+
+	"developerOptions": {
+		"showErrorsToDevs": "true",
+		"showErrorsToUsers": "false"
+	},
+
 	"channel_ids": {
 		"gm_confirm": "400350702138032140",
 		"story_time": "401767386400948225",
