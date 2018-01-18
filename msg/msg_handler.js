@@ -35,8 +35,12 @@ module.exports = function(msg, client) {
           break;
         }
       } catch(err){
-        msg.reply(`an error occured or\`${msg.content}\` is an unknown command...`);
-        console.log(err);
+        if (err == "TypeError: require(...)[(messageContent[1] + \"Cmd\")] is not a function"){
+          msg.reply(`\`${msg.content}\` is an unknown command...`);
+        } else {
+          msg.reply(`an error occurred...`)
+          console.log(err);
+        }
       }
   };
 };
