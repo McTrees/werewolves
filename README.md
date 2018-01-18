@@ -15,13 +15,13 @@ Download the project to your local machine.
 git clone https://github.com/McTrees/werewolves.git
 ```
 
-### Install dependencies
+#### Install dependencies
 
 ```
 npm i
 ```
 
-Edit `config.json` and `token.json` with required info
+Edit `config.json` and `token.json` with required info (In the future this will be done via prompts in discord or the console)
 
 Run with `node index.js` or by opening `run.bat` (windows only)
 
