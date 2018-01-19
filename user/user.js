@@ -19,27 +19,26 @@ exports.init = function() {
 exports.signupCmd = function (msg, client, content) {
   if (game.is_started()) {
     msg.reply('Sorry, but a game is already in progress! Please wait for next season to start.')
-  }
-  else {
-    if (!content){
+  } else {
+    if (content.length != 1){
       msg.reply(`I'm glad you want to sign up but the correct syntax is \`${config.bot_prefix}signup <emoji>\``)
     } else {
-      msg.react(content).then(mr=>{
+      msg.react(content[0]).then(mr=>{
         msg.clearReactions();
-        db_fns.getUserId(utils.toBase64(content)).then((id)=>{
+        db_fns.getUserId(utils.toBase64(content[0])).then((id)=>{
           // already in use
           msg.channel.send(`Sorry but <@${id}> is already using that emoji!`)
         }).catch(()=>{
-          db_fns.addUser(msg.author.id, utils.toBase64(content)).then(old=>{
+          db_fns.addUser(msg.author.id, utils.toBase64(content[0])).then(old=>{
             if (old) {
-              msg.channel.send(`<@${msg.author.id}>'s emoji changed from ${utils.fromBase64(old)} to ${content}`)
+              msg.channel.send(`<@${msg.author.id}>'s emoji changed from ${utils.fromBase64(old)} to ${content[0]}`)
             } else {
-              msg.channel.send(`<@${msg.author.id}> signed up with emoji ${content}`)
+              msg.channel.send(`<@${msg.author.id}> signed up with emoji ${content[0]}`)
             }
           })
         })
       }).catch(()=>{ // react
-        msg.reply(`${content} is not a valid emoji...`)
+        msg.reply(`${content[0]} is not a valid emoji...`)
       })
     }
   }

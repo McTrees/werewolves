@@ -35,8 +35,20 @@ module.exports = function(msg, client) {
           break;
         }
       } catch(err){
-        msg.reply(`an error occured or\`${msg.content}\` is an unknown command...`);
-        console.log(err);
+        if (err == "TypeError: require(...)[(messageContent[1] + \"Cmd\")] is not a function"){
+          msg.reply(`\`${msg.content}\` is an unknown command...`);
+        } else {
+          msg.reply(`an error occurred...`)
+          if (config.developerOptions.showErrorsToUsers == "true") {
+            msg.channel.send("the error was:```"+err+"```")
+          }
+          else if (config.developerOptions.showErrorsToDevs == "true") {
+            if (msg.member.roles.has(msg.guild.roles.find("name", "Developer").id)) {
+              msg.channel.send("the error was: *(this only shows if the user who typed the command is a developer)*```"+err+"```")
+            }
+          }
+          console.log(err);
+        }
       }
   };
 };
