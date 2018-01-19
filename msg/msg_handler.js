@@ -28,7 +28,7 @@ module.exports = function(msg, client) {
           require("../cc/ccs.js")[messageContent[1]+"Cmd"](msg, client, messageContent.slice(2));
           break;
         case ("g"):
-          require("../game/game.js")[messageContent[1]+"Cmd"](msg, client, messageContent.slice(2));
+          require("../game/game.js")[messageContent[1]+"Cmd"](msg, client, messageContent.slice(2), messageContent.slice(3));
           break
         default: //replies if no command found
           msg.reply(`\`${msg.content}\` is an unknown command...`);

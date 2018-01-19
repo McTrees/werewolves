@@ -1,5 +1,17 @@
 const sqlite3 = require("sqlite3");
 const userdb = new sqlite3.Database("user/user.db")
+const fs = require("fs")
+const path = require("path")
+
+exports.init = function() {
+  // should only be called if the database does not exist.
+  fs.readFile(path.join(__dirname, 'user_db_schema.sql'), {encoding: "utf-8"}, function(err, data) {
+    if (err) throw err
+    else {
+      console.log(data)
+    }
+  })
+}
 
 exports.getUserEmoji = function (id) {
   // returns promise of base64 of emoji for user
@@ -53,3 +65,21 @@ exports.addUser = function (id, emoji) {
     })
   })
 };
+
+exports.all_signed_up = function() {
+  // returns promise of a list of all signed up users' ids
+  //intentionally does not include emojis to prevent this being used for polls etc
+  return new Promise(function(resolve, reject) {
+    userdb.all("select user_id from signed_up_users", [], function(err, rows){
+      if (err) {
+        throw err
+      } else {
+        resolve(rows)
+      }
+    })
+  });
+}
+
+exports.add_actual_user = function(id, lives, role) {
+    userdb.run("replace into players (user_id, lives, role) values (?, ?, ?)", [id, lives, role]);
+}

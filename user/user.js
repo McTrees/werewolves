@@ -12,7 +12,7 @@ const game = require('../game/game.js')
 
 exports.init = function() {
   if (!fs.existsSync("user/user.db")) { //database file doesn't exist
-    throw new Error("User database 'user/user.db' not found! Please create a new database by running 'user/user_db_schema.sql'! (This will happen automatically in the future)");
+    db_fns.init()
   }
 }
 
@@ -46,15 +46,9 @@ exports.signupCmd = function (msg, client, content) {
 }
 
 exports.all_signed_up = function() {
-  // returns promise of a list of all signed up users' ids
-  //intentionally does not include emojis to prevent this being used for polls etc
-  return new Promise(function(resolve, reject) {
-    db.all("select user_id from signed_up_users", [], function(err, rows){
-      if (err) {
-        throw err
-      } else {
-        resolve(rows)
-      }
-    })
-  });
+  return db_fns.all_signed_up()
+}
+
+exports.add_actual_user = function(id, lives, role) {
+  return db_fns.add_actual_user(id, lives, role)
 }
