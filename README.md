@@ -18,7 +18,7 @@ git clone https://github.com/McTrees/werewolves.git
 #### Install dependencies
 
 ```
-npm i
+npm install
 ```
 
 Edit `config.json` and `token.json` with required info (In the future this will be done via prompts in discord or the console)
