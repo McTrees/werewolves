@@ -4,17 +4,17 @@ DROP TABLE IF EXISTS player_tags;
 
 CREATE TABLE signed_up_users (
     user_id char(21) not null unique,
-    emoji char(10) not null unique,
+    emoji varchar(18) not null unique,
     finalised boolean not null default 0
 );
 
 CREATE TABLE players (
   user_id char(21) not null unique,
   alive boolean not null,
-  role char(18) not null
+  role varchar(18) not null
 );
 
 CREATE TABLE player_tags (
   user_id char(21) not null,
-  tag_name char(18) not null
+  tag_name varchar(18) not null
 );
