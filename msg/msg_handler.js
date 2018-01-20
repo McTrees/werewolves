@@ -3,6 +3,11 @@
 
    it calls functions from other files with the message object
 */
+
+// CALLING CONVENTION FOR COMMAND FUNCTIONS:
+// 1st arg ("msg") = the message object containing the command
+// 2nd arg ("client") = the client object representing the discord bot
+// 3rd arg ("args") = an array containing the rest of the args.
 const config = require('../config');
 const aliases = require('./aliases');
 /*syntax: "alias" :"defined as",
@@ -28,7 +33,7 @@ module.exports = function(msg, client) {
           require("../cc/ccs.js")[messageContent[1]+"Cmd"](msg, client, messageContent.slice(2));
           break;
         case ("g"):
-          require("../game/game.js")[messageContent[1]+"Cmd"](msg, client, messageContent.slice(2), messageContent.slice(3));
+          require("../game/game.js")[messageContent[1]+"Cmd"](msg, client, messageContent.slice(2));
           break
         default: //replies if no command found
           msg.reply(`\`${msg.content}\` is an unknown command...`);
