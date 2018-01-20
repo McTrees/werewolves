@@ -2,12 +2,12 @@
  var fs = require('fs')
 
  var ccconf; //decalre cc conf var as global
- exports.createCmd = function(msg, clinet, args) { //mgs = msg obdj, client = bot client obdj, args = array of arguments
+ exports.createCmd = function(msg, client, args) { //mgs = msg obdj, client = bot client obdj, args = array of arguments
    msg.delete(); // del msg
-   makeChannel(msg, args[0]);
+   makeChannel(msg, client, args[0], args.slice(1));
  }
 
- function makeChannel(msg, name) { //functiohn to create
+ function makeChannel(msg, client, name, people) { //functiohn to create   ('PEOPLE' NEEDS TO BE AN ARRAY OF MENTIONS (<@ID>))
    if (name == "" || name.split(0) == "@") { //test to see if there are no arguments or if name should be thingy
      msg.reply("Incorenct syntax; you must specify a name *note: it cant start with `@`*")
    } else {
@@ -21,7 +21,7 @@
        ccconf.CC_catagory_number = parseInt(ccconf.CC_catagory_number) + 1 //increment the number of catgories
        categoryName = "S" + config.season + "_CC_" + ccconf.CC_catagory_number; //phrase name of catgories
 
-       if (ccconf.CC_curent_category_id==""){ //makes a category if none exist
+       if (ccconf.CC_curent_category_id == "") { //makes a category if none exist
          msg.guild.createChannel(categoryName, "category").then(function(channel) { //make a new category
            console.log("had to make a new CC category")
            ccconf.CC_curent_category_id = channel.id //update current category id
@@ -35,14 +35,33 @@
              if (error == "DiscordAPIError: Invalid Form Body\nparent_id: Maximum number of channels in category reached (50)") { //check that the error actually is that the categoory is full
                channel.delete() //delete the category
                msg.guild.createChannel(categoryName, "category").then(function(channel) { //make a new category
-                 console.log("had to make a new CC category")
                  ccconf.CC_curent_category_id = channel.id //update current category id
                  writecc(); //write new channel id and number to cc.json
                  createChannel(name, ccconf, msg) //try to make the channel again
                })
              }
            })
-         ).then(console.log(msg.author.username + " made a CC called " + name)); //sends defaut message
+         ).then(function(channel) {
+           channel.send(config.defaultMessage)
+           channel.overwritePermissions(client.user.id, {
+             VIEW_CHANNEL: true
+           }) //the bot can see it
+           channel.overwritePermissions(msg.guild.roles.get(config.role_ids.gameMaster), {
+             VIEW_CHANNEL: true
+           }) //gamemaster can see it
+           channel.overwritePermissions(msg.guild.roles.get(config.role_ids.everyone), {
+             VIEW_CHANNEL: false
+           }) //@everyone can't see it
+           channel.overwritePermissions(msg.author, {
+             VIEW_CHANNEL: true
+           }) //author can see it
+           people.forEach(function(element) {
+             channel.overwritePermissions(msg.guild.members.get(element.slice(2, -1)), {
+               VIEW_CHANNEL: true
+             })
+           }) //everyone specified can see it
+           channel.send("<@" + msg.author.id + "> brought you together: " + people.join(", ")) //say whos in the cc
+         });
        }
 
        createChannel(name, ccconf, msg) //run the category creation function
