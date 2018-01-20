@@ -5,17 +5,15 @@ var ccconf; //decalre cc conf var as global
 
 exports.createCmd = function(msg, client, args) { //mgs = msg obdj, client = bot client obdj, args = array of arguments
   msg.delete(); // del msg
-  makeChannel(msg, client, args[0], args.slice(1));
-}
-
-function makeChannel(msg, client, name, people) { //functiohn to create ('PEOPLE' NEEDS TO BE AN ARRAY OF MENTIONS (<@ID>)) NEEDS TO BE FIXED
+  var name = args[0];
+  var people = args.slice(1); //'PEOPLE' NEEDS TO BE AN ARRAY OF MENTIONS (<@ID>)) NEEDS TO BE FIXED
   if (name == "" || name[0] == "<") { //test to see if there are no arguments or if name should be thingy
     msg.reply("Incorenct syntax; you must specify a name ***did you forget?***").then(message => //allerts user of correct syntax
       message.delete(config.messageTimeout)) //deletes bots own message after time out
-  }else if (people.length == 0){
+  } else if (people.length == 0) {
     msg.reply("did you forget to invite someone? ***Partys are better with freidns.***").then(message =>
-    message.delete(config.messageTimeout))
-  }else{
+      message.delete(config.messageTimeout))
+  } else {
     msg.reply(typeof(people));
     fs.readFile('./cc/cc.json', {
       encoding: 'utf-8'
