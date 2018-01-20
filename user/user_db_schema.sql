@@ -10,7 +10,7 @@ CREATE TABLE signed_up_users (
 
 CREATE TABLE players (
   user_id char(21) not null unique,
-  alive boolean not null,
+  alive boolean not null default 1,
   role varchar(18) not null
 );
 
