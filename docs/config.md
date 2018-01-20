@@ -60,4 +60,4 @@ This file describes all of the parameters in `/config.json`, what they do and ho
 | `gmaeMaster` | `String` | gameMaster id role |
 | `everyone`   | `String` | eveyone id         |
 
-_side note: you can get the id of a role by doing `\@role`_
+_side note: you can get the ID of a role by doing: `\@role`_
