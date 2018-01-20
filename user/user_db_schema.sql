@@ -14,6 +14,6 @@ CREATE TABLE players (
 )
 
 CREATE TABLE player_tags (
-  user id char(21) not null,
+  user_id char(21) not null,
   tag_name char(18) not null
 )
