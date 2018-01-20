@@ -1,7 +1,7 @@
 /* this file recieves the message object
-   and decides what do do with it
+and decides what do do with it
 
-   it calls functions from other files with the message object
+it calls functions from other files with the message object
 */
 const config = require('../config');
 const aliases = require('./aliases');
