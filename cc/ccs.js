@@ -1,10 +1,7 @@
-const config = require('../config'); //include main config
+ const config = require('../config'); //include main config
 var fs = require('fs')
 
 var ccconf; //decalre cc conf var as global
-
-
-
 exports.createCmd = function(msg, clinet, args){//mgs = message obdj, client = bot client obdj, args = array of arguments
   msg.delete();// del message
   makeChannel(msg, args[0]);
@@ -31,10 +28,6 @@ function makeChannel(message, name){//functiohn to create
     })
 
   }
-}
-
-function readcc(){ //function read cc.json and parses it as ccconf (obdj)
-
 }
 
 function writecc(){ //function writes ccconf (odbj) to cc.json

@@ -4,7 +4,7 @@ const gm_confirm_channel_id = require("../config").channel_ids.gm_confirm
 exports.confirm = function(confirm_msg, client) {
   // posts confirm_msg to the confirm channel
   // resolves true if accepted, false if denied, and rejects if timed out
-  
+
   return new Promise(function(resolve, reject) {
     let gm_confirm_channel = client.channels.get(gm_confirm_channel_id)
     gm_confirm_channel.send(confirm_msg
