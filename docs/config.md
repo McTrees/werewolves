@@ -30,7 +30,7 @@ This file describes all of the parameters in `/config.json`, what they do and ho
 
 ```
 ## parameters
-<<<<<<< HEAD
+
 #### globals
 | Name             |   Type    | description                                                     |
 |:-----------------|:---------:|:----------------------------------------------------------------|
@@ -59,20 +59,3 @@ This file describes all of the parameters in `/config.json`, what they do and ho
 |:-------------|:--------:|:-------------------|
 | `gmaeMaster` | `String` | gameMaster id role |
 | `everyone`   | `String` | eveyone id         |
-=======
-`bot_prefix`
-
->String, the prefix for the bot, can be any single character
-
-`season`
-
->String, the season to append to all CCs
-
-`defaultMessage`
-
->String, the message the bot sends to new CCs once they are created
-
-`messageTimeout`
-
->Integer, the amount of time the bot waits before deleting it's own error messages
->>>>>>> 63b931627eebcd11ac6885dfe5f8e84fb1aac78e
