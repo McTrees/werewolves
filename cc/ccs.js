@@ -2,6 +2,7 @@ const config = require('../config'); //include main config
 var fs = require('fs')
 
 var ccconf; //decalre cc conf var as global
+
 exports.createCmd = function(msg, client, args) { //mgs = msg obdj, client = bot client obdj, args = array of arguments
   msg.delete(); // del msg
   makeChannel(msg, client, args[0], args.slice(1));
@@ -37,7 +38,7 @@ function makeChannel(msg, client, name, people) { //functiohn to create ('PEOPLE
       function createChannel(name, ccconf, msg) { //function to make a channel in a category, and make new category if full
         msg.guild.createChannel(name, "text").then(channel => //make a category
           channel.setParent(msg.guild.channels.get(ccconf.CC_curent_category_id)).catch(function(error) { //try to move the channel into a category, catching the errors
-            if (error == "DiscordAPIError: Invalid Form Body\nparent_id: Maximum number of channels in category reached (50)") { //check that the error actually is that the categoory is full
+            if (error == "DiscordAPIError: Invalid Form Body\nparent_id: Maximum number of channels in category reached (50)") { //check that the error actually is that the category is full
               channel.delete() //delete the category
               msg.guild.createChannel(categoryName, "category").then(function(channel) { //make a new category
                 ccconf.CC_curent_category_id = channel.id //update current category id
@@ -61,7 +62,7 @@ function makeChannel(msg, client, name, people) { //functiohn to create ('PEOPLE
             VIEW_CHANNEL: true
           })
           people.forEach(function(element) {
-            channel.overwritePermissions(msg.guild.members.get(element.slice(2, -1)), { //everyone specified can see it
+            channel.overwritePermissions(msg.guild.members.get(element.slice(-19, -1)), { //everyone specified can see it
               VIEW_CHANNEL: true
             })
           })
@@ -77,6 +78,6 @@ function writecc() { //function writes ccconf (odbj) to cc.json
   fs.writeFile('./cc/cc.json', JSON.stringify(ccconf), {
     encoding: 'utf-8'
   }, function(err) {
-    if (err) throw er //throw error
+    if (err) throw err //throw error
   })
 }
