@@ -44,4 +44,4 @@ This file describes all of the parameters in `/config.json`, what they do and ho
 
 `messageTimeout`
 
-Integer, the amount of time the bot waits before deleting it's own error messages
+>Integer, the amount of time the bot waits before deleting it's own error messages
