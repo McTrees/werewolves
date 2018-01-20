@@ -24,7 +24,6 @@ This file describes all of the parameters in `/config.json`, what they do and ho
 
   "role_ids": {
     "gameMaster": "Insert ID here!",
-    "everyone": "Insert ID here!"
   }
 }
 
@@ -58,7 +57,6 @@ This file describes all of the parameters in `/config.json`, what they do and ho
 | Name         |   Type   | description        |
 |:-------------|:--------:|:-------------------|
 | `gmaeMaster` | `String` | gameMaster id role |
-| `everyone`   | `String` | eveyone id         |
 
 ----
 > Side note, you can get the ID of a role by doing: `\@role`

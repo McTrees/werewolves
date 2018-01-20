@@ -53,7 +53,7 @@ exports.createCmd = function(msg, client, args) { //mgs = msg obdj, client = bot
           channel.overwritePermissions(msg.guild.roles.get(config.role_ids.gameMaster), { //gamemaster can see it
             VIEW_CHANNEL: true
           })
-          channel.overwritePermissions(msg.guild.roles.find("name", "@everyone")), { //@everyone can't see it
+          channel.overwritePermissions(msg.guild.roles.find("name", "@everyone"), { //@everyone can't see it
             VIEW_CHANNEL: false
           })
           channel.overwritePermissions(msg.author, { //author can see it
