@@ -1,5 +1,7 @@
 const fs = require("fs");
-const db_fns = require("./db_fns")
+const path = require("path")
+const sqlite3 = require("sqlite3")
+const userdb = new sqlite3.Database("user/user.db")
 const utils = require("../utils.js")
 const config = require('../config');
 const admin = require("../admin/admin")
@@ -7,7 +9,13 @@ const game = require('../game/game.js')
 
 exports.init = function() {
   if (!fs.existsSync("user/user.db")) { //database file doesn't exist
-    db_fns.init()
+    // should only be called if the database does not exist.
+    fs.readFile(path.join(__dirname, 'user_db_schema.sql'), {encoding: "utf-8"}, function(err, data) {
+      if (err) throw err
+      else {
+        console.log(data)
+      }
+    })
   }
 }
 
@@ -20,11 +28,11 @@ exports.signupCmd = function (msg, client, content) {
     } else {
       msg.react(content[0]).then(mr=>{
         msg.clearReactions();
-        db_fns.getUserId(utils.toBase64(content[0])).then((id)=>{
+        getUserId(utils.toBase64(content[0])).then((id)=>{
           // already in use
           msg.channel.send(`Sorry but <@${id}> is already using that emoji!`)
         }).catch(()=>{
-          db_fns.addUser(msg.author.id, utils.toBase64(content[0])).then(old=>{
+          addUser(msg.author.id, utils.toBase64(content[0])).then(old=>{
             if (old) {
               msg.channel.send(`<@${msg.author.id}>'s emoji changed from ${utils.fromBase64(old)} to ${content[0]}`)
             } else {
@@ -40,9 +48,79 @@ exports.signupCmd = function (msg, client, content) {
 }
 
 exports.all_signed_up = function() {
-  return db_fns.all_signed_up()
+  // returns promise of a list of all signed up users' ids
+  //intentionally does not include emojis to prevent this being used for polls etc
+  return new Promise(function(resolve, reject) {
+    userdb.all("select user_id from signed_up_users", [], function(err, rows){
+      if (err) {
+        throw err
+      } else {
+        resolve(rows)
+      }
+    })
+  });
 }
 
 exports.add_actual_user = function(id, lives, role) {
-  return db_fns.add_actual_user(id, lives, role)
+  userdb.run("replace into players (user_id, lives, role) values (?, ?, ?)", [id, lives, role]);
 }
+
+
+
+
+
+// moved from db_fns.js
+
+function addUser(id, emoji) {
+  // if no one else is using that emoji, sign them up
+  // or change their emoji
+  // returns promise:
+    // reject = id of user using that emoji
+    // resolve: old emoji if changed, nothing (undefined) otherwise
+  return new Promise(function(resolve, reject) {
+    exports.getUserId(emoji).then(i=>{
+      reject(i)
+    }).catch(()=>{
+      //check if user is already signed up
+      exports.getUserEmoji(id).then(old_emoji=>{
+        //user already signed up, wants to change their emoji
+        userdb.run("replace into signed_up_users values (?, ?)", [id, emoji], ()=>{
+          resolve(old_emoji);
+        })
+      }).catch(()=>{
+        //not signed up, wants to.
+        userdb.run("insert into signed_up_users values (?, ?)", [id, emoji], ()=>{
+          resolve()
+        })
+      })
+    })
+  })
+};
+
+function getUserEmoji (id) {
+  // returns promise of base64 of emoji for user
+  return new Promise(function(resolve, reject) {
+    userdb.get("select emoji from signed_up_users where user_id = ?", id, function(err, row) {
+      if (err) throw err;
+      if (row) {
+        resolve(row.emoji)
+      } else {
+        reject()
+      }
+    })
+  });
+};
+
+function getUserId (emoji) {
+  // returns promise of id for user by emoji
+  return new Promise(function(resolve, reject) {
+    userdb.get("select user_id from signed_up_users where emoji = ?", emoji, function(err, row) {
+      if (err) throw err;
+      if (row) {
+        resolve(row.user_id)
+      } else {
+        reject()
+      }
+    })
+  });
+};
