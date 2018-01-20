@@ -2,6 +2,7 @@
   "bot_prefix": "!",
   "season": "5",
   "defaultMessage": "heyyy come here offten? (this can be the message that it says lol)",
+  "messageTimeout": 3000,
 
   "developerOptions": {
     "showErrorsToDevs": "true",
