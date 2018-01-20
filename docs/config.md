@@ -15,16 +15,16 @@ This file describes all of the parameters in `/config.json`, what they do and ho
   },
 
   "channel_ids": {
-    "gm_confirm": "400350702138032140",
-    "story_time": "401767386400948225",
-    "voting_booth": "402127047478083584",
-    "werewolves": "403457591444766731",
-    "cult": "403457834278453248"
+    "gm_confirm": "Insert ID here!",
+    "story_time": "Insert ID here!",
+    "voting_booth": "Insert ID here!",
+    "werewolves": "Insert ID here!",
+    "cult": "Insert ID here!"
   },
 
   "role_ids": {
-    "gameMaster": "403220526903853066",
-    "everyone": "395966781589815296"
+    "gameMaster": "Insert ID here!",
+    "everyone": "Insert ID here!"
   }
 }
 
