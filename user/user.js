@@ -8,15 +8,17 @@ const admin = require("../admin/admin")
 const game = require('../game/game.js')
 
 exports.init = function() {
-  if (!fs.existsSync("user/user.db")) { //database file doesn't exist
-    // should only be called if the database does not exist.
-    fs.readFile(path.join(__dirname, 'user_db_schema.sql'), {encoding: "utf-8"}, function(err, data) {
-      if (err) throw err
-      else {
-        console.log(data)
-      }
-    })
-  }
+  fs.readFile(path.join(__dirname, 'user.db'), {encoding: "utf-8"}, function(err, data){
+    if (data === '') { // database is empty and needs to be created
+      fs.readFile(path.join(__dirname, 'user_db_schema.sql'), {encoding: "utf-8"}, function(er, schema) {
+        if (er) throw er
+        else {
+          console.log("User database not found - creating a new one")
+          userdb.exec(schema)
+        }
+      })
+    }
+  })
 }
 
 exports.signupCmd = function (msg, client, content) {
