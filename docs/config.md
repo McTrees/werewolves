@@ -30,7 +30,11 @@ This file describes all of the parameters in `/config.json`, what they do and ho
 
 ```
 ## parameters
-> `bot_prefix` String, the prefix for the bot, can be any single character
-> `season` String, the season to append to all CCs
-> `defaultMessage` String, the message the bot sends to new CCs once they are created
-> `messageTimeout` Integer, the amount of time the bot waits before deleting it's own error messages
+ `bot_prefix`
+> String, the prefix for the bot, can be any single character
+`season`
+>String, the season to append to all CCs
+`defaultMessage`
+>String, the message the bot sends to new CCs once they are created
+`messageTimeout`
+>Integer, the amount of time the bot waits before deleting it's own error messages
