@@ -11,9 +11,9 @@ CREATE TABLE players (
   user_id char(21) not null unique,
   alive boolean not null,
   role char(18) not null
-)
+);
 
 CREATE TABLE player_tags (
   user_id char(21) not null,
   tag_name char(18) not null
-)
+);
