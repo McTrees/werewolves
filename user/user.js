@@ -7,7 +7,6 @@ const config = require('../config');
 const admin = require("../admin/admin")
 
 
-
 /*
 ███████ ██   ██ ██████   ██████  ██████  ████████ ███████ ██████
 ██       ██ ██  ██   ██ ██    ██ ██   ██    ██    ██      ██   ██
@@ -33,8 +32,7 @@ exports.init = function() {
 
 exports.signupCmd = function (msg, client, content) {
   // command for signing yourself up
-  const game = require('../game/game.js')
-  if (game.is_started()) {
+  if (fs.existsSync("game.dat")) {
     msg.reply('Sorry, but a game is already in progress! Please wait for next season to start.')
   } else {
     if (content.length != 1){
