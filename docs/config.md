@@ -6,7 +6,7 @@ This file describes all of the parameters in `/config.json`, what they do and ho
 {
   "bot_prefix": "!",
   "season": "5",
-  "defaultMessage": "Look, look! Over @here, a new conspiracy channel has been created! The creator, has brought you together! Maybe he has something to say... If you need help managing your conspiracy channel, type ~help c for help.",
+  "defaultMessage": "Look, look! Over @here, a new conspiracy channel has been created! The creator, has brought you together! Maybe he has something to say...",
   "messageTimeout": 3000,
 
   "developerOptions": {
