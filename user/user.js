@@ -89,9 +89,15 @@ exports.resolveToId = function(str) {
   // otherwise, reject
   // note: currently if this is a mention, but of someone not in the server, it will still return their id.
   return new Promise(function(resolve, reject) {
-    var discordId = /^<@\d+>$/
+    var discordId = /^<@!?(\d+)>$/
     if (discordId.test(str)) { // str is a valid discord mention
-      return str.slice(2, -1)
+      resolve(discordId.exec(str)[1])
+    } else { // emoji or invalid
+      db.get("select user_id from signed_up_users where emoji = ?", [utils.toBase64(str)], function(err, row){
+        if (err) throw err //TODO: err handling
+        if (row.user_id) { resolve(row.user_id)}
+        else { reject() }
+      })
     }
   });
 }
