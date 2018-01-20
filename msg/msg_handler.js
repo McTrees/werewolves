@@ -42,11 +42,6 @@ module.exports = function(msg, client) {
           if (config.developerOptions.showErrorsToUsers == "true") {
             msg.channel.send("the error was:```"+err+"```")
           }
-          else if (config.developerOptions.showErrorsToDevs == "true") {
-            if (msg.member.roles.has(msg.guild.roles.find("name", "Developer").id)) {
-              msg.channel.send("the error was: *(this only shows if the user who typed the command is a developer)*```"+err+"```")
-            }
-          }
           console.log(err);
         }
       }
