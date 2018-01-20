@@ -74,9 +74,13 @@ exports.all_signed_up = function() {
   });
 }
 
-exports.finalise_user = function(id, lives, role) {
+exports.finalise_user = function(id, role) {
   // turns a signed up user into a player with a role
-  userdb.run("replace into players (user_id, lives, role) values (?, ?, ?)", [id, lives, role]);
+  userdb.run(`
+    begin transaction;
+    replace into players (user_id, role) values ($id, $role);
+    update signed_up_users set finalised = 1 where user_id = $id;
+    commit;`, { $id: id, $role, role});
 }
 
 exports.resolveToId = function(str) {
