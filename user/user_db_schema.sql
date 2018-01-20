@@ -5,7 +5,7 @@ DROP TABLE IF EXISTS player_tags;
 CREATE TABLE signed_up_users (
     user_id char(21) not null unique,
     emoji char(10) not null unique,
-    finalised boolean not null
+    finalised boolean not null default 0
 );
 
 CREATE TABLE players (
