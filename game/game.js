@@ -42,7 +42,7 @@ exports.setroleCmd = function (msg, client, user, role) {
     if (!VALID_ROLES.includes(role)) {
       msg.reply("invalid role: `"+role+"`!")
     } else {
-      user.finalise_user(user.resolveToId(user), role)
+      user.finalise_user(user.resolve_to_id(user), role)
     }
   }
 }

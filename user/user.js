@@ -84,7 +84,7 @@ exports.finalise_user = function(id, role) {
     commit;`, { $id: id, $role, role});
 }
 
-exports.resolveToId = function(str) {
+exports.resolve_to_id = function(str) {
   // if str is a discord mention (<@id>), resolve with the id
   // if str is an emoji, resolve with the id of the user with that emoji
   // otherwise, reject
