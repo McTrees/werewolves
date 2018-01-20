@@ -17,6 +17,7 @@ const game = require('../game/game.js')
 */
 
 exports.init = function() {
+  // called on bot start
   fs.readFile(path.join(__dirname, 'user.db'), {encoding: "utf-8"}, function(err, data){
     if (data === '') { // database is empty and needs to be created
       fs.readFile(path.join(__dirname, 'user_db_schema.sql'), {encoding: "utf-8"}, function(er, schema) {
@@ -31,6 +32,7 @@ exports.init = function() {
 }
 
 exports.signupCmd = function (msg, client, content) {
+  // command for signing yourself up
   if (game.is_started()) {
     msg.reply('Sorry, but a game is already in progress! Please wait for next season to start.')
   } else {
@@ -73,6 +75,7 @@ exports.all_signed_up = function() {
 }
 
 exports.add_actual_user = function(id, lives, role) {
+  // signs up a user. TODO: better name
   userdb.run("replace into players (user_id, lives, role) values (?, ?, ?)", [id, lives, role]);
 }
 
