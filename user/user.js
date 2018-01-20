@@ -16,7 +16,6 @@ const game = require('../game/game.js')
 ███████ ██   ██ ██       ██████  ██   ██    ██    ███████ ██████
 */
 
-
 exports.init = function() {
   fs.readFile(path.join(__dirname, 'user.db'), {encoding: "utf-8"}, function(err, data){
     if (data === '') { // database is empty and needs to be created
@@ -85,9 +84,6 @@ exports.add_actual_user = function(id, lives, role) {
 ██ ██  ██ ██    ██    ██      ██   ██ ██  ██ ██ ██   ██ ██
 ██ ██   ████    ██    ███████ ██   ██ ██   ████ ██   ██ ███████
 */
-
-
-
 // moved from db_fns.js
 
 function addUser(id, emoji) {
