@@ -15,21 +15,22 @@ This file describes all of the parameters in `/config.json`, what they do and ho
   },
 
   "channel_ids": {
-    "gm_confirm": "400350702138032140",
-    "story_time": "401767386400948225",
-    "voting_booth": "402127047478083584",
-    "werewolves": "403457591444766731",
-    "cult": "403457834278453248"
+    "gm_confirm": "Insert ID here!",
+    "story_time": "Insert ID here!",
+    "voting_booth": "Insert ID here!",
+    "werewolves": "Insert ID here!",
+    "cult": "Insert ID here!"
   },
 
   "role_ids": {
-    "gameMaster": "403220526903853066",
-    "everyone": "395966781589815296"
+    "gameMaster": "Insert ID here!",
+    "everyone": "Insert ID here!"
   }
 }
 
 ```
 ## parameters
+<<<<<<< HEAD
 #### globals
 | Name             |   Type    | description                                                     |
 |:-----------------|:---------:|:----------------------------------------------------------------|
@@ -58,3 +59,20 @@ This file describes all of the parameters in `/config.json`, what they do and ho
 |:-------------|:--------:|:-------------------|
 | `gmaeMaster` | `String` | gameMaster id role |
 | `everyone`   | `String` | eveyone id         |
+=======
+`bot_prefix`
+
+>String, the prefix for the bot, can be any single character
+
+`season`
+
+>String, the season to append to all CCs
+
+`defaultMessage`
+
+>String, the message the bot sends to new CCs once they are created
+
+`messageTimeout`
+
+>Integer, the amount of time the bot waits before deleting it's own error messages
+>>>>>>> 63b931627eebcd11ac6885dfe5f8e84fb1aac78e
