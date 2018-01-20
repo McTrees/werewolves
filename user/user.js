@@ -1,13 +1,8 @@
 const fs = require("fs");
-
 const db_fns = require("./db_fns")
-
 const utils = require("../utils.js")
-
 const config = require('../config');
-
 const admin = require("../admin/admin")
-
 const game = require('../game/game.js')
 
 exports.init = function() {
