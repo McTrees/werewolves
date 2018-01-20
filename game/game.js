@@ -39,7 +39,11 @@ exports.setroleCmd = function (msg, client, user, role) {
   if (!exports.is_started()) {
     msg.reply("signups are currently open or a game is not being set up")
   } else {
-    user.finalise_user()
+    if (!VALID_ROLES.includes(role)) {
+      msg.reply("invalid role: `"+role+"`!")
+    } else {
+      user.finalise_user(user.resolveToId(user), role)
+    }
   }
 }
 
