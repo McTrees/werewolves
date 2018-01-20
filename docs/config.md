@@ -6,7 +6,7 @@ This file describes all of the parameters in `/config.json`, what they do and ho
 {
   "bot_prefix": "!",
   "season": "5",
-  "defaultMessage": "heyyy come here offten? (this can be the message that it says lol)",
+  "defaultMessage": "Look, look! Over @here, a new conspiracy channel has been created! The creator, has brought you together! Maybe he has something to say... If you need help managing your conspiracy channel, type ~help c for help.",
   "messageTimeout": 3000,
 
   "developerOptions": {
@@ -30,11 +30,31 @@ This file describes all of the parameters in `/config.json`, what they do and ho
 
 ```
 ## parameters
- `bot_prefix`
-> String, the prefix for the bot, can be any single character
-`season`
->String, the season to append to all CCs
-`defaultMessage`
->String, the message the bot sends to new CCs once they are created
-`messageTimeout`
->Integer, the amount of time the bot waits before deleting it's own error messages
+#### globals
+| Name             |   Type    | description                                                     |
+|:-----------------|:---------:|:----------------------------------------------------------------|
+| `bot_prefix`     | `String`  | Prefix that the bot uses                                        |
+| `season`         | `String`  | Season that is appended to all CCs                              |
+| `defaultMessage` | `String`  | Default message the bot sends to new CCs                        |
+| `messageTimeout` | `Integer` | amount of time bot waits before deleting its own error messages |
+
+ #### developerOptions
+| Name                |   Type   | description                          |
+|:--------------------|:--------:|:-------------------------------------|
+| `showErrorsToDevs`  | `String` | If bot logs errors to users with dev |
+| `showErrorsToUsers` | `String` | If bot logs errors to all users      |
+
+#### channel_ids
+| Name           |   Type   | description             |
+|:---------------|:--------:|:------------------------|
+| `gm_confirm`   | `String` | GM confirm channel id   |
+| `story_time`   | `String` | story time channel id   |
+| `voting_booth` | `String` | voting_booth channel id |
+| `werewolves`   | `String` | werewolves channel id   |
+| `cult`         | `String` | cult channel id         |
+
+#### role_ids
+| Name         |   Type   | description        |
+|:-------------|:--------:|:-------------------|
+| `gmaeMaster` | `String` | gameMaster id role |
+| `everyone`   | `String` | eveyone id         |
