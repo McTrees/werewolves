@@ -74,8 +74,8 @@ exports.all_signed_up = function() {
   });
 }
 
-exports.add_actual_user = function(id, lives, role) {
-  // signs up a user. TODO: better name
+exports.finalise_user = function(id, lives, role) {
+  // turns a signed up user into a player with a role
   userdb.run("replace into players (user_id, lives, role) values (?, ?, ?)", [id, lives, role]);
 }
 
