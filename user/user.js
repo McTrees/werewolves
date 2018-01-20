@@ -78,11 +78,11 @@ function addUser(id, emoji) {
     // reject = id of user using that emoji
     // resolve: old emoji if changed, nothing (undefined) otherwise
   return new Promise(function(resolve, reject) {
-    exports.getUserId(emoji).then(i=>{
+    getUserId(emoji).then(i=>{
       reject(i)
     }).catch(()=>{
       //check if user is already signed up
-      exports.getUserEmoji(id).then(old_emoji=>{
+      getUserEmoji(id).then(old_emoji=>{
         //user already signed up, wants to change their emoji
         userdb.run("replace into signed_up_users values (?, ?)", [id, emoji], ()=>{
           resolve(old_emoji);
