@@ -79,7 +79,18 @@ exports.finalise_user = function(id, lives, role) {
   userdb.run("replace into players (user_id, lives, role) values (?, ?, ?)", [id, lives, role]);
 }
 
-
+exports.resolveToId = function(str) {
+  // if str is a discord mention (<@id>), resolve with the id
+  // if str is an emoji, resolve with the id of the user with that emoji
+  // otherwise, reject
+  // note: currently if this is a mention, but of someone not in the server, it will still return their id.
+  return new Promise(function(resolve, reject) {
+    var discordId = /^<@\d+>$/
+    if (discordId.test(str)) { // str is a valid discord mention
+      return str.slice(2, -1)
+    }
+  });
+}
 /*
 ██ ███    ██ ████████ ███████ ██████  ███    ██  █████  ██
 ██ ████   ██    ██    ██      ██   ██ ████   ██ ██   ██ ██
