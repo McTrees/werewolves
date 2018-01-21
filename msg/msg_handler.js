@@ -32,6 +32,9 @@ module.exports = function(msg, client) {
         case ("g"):
           require("../game/game.js")[messageContent[1] + "Cmd"](msg, client, messageContent.slice(2), messageContent.slice(3));
           break;
+        case("h"):
+          require("../help/main.js")[messageContent[1] + "Cmd"](msg, client, messageContent.slice(2));
+          break;
         default: //replies if no command found
           msg.reply(`\`${msg.content}\` is an unknown command...`);
           break;
@@ -41,7 +44,7 @@ module.exports = function(msg, client) {
         msg.reply(`\`${msg.content}\` is an unknown command...`);
       } else {
         msg.reply(`an error occurred...`)
-        if ((config.developerOptions.showErrorsToDevs == "true" && msg.member.roles.has("395967396218667008" )|| config.developerOptions.showErrorsToUsers == "true")){
+        if ((config.developerOptions.showErrorsToDevs == "true" && msg.member.roles.has("395967396218667008" ) || config.developerOptions.showErrorsToUsers == "true")){
           msg.channel.send("the error was: ```" + err + "```")
         }
         console.log(err);
