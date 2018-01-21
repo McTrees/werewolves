@@ -1,7 +1,7 @@
 const events = require("events")
 const config = require("../config")
 const fs = require("fs")
-const user = require("../user/user")
+const user = require("../user/user.js")
 const discord = require("discord.js")
 
 const VALID_ROLES = ["INNOCENT", "WEREWOLF"]
@@ -35,14 +35,22 @@ exports.startseasonCmd = function (msg, client) {
   }
 };
 
-exports.setroleCmd = function (msg, client, user, role) {
+exports.setroleCmd = function (msg, client, args) {
+  if (args.length !== 2) {
+    msg.reply("invalid syntax!")
+    return
+  }
+  let usr = args[0]
+  let role = args[1]
   if (!exports.is_started()) {
     msg.reply("signups are currently open or a game is not being set up")
   } else {
     if (!VALID_ROLES.includes(role)) {
       msg.reply("invalid role: `"+role+"`!")
     } else {
-      user.finalise_user(user.resolve_to_id(user), role)
+      user.resolve_to_id(usr).then(id=>{
+        user.finalise_user(id, role)
+      })
     }
   }
 }
