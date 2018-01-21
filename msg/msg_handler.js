@@ -41,9 +41,7 @@ module.exports = function(msg, client) {
         msg.reply(`\`${msg.content}\` is an unknown command...`);
       } else {
         msg.reply(`an error occurred...`)
-        if (config.developerOptions.showErrorsToUsers == "true") {
-          msg.channel.send("the error was: ```" + err + "```")
-        } else if (config.developerOptions.showErrorsToDevs == "true" && msg.member.roles.has("395967396218667008")){
+        if ((config.developerOptions.showErrorsToDevs == "true" && msg.member.roles.has("395967396218667008" )|| config.developerOptions.showErrorsToUsers == "true")){
           msg.channel.send("the error was: ```" + err + "```")
         }
         console.log(err);
