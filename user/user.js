@@ -75,11 +75,12 @@ exports.all_signed_up = function() {
 
 exports.finalise_user = function(id, role) {
   // turns a signed up user into a player with a role
-  userdb.run(`
-    begin transaction;
-    replace into players (user_id, role) values ($id, $role);
-    update signed_up_users set finalised = 1 where user_id = $id;
-    commit;`, { $id: id, $role, role});
+  userdb.serialize(function(){
+    userdb.run("begin transaction;")
+    userdb.run("replace into players (user_id, role) values ($id, $role);", {$id:id,$role:role})
+    userdb.run("update signed_up_users set finalised = 1 where user_id = $id;", {$id:id})
+    userdb.run("commit;")
+  })
 }
 
 exports.resolve_to_id = function(str) {
