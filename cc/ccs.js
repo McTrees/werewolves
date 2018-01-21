@@ -6,12 +6,35 @@ var ccconf; //decalre cc conf var as global
 exports.createCmd = function(msg, client, args) { //mgs = msg obdj, client = bot client obdj, args = array of arguments
   msg.delete(); // del msg
   var name = args[0];
-  var people = args.slice(1); //'PEOPLE' NEEDS TO BE AN ARRAY OF MENTIONS (<@ID>)) NEEDS TO BE FIXED
+  var showCreator = false
+  if (args.length == 0) {
+    msg.reply("Incorenct syntax; ```" + config.bot_prefix + "c create <name> [show creator (True or False)] <person1> [person2]...```").then(message => //alerts user of correct syntax
+      message.delete(config.messageTimeout)) //deletes bots own message after time out
+    return
+  }
+  if (args.length == 1) {
+    msg.reply("Incorenct syntax; Did you forget to invite someone? ```" + config.bot_prefix + "c create <name> [show creator (True or False)] <person1> [person2]...```").then(message => //alerts user of correct syntax
+      message.delete(config.messageTimeout)) //deletes bots own message after time out
+    return
+  }
+  if (args[1].toLowerCase() == "true") {
+    var showCreator = true
+    var people = args.slice(2); //'PEOPLE' NEEDS TO BE AN ARRAY OF MENTIONS (<@ID>)) NEEDS TO BE FIXED
+  } else if (args[1].toLowerCase() == "false") {
+    var people = args.slice(2); //'PEOPLE' NEEDS TO BE AN ARRAY OF MENTIONS (<@ID>)) NEEDS TO BE FIXED
+  } else if (args[1][0] == "<") {
+    var people = args.slice(1); //'PEOPLE' NEEDS TO BE AN ARRAY OF MENTIONS (<@ID>)) NEEDS TO BE FIXED
+  } else {
+    msg.reply("Incorenct syntax; you must specify a name ```" + config.bot_prefix + "c create <name> [show creator (True or False)] <person1> [person2]...```").then(message => //alerts user of correct syntax
+      message.delete(config.messageTimeout)) //deletes bots own message after time out
+    return
+  }
+
   if (name == undefined || name == "" || name[0] == "<") { //test to see if there are no arguments or if name should be thingy
-    msg.reply("Incorenct syntax; you must specify a name ***did you forget?***").then(message => //allerts user of correct syntax
+    msg.reply("Incorenct syntax; you must specify a name ```" + config.bot_prefix + "c create <name> [show creator (True or False)] <person1> [person2]...```").then(message => //alerts user of correct syntax
       message.delete(config.messageTimeout)) //deletes bots own message after time out
   } else if (people.length == 0) {
-    msg.reply("did you forget to invite someone? ***Partys are better with freidns.***").then(message =>
+    msg.reply("did you forget to invite someone? ```" + config.bot_prefix + "c create <name> [show creator (True or False)] <person1> [person2]...```").then(message =>
       message.delete(config.messageTimeout))
   } else {
     msg.reply(typeof(people));
@@ -64,7 +87,9 @@ exports.createCmd = function(msg, client, args) { //mgs = msg obdj, client = bot
               VIEW_CHANNEL: true
             })
           })
-          channel.send("<@" + msg.author.id + "> brought you together: " + people.join(", ")) //say whos in the CC
+          if (showCreator == true) {
+            channel.send("<@" + msg.author.id + "> brought you together: " + people.join(", ")) //say whos in the CC
+          }
         });
       }
       createChannel(name, ccconf, msg) //run the category creation function
