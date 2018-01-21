@@ -5,6 +5,7 @@ it calls functions from other files with the message object
 */
 const config = require('../config');
 const aliases = require('./aliases');
+
 /*syntax: "alias" :"defined as",
 all other arguments that get send with the alias get added to the send
 alieses need to be one word
