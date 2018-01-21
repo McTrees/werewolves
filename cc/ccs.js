@@ -7,7 +7,7 @@ exports.createCmd = function(msg, client, args) { //mgs = msg obdj, client = bot
   msg.delete(); // del msg
   var name = args[0];
   var people = args.slice(1); //'PEOPLE' NEEDS TO BE AN ARRAY OF MENTIONS (<@ID>)) NEEDS TO BE FIXED
-  if (name == "" || name[0] == "<") { //test to see if there are no arguments or if name should be thingy
+  if (name == undefined || name == "" || name[0] == "<") { //test to see if there are no arguments or if name should be thingy
     msg.reply("Incorenct syntax; you must specify a name ***did you forget?***").then(message => //allerts user of correct syntax
       message.delete(config.messageTimeout)) //deletes bots own message after time out
   } else if (people.length == 0) {
