@@ -2,6 +2,9 @@ const events = require("events")
 const config = require("../config")
 const fs = require("fs")
 const user = require("../user/user")
+const discord = require("discord.js")
+
+const VALID_ROLES = ["INNOCENT", "WEREWOLF"]
 
 class Game extends events.EventEmitter {
   constructor(season_number) {
@@ -28,11 +31,23 @@ exports.startseasonCmd = function (msg, client) {
   if (exports.is_started()) {
     msg.reply("It appears that we are already in a game... -_-")
   } else {
-    startgame()
+    startgame(client)
   }
 };
 
-function startgame() {
-  //fs.writeFile("game.dat", "GAME", err => if (err) throw err)
-  user.all_signed_up().then(console.log)
+exports.setroleCmd = function (msg, client, user, role) {
+  if (!exports.is_started()) {
+    msg.reply("signups are currently open or a game is not being set up")
+  } else {
+    
+  }
+}
+
+function startgame(client) {
+  fs.writeFile("game.dat", "GAME", err =>{if (err) throw err})
+  user.all_signed_up().then(asu=>{
+    gm_confirm = client.channels.get(config.channel_ids.gm_confirm)
+    gm_confirm.send(`Signed up users: ${asu.map(id=>`\n- <@${id.user_id}>`)}`)
+    gm_confirm.send("For every user, please say `!g setrole @mention ROLE`, where ROLE is any of " + VALID_ROLES)
+  })
 }
