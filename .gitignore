@@ -3,3 +3,4 @@ node_modules/
 token.json
 poll/polls.json
 game.dat
+cc/cc.json
