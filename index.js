@@ -6,11 +6,12 @@ const token = require('./token').token;
 const discord = require('discord.js');
 const client = new discord.Client();
 
+const utils = require('./utils');
 const msg_handler = require("./msg/msg_handler");
 const failsafes = require("./failsafes");
 
 client.on('ready', () => {
-  console.log("Logged in!")
+  utils.successMessage("Logged in!");
   failsafes(client) // actually actually run the darn thing
 });
 
