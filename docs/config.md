@@ -56,7 +56,7 @@ This file describes all of the parameters in `/config.json`, what they do and ho
 #### role_ids
 | Name         |   Type   | description        |
 |:-------------|:--------:|:-------------------|
-| `gmaeMaster` | `String` | gameMaster id role |
+| `gameMaster` | `String` | gameMaster id role |
 
 ----
 > Side note, you can get the ID of a role by doing: `\@role`
