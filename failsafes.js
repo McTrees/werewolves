@@ -9,6 +9,6 @@ client.on('guildMemberRemove', member => {
   .setTimestamp()
   .addField('User Update',
     `${member.user} has left! :neutral_face: `)
-  guild.defaultChannel.sendEmbed(embed);
+  general.sendEmbed(embed);
 });
 }
