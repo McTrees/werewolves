@@ -9,7 +9,7 @@ Run the main file with `node index.js` or opening `run.bat` (windows only). Any 
 
 ### Installing
 
-Download the project to your local machine.
+Download the project to your local machine using git (or by downloading the zip).
 
 ```
 git clone https://github.com/McTrees/werewolves.git
