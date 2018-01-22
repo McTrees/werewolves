@@ -28,9 +28,9 @@ This file describes all of the parameters in `/config.json`, what they do and ho
 }
 
 ```
-## Parameters
+## parameters
 
-#### Globals
+#### globals
 | Name             |   Type    | description                                                     |
 |:-----------------|:---------:|:----------------------------------------------------------------|
 | `bot_prefix`     | `String`  | Prefix that the bot uses                                        |
