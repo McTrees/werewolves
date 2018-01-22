@@ -31,7 +31,8 @@ exports.startseasonCmd = function (msg, client) {
   if (exports.is_started()) {
     msg.reply("It appears that we are already in a game... -_-")
   } else {
-    startgame(client)
+    msg.channel.send("Starting season! Please check <#" + config.channel_ids.gm_confirm + "> and enter player's roles.");
+    startgame(client);
   }
 };
 
