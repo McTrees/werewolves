@@ -1,6 +1,6 @@
 const discord = require("discord.js")
 
-module.exports = function(msg, client) {
+module.exports = function(client) {
 var general = client.channels.get("395966781589815298");
 client.on('guildMemberRemove', member => {
   let guild = member.guild
