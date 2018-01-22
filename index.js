@@ -8,10 +8,10 @@ const client = new discord.Client();
 
 const msg_handler = require("./msg/msg_handler");
 const failsafes = require("./failsafes");
-failsafes(client) // actually run the darn thing
 
 client.on('ready', () => {
   console.log("Logged in!")
+  failsafes(client) // actually actually run the darn thing
 });
 
 client.on('message', msg => {
