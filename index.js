@@ -1,12 +1,39 @@
 /* werewolves bot */
 const utils = require('./utils');
+utils.infoMessage("Startup process begginning...");
 // Check to see if the user wants to run in debug mode
 if (process.argv.indexOf("--debug") > -1) {
 	utils.debugMode();
 }
 
+// Check for updates
+const https = require('https');
+url = "https://ben.mctrees.net/api/checkGitVersion.php?repo=werewolves";
+
+currentVer = require('./package').version;
+https.get(url, res => {
+  res.setEncoding("utf8");
+  let body = "";
+  res.on("data", data => {
+    body += data;
+  });
+  res.on("end", () => {
+    	utils.debugMessage(`got ${body} from version API`);
+    	utils.debugMessage(`Current version from package.json is ${currentVer}`)
+    	if (currentVer == body) {
+    		utils.infoMessage("You are up-to-date with the latest version from Github.")
+    	}
+    	else {
+    		utils.warningMessage(`You are not on the latest version. You should update for fixes and features by doing a git pull.
+    			Remote version: ${body}
+    			Local version: ${currentVer}
+    			Please update.`)
+    	}
+  });
+});
+
+
 utils.debugMessage("Debug messages enabled.");
-utils.infoMessage("Startup process begginning...");
 const config = require('./config');
 const token = require('./token').token;
 utils.successMessage("Config loaded");
