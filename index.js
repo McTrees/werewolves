@@ -8,12 +8,12 @@ utils.infoMessage("Config loaded");
 
 try {
 	const discord = require('discord.js');
-	const client = new discord.Client();
 } catch (ball) {
-	utils.errorMessage("Issue whilst loading discordJS and initializing client. Please ensure you have run 'npm i' at least once after downloading");
+	utils.errorMessage("Issue whilst loading discordJS. Please ensure you have run 'npm i' at least once after downloading");
 	process.exit();
 }
 
+const client = new discord.Client();
 
 const msg_handler = require("./msg/msg_handler");
 const failsafes = require("./failsafes");
