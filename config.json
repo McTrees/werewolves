@@ -7,7 +7,7 @@
   "developerOptions": {
     "showErrorsToDevs": "true",
     "showErrorsToUsers": "false",
-    "logDebugMessages": "true",
+    "logDebugMessages": "false",
     "logOtherMessages": "true"
   },
 
