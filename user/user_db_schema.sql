@@ -1,3 +1,4 @@
+BEGIN TRANSACTION;
 DROP TABLE IF EXISTS signed_up_users;
 DROP TABLE IF EXISTS players;
 DROP TABLE IF EXISTS player_tags;
@@ -18,3 +19,4 @@ CREATE TABLE player_tags (
   user_id char(21) not null,
   tag_name varchar(18) not null
 );
+COMMIT;
