@@ -1,6 +1,11 @@
 /* werewolves bot */
 const utils = require('./utils');
+// Check to see if the user wants to run in debug mode
+if (process.argv.indexOf("--debug") > -1) {
+	utils.debugMode();
+}
 
+utils.debugMessage("Debug messages enabled.");
 utils.infoMessage("Startup process begginning...");
 const config = require('./config');
 const token = require('./token').token;
