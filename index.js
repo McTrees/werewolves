@@ -6,8 +6,13 @@ const config = require('./config');
 const token = require('./token').token;
 utils.infoMessage("Config loaded");
 
-const discord = require('discord.js');
-const client = new discord.Client();
+try {
+	const discord = require('discord.js');
+	const client = new discord.Client();
+} catch (ball) {
+	utils.errorMessage("Issue whilst loading discordJS and initializing client. Please ensure you have run 'npm i' at least once after downloading");
+	process.exit();
+}
 
 
 const msg_handler = require("./msg/msg_handler");
