@@ -128,7 +128,7 @@ function addUser(id, emoji) {
         })
       }).catch(()=>{
         //not signed up, wants to.
-        userdb.run("insert into signed_up_users values (?, ?)", [id, emoji], ()=>{
+        userdb.run("insert into signed_up_users (user_id, emoji) values (?, ?)", [id, emoji], ()=>{
           resolve()
         })
       })
