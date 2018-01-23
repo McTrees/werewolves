@@ -20,6 +20,12 @@ exports.successMessage = function (str, force) {
 	}
 }
 
+exports.warningMessage = function (str, force) {
+	if (config.developerOptions.logDebugMessages == "true" || force == "force" || force == true) {
+		console.log('\x1b[2m\x1b[33m%s\x1b[0m', "[!] ".concat(str));
+	}
+}
+
 exports.errorMessage = function (str, force) {
 	if (config.developerOptions.logOtherMessages == "true" || force == "force" || force == true) {
 		console.log('\x1b[2m\x1b[31m%s\x1b[0m', "[!] ".concat(str));
