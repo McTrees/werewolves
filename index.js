@@ -11,7 +11,7 @@ const msg_handler = require("./msg/msg_handler");
 const failsafes = require("./failsafes");
 
 client.on('ready', () => {
-  utils.successMessage("Logged in!");
+  utils.successMessage("Logged in!", true);
   failsafes(client) // actually actually run the darn thing
 });
 
