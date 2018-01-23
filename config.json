@@ -6,7 +6,9 @@
 
   "developerOptions": {
     "showErrorsToDevs": "true",
-    "showErrorsToUsers": "false"
+    "showErrorsToUsers": "false",
+    "logDebugMessages": "true",
+    "logOtherMessages": "true"
   },
 
   "channel_ids": {
