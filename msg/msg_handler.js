@@ -45,8 +45,8 @@ module.exports = function(msg, client) {
           msg.reply(`\`${msg.content}\` is an unknown command...`);
           break;
       }
-    } catch (err) { // Gotta catch 'em all
-      if (err == "TypeError: require(...)[(messageContent[1] + \"Cmd\")] is not a function") {
+    } catch (err) {
+      if (err instanceof TypeError) {
         msg.reply(`\`${msg.content}\` is an unknown command...`);
       } else {
         msg.reply(`an error occurred...`)
