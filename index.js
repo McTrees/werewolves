@@ -1,23 +1,19 @@
 /* werewolves bot */
 const utils = require('./utils');
 
-utils.infoMessage("Startup process begginning");
+utils.infoMessage("Startup process begginning...");
 const config = require('./config');
 const token = require('./token').token;
-utils.infoMessage("Config loaded");
+utils.successMessage("Config loaded");
 
-try {
-	const discord = require('discord.js');
-} catch (ball) {
-	utils.errorMessage("Issue whilst loading discordJS. Please ensure you have run 'npm i' at least once after downloading");
-	process.exit();
-}
-
+utils.infoMessage("Loading external modules...");
+const discord = require('discord.js');
 const client = new discord.Client();
 
+utils.infoMessage("Loaded external modules, loading other modules.");
 const msg_handler = require("./msg/msg_handler");
 const failsafes = require("./failsafes");
-utils.infoMessage("Loaded libraries");
+utils.infoMessage("Loaded modules");
 
 if (token == 'insert-token-here') {
 	utils.errorMessage("Incorrect login credentials passed! Please edit token.json with your bot's token.", true)
