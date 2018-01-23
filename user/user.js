@@ -31,6 +31,7 @@ exports.init = function() {
 }
 
 exports.signupCmd = function (msg, client, content) {
+  utils.debugMessage(`<@${msg.author}> ran signup command with emoji ${content[0]}`)
   // command for signing yourself up
   if (fs.existsSync("game.dat")) {
     msg.reply('Sorry, but a game is already in progress! Please wait for next season to start.')
@@ -116,6 +117,7 @@ function addUser(id, emoji) {
   // returns promise:
     // reject = id of user using that emoji
     // resolve: old emoji if changed, nothing (undefined) otherwise
+  utils.debugMessage("Function addUser called");
   return new Promise(function(resolve, reject) {
     getUserId(emoji).then(i=>{
       reject(i)
@@ -123,11 +125,13 @@ function addUser(id, emoji) {
       //check if user is already signed up
       getUserEmoji(id).then(old_emoji=>{
         //user already signed up, wants to change their emoji
-        userdb.run("replace into signed_up_users values (?, ?)", [id, emoji], ()=>{
+        utils.debugMessage("User wants to replace old emoji");
+        userdb.run("replace into signed_up_users (user_id, emoji) values (?, ?)", [id, emoji], ()=>{
           resolve(old_emoji);
         })
       }).catch(()=>{
         //not signed up, wants to.
+        utils.debugMessage("User wants to sign up and not replace an emoji");
         userdb.run("insert into signed_up_users (user_id, emoji) values (?, ?)", [id, emoji], ()=>{
           resolve()
         })
@@ -152,12 +156,15 @@ function getUserEmoji (id) {
 
 function getUserId (emoji) {
   // returns promise of id for user by emoji
+  utils.debugMessage("getUserId function Called")
   return new Promise(function(resolve, reject) {
-    userdb.get("select user_id from signed_up_users where emoji = ?", emoji, function(err, row) {
+    userdb.get("select user_id from signed_up_users where emoji = ?", [emoji], function(err, row) {
       if (err) throw err;
       if (row) {
+        utils.debugMessage("Promise resolved; user is already signed up")
         resolve(row.user_id)
       } else {
+        utils.debugMessage("Promise rejected; user is not signed up yet")
         reject()
       }
     })
