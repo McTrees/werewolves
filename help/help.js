@@ -2,7 +2,7 @@ const config = require('../config');
 const aliases = require('../msg/aliases');
 const user = require("../user/user")
 const discord = require("discord.js")
-
+var fs = require('fs')
 
 
 exports.uCmd = function(msg, client, args) {
@@ -14,7 +14,12 @@ exports.uCmd = function(msg, client, args) {
     try {
       messageContent = (aliases[messageContent[0]].split(" ").concat(messageContent.slice(1)));
     } catch (err) {} //check aliases
-    if (args[0] == "signup") {
-      msg.channel.send("```--!u signup--\nDescription: Used to sign up for the next season of werewolves.\nUsage: '!u signup <emoji>' where <emoji> is an actual emoji (eg 💩)\nNotes:\n  Cannot be used whilst a game is in progress.```");
-    }
+
+    fs.readFile('./help/cmds' + args[0] + '.md', {
+      encoding: 'utf-8'
+    }, function(err, data) { //read cc.json to ccconfig
+      if (err) {
+        msg.channel.send("Sorry, I dont have any help for that topic. ")
+      }
+      msg.channel.send(data);
 }
