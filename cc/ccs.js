@@ -6,14 +6,14 @@ var ccconf; //decalre cc conf var as global
 exports.createCmd = function(msg, client, args) { //mgs = msg obdj, client = bot client obdj, args = array of arguments
   msg.delete(); // del msg
   var name = args[0];
-  var showCreator = false
+  var showCreator = true
   if (args.length == 0) {
-    msg.reply("Incorenct syntax; ```" + config.bot_prefix + "c create <name> [show creator (True or False)] <person1> [person2]...```").then(message => //alerts user of correct syntax
+    msg.reply("Incorenct syntax; ```" + config.bot_prefix + "c create <name> [show creator (True or False [default True])] <person1> [person2]...```").then(message => //alerts user of correct syntax
       msg.delete(config.messageTimeout)) //deletes bots own message after time out
     return
   }
   if (args.length == 1) {
-    msg.reply("Incorenct syntax; Did you forget to invite someone? ```" + config.bot_prefix + "c create <name> [show creator (True or False)] <person1> [person2]...```").then(message => //alerts user of correct syntax
+    msg.reply("Incorenct syntax; Did you forget to invite someone? ```" + config.bot_prefix + "c create <name> [show creator (True or False [default True])] <person1> [person2]...```").then(message => //alerts user of correct syntax
       msg.delete(config.messageTimeout)) //deletes bots own message after time out
     return
   }
@@ -25,16 +25,16 @@ exports.createCmd = function(msg, client, args) { //mgs = msg obdj, client = bot
   } else if (args[1][0] == "<") {
     var people = args.slice(1); //'PEOPLE' NEEDS TO BE AN ARRAY OF MENTIONS (<@ID>)) NEEDS TO BE FIXED
   } else {
-    msg.reply("Incorenct syntax; you must specify a name ```" + config.bot_prefix + "c create <name> [show creator (True or False)] <person1> [person2]...```").then(message => //alerts user of correct syntax
+    msg.reply("Incorenct syntax; you must specify a name ```" + config.bot_prefix + "c create <name> [show creator (True or False [default True])] <person1> [person2]...```").then(message => //alerts user of correct syntax
       msg.delete(config.messageTimeout)) //deletes bots own message after time out
     return
   }
 
   if (name == undefined || name == "" || name[0] == "<") { //test to see if there are no arguments or if name should be thingy
-    msg.reply("Incorenct syntax; you must specify a name ```" + config.bot_prefix + "c create <name> [show creator (True or False)] <person1> [person2]...```").then(message => //alerts user of correct syntax
+    msg.reply("Incorenct syntax; you must specify a name ```" + config.bot_prefix + "c create <name> [show creator (True or False [default True])] <person1> [person2]...```").then(message => //alerts user of correct syntax
       msg.delete(config.messageTimeout)) //deletes bots own message after time out
   } else if (people.length == 0) {
-    msg.reply("did you forget to invite someone? ```" + config.bot_prefix + "c create <name> [show creator (True or False)] <person1> [person2]...```").then(message =>
+    msg.reply("did you forget to invite someone? ```" + config.bot_prefix + "c create <name> [show creator (True or False [default True])] <person1> [person2]...```").then(message =>
       msg.delete(config.messageTimeout))
   } else {
     fs.readFile('./cc/cc.json', {
