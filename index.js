@@ -7,7 +7,11 @@ if (process.argv.indexOf("--debug") > -1) {
 }
 
 // Check for updates
+try {
 checkForUpdate();
+} catch(err) {
+	utils.errorMessage("Could not check for updates. Please check your internet connection and try again.")
+}
 
 
 utils.debugMessage("Debug messages enabled.");
@@ -45,25 +49,25 @@ function checkForUpdate() {
 const https = require('https');
 url = "https://ben.mctrees.net/api/checkGitVersion.php?repo=werewolves";
 
-currentVer = require('./package').version;
-https.get(url, res => {
-  res.setEncoding("utf8");
-  let body = "";
-  res.on("data", data => {
-    body += data;
-  });
-  res.on("end", () => {
-    	utils.debugMessage(`got ${body} from version API`);
-    	utils.debugMessage(`Current version from package.json is ${currentVer}`)
-    	if (currentVer == body) {
-    		utils.infoMessage("You are up-to-date with the latest version from Github.")
-    	}
-    	else {
-    		utils.warningMessage(`You are not on the latest version. You should update for fixes and features by doing a git pull.
-    			Remote version: ${body}
-    			Local version: ${currentVer}
-    			Please update.`)
-    	}
-  });
-});
+	currentVer = require('./package').version;
+      https.get(url, res => {
+	  res.setEncoding("utf8");
+	  let body = "";
+	  res.on("data", data => {
+	    body += data;
+	  });
+	  res.on("end", () => {
+	    	utils.debugMessage(`got ${body} from version API`);
+	    	utils.debugMessage(`Current version from package.json is ${currentVer}`)
+	    	if (currentVer == body) {
+	    		utils.infoMessage("You are up-to-date with the latest version from Github.")
+	    	}
+	    	else {
+	    		utils.warningMessage(`You are not on the latest version. You should update for fixes and features by doing a git pull.
+	    			Remote version: ${body}
+	    			Local version: ${currentVer}
+	    			Please update.`)
+	    	}
+	  });
+	});
 }
