@@ -31,7 +31,7 @@ exports.createCmd = function(msg, client, args) { //mgs = msg obdj, client = bot
   }
 
   if (name == undefined || name == "" || name[0] == "<") { //test to see if there are no arguments or if name should be thingy
-    msg.reply("Incorenct syntax; you must specify a name ```" + config.bot_prefix + "c create <name> [show creator (True or False [default True])] <person1> [person2]...```").then(message => //alerts user of correct syntax
+    msg.reply("Incorenct syntax; you must specify a name and it must be a mention or emoji ```" + config.bot_prefix + "c create <name> [show creator (True or False [default True])] <person1> [person2]...```").then(message => //alerts user of correct syntax
       msg.delete(config.messageTimeout)) //deletes bots own message after time out
   } else if (people.length == 0) {
     msg.reply("did you forget to invite someone? ```" + config.bot_prefix + "c create <name> [show creator (True or False [default True])] <person1> [person2]...```").then(message =>
@@ -67,7 +67,7 @@ exports.createCmd = function(msg, client, args) { //mgs = msg obdj, client = bot
             }
           })
         ).then(function(channel) {
-          channel.send(config.defaultMessage) //send the default message to the channel
+          channel.send(config.messages.CC.createAnonymous) //send the default message to the channel
           channel.overwritePermissions(client.user.id, { //the bot can see it
             VIEW_CHANNEL: true
           })
