@@ -19,4 +19,12 @@ CREATE TABLE player_tags (
   user_id char(21) not null,
   tag_name varchar(18) not null
 );
+
+CREATE TABLE global_player (
+	username not null,
+	gender,
+	age,
+	record,
+	personal_desc
+);
 COMMIT;
