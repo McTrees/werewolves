@@ -1,12 +1,30 @@
 {
-	"bot_prefix" : "!",
-	"season" : "5",
-	"defaultMessage" : "heyyy come here offten? (this can be the message that it says lol)",
+	"bot_prefix": "!",
+	"season": "5",
+	"messageTimeout": 3000,
+
+	"messages": {
+		"CC": {
+			"createAnonymous": "Look, look! Over @here, a new conspiracy channel has been created! The creator has brought you together! Maybe he has something to say..."
+		}
+	},
+
 	"channel_ids": {
 		"gm_confirm": "400350702138032140",
 		"story_time": "401767386400948225",
 		"voting_booth": "402127047478083584",
 		"werewolves": "403457591444766731",
 		"cult": "403457834278453248"
+	},
+
+	"role_ids": {
+		"gameMaster": "403220526903853066"
+	},
+
+	"developerOptions": {
+		"showErrorsToDevs": "true",
+		"showErrorsToUsers": "false",
+		"logDebugMessages": "false",
+		"logOtherMessages": "true"
 	}
 }

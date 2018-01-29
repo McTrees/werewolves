@@ -1,23 +1,39 @@
 const fs = require("fs");
-
-const db_fns = require("./db_fns")
-
+const path = require("path")
+const sqlite3 = require("sqlite3")
+const userdb = new sqlite3.Database("user/user.db")
 const utils = require("../utils.js")
-
 const config = require('../config');
-
 const admin = require("../admin/admin")
 
-const game = require('../game/game.js')
+
+/*
+███████ ██   ██ ██████   ██████  ██████  ████████ ███████ ██████
+██       ██ ██  ██   ██ ██    ██ ██   ██    ██    ██      ██   ██
+█████     ███   ██████  ██    ██ ██████     ██    █████   ██   ██
+██       ██ ██  ██      ██    ██ ██   ██    ██    ██      ██   ██
+███████ ██   ██ ██       ██████  ██   ██    ██    ███████ ██████
+*/
 
 exports.init = function() {
-  if (!fs.existsSync("user/user.db")) { //database file doesn't exist
-    throw new Error("User database 'user/user.db' not found! Please create a new database by running 'user/user_db_schema.sql'! (This will happen automatically in the future)");
-  }
+  // called on bot start
+  fs.readFile(path.join(__dirname, 'user.db'), {encoding: "utf-8"}, function(err, data){
+    if (data === '') { // database is empty and needs to be created
+      fs.readFile(path.join(__dirname, 'user_db_schema.sql'), {encoding: "utf-8"}, function(er, schema) {
+        if (er) throw er
+        else {
+          console.log("User database not found - creating a new one")
+          userdb.exec(schema)
+        }
+      })
+    }
+  })
 }
 
 exports.signupCmd = function (msg, client, content) {
-  if (game.is_started()) {
+  utils.debugMessage(`<@${msg.author}> ran signup command with emoji ${content[0]}`)
+  // command for signing yourself up
+  if (fs.existsSync("game.dat")) {
     msg.reply('Sorry, but a game is already in progress! Please wait for next season to start.')
   } else {
     if (content.length != 1){
@@ -25,11 +41,11 @@ exports.signupCmd = function (msg, client, content) {
     } else {
       msg.react(content[0]).then(mr=>{
         msg.clearReactions();
-        db_fns.getUserId(utils.toBase64(content[0])).then((id)=>{
+        getUserId(utils.toBase64(content[0])).then((id)=>{
           // already in use
           msg.channel.send(`Sorry but <@${id}> is already using that emoji!`)
         }).catch(()=>{
-          db_fns.addUser(msg.author.id, utils.toBase64(content[0])).then(old=>{
+          addUser(msg.author.id, utils.toBase64(content[0])).then(old=>{
             if (old) {
               msg.channel.send(`<@${msg.author.id}>'s emoji changed from ${utils.fromBase64(old)} to ${content[0]}`)
             } else {
@@ -48,7 +64,7 @@ exports.all_signed_up = function() {
   // returns promise of a list of all signed up users' ids
   //intentionally does not include emojis to prevent this being used for polls etc
   return new Promise(function(resolve, reject) {
-    db.all("select user_id from signed_up_users", [], function(err, rows){
+    userdb.all("select user_id from signed_up_users", [], function(err, rows){
       if (err) {
         throw err
       } else {
@@ -57,3 +73,100 @@ exports.all_signed_up = function() {
     })
   });
 }
+
+exports.finalise_user = function(id, role) {
+  // turns a signed up user into a player with a role
+  userdb.serialize(function(){
+    userdb.run("begin transaction;")
+    userdb.run("replace into players (user_id, role) values ($id, $role);", {$id:id,$role:role})
+    userdb.run("update signed_up_users set finalised = 1 where user_id = $id;", {$id:id})
+    userdb.run("commit;")
+  })
+}
+
+exports.resolve_to_id = function(str) {
+  // if str is a discord mention (<@id>), resolve with the id
+  // if str is an emoji, resolve with the id of the user with that emoji
+  // otherwise, reject
+  // note: currently if this is a mention, but of someone not in the server, it will still return their id.
+  return new Promise(function(resolve, reject) {
+    var discordId = /^<@!?(\d+)>$/
+    if (discordId.test(str)) { // str is a valid discord mention
+      resolve(discordId.exec(str)[1])
+    } else { // emoji or invalid
+      db.get("select user_id from signed_up_users where emoji = ?", [utils.toBase64(str)], function(err, row){
+        if (err) throw err //TODO: err handling
+        if (row.user_id) { resolve(row.user_id)}
+        else { reject() }
+      })
+    }
+  });
+}
+/*
+██ ███    ██ ████████ ███████ ██████  ███    ██  █████  ██
+██ ████   ██    ██    ██      ██   ██ ████   ██ ██   ██ ██
+██ ██ ██  ██    ██    █████   ██████  ██ ██  ██ ███████ ██
+██ ██  ██ ██    ██    ██      ██   ██ ██  ██ ██ ██   ██ ██
+██ ██   ████    ██    ███████ ██   ██ ██   ████ ██   ██ ███████
+*/
+// moved from db_fns.js
+
+function addUser(id, emoji) {
+  // if no one else is using that emoji, sign them up
+  // or change their emoji
+  // returns promise:
+    // reject = id of user using that emoji
+    // resolve: old emoji if changed, nothing (undefined) otherwise
+  utils.debugMessage("Function addUser called");
+  return new Promise(function(resolve, reject) {
+    getUserId(emoji).then(i=>{
+      reject(i)
+    }).catch(()=>{
+      //check if user is already signed up
+      getUserEmoji(id).then(old_emoji=>{
+        //user already signed up, wants to change their emoji
+        utils.debugMessage("User wants to replace old emoji");
+        userdb.run("replace into signed_up_users (user_id, emoji) values (?, ?)", [id, emoji], ()=>{
+          resolve(old_emoji);
+        })
+      }).catch(()=>{
+        //not signed up, wants to.
+        utils.debugMessage("User wants to sign up and not replace an emoji");
+        userdb.run("insert into signed_up_users (user_id, emoji) values (?, ?)", [id, emoji], ()=>{
+          resolve()
+        })
+      })
+    })
+  })
+};
+
+function getUserEmoji (id) {
+  // returns promise of base64 of emoji for user
+  return new Promise(function(resolve, reject) {
+    userdb.get("select emoji from signed_up_users where user_id = ?", id, function(err, row) {
+      if (err) throw err;
+      if (row) {
+        resolve(row.emoji)
+      } else {
+        reject()
+      }
+    })
+  });
+};
+
+function getUserId (emoji) {
+  // returns promise of id for user by emoji
+  utils.debugMessage("getUserId function Called")
+  return new Promise(function(resolve, reject) {
+    userdb.get("select user_id from signed_up_users where emoji = ?", [emoji], function(err, row) {
+      if (err) throw err;
+      if (row) {
+        utils.debugMessage("Promise resolved; user is already signed up")
+        resolve(row.user_id)
+      } else {
+        utils.debugMessage("Promise rejected; user is not signed up yet")
+        reject()
+      }
+    })
+  });
+};

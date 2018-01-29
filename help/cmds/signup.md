@@ -1,0 +1,1 @@
+```--!u signup--\nDescription: Used to sign up for the next season of werewolves.\nUsage: '!u signup <emoji>' where <emoji> is an actual emoji (eg 💩)\nNotes:\n  Cannot be used whilst a game is in progress.```
