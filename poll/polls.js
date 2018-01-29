@@ -3,6 +3,7 @@ const fs = require("fs");
 const config = require("../config");
 const aliases = require('./polls_aliases')
 const polls = require("./polls");
+const utils = require("../utils");
 //The above is self-explanatory, I think
 
 //PS - I haven't actually finished anything much, only a base.
@@ -11,6 +12,9 @@ exports.startPollCmd = function(msg, client, args){
 	var txt = args.slice(1).join(" ");//The text thats displayed at the top of the polls
 	if(aliases[type])type = aliases[type];//Convert full name to the alias
 	var id = -1;//Poll ID
+	
+	
+	
 	switch(type){
 		case ("l"):
 			//The daily lynch
@@ -25,8 +29,8 @@ exports.startPollCmd = function(msg, client, args){
 			
 			break;
 		default:
-			msg.reply("I'm sorry, but `" + type + "` is not a valid poll type");
-	}
+			msg.reply("I'm sorry, but `" + type + "` is not a valid poll type (Types are -\nl - The Daily Lynch\nw - The Werewolves poll\nc - The Cult poll");
+	}	
 	//Send message informing GMs of new poll
 	if(id !== -1)client.channels.get(config.channel_ids.gm_confirm).send("A new Poll, ``"+txt+"`` (id: "+num+") was created.");
 }
@@ -103,9 +107,10 @@ exports.startPollActual = function(client, data){
 			for(j = 0; j < 20; j++){
 				if(i*20 + j >= options.length)break;
 				values[i].react(options[i*20 + j].emoji).catch(err => {
-					//console.error(err);
-					console.log("The bot failed to add an emoji to the message. If you know how I can set this right, please tell me.");
-					console.log("For now, use !checkpoll <id> to set the poll right.");
+					utils.errorMessage(err);
+					utils.errorMessage("The bot failed to add an emoji to the message. If you know how I can set this right, please tell me.");
+					utils.infoMessage("For now, use !checkPoll <id> to set the poll right.");
+					ch.send("The bot failed to add an emoji to the message. To set it right, use !checkPoll <id>");
 				});
 				opts.push(options[i*20+j]);
 			}
@@ -122,9 +127,14 @@ exports.startPollActual = function(client, data){
 			options:options
 		};
 		fs.writeFile("./poll/polls.json", JSON.stringify(polls, null, 2), (err) => {
-			if (err) console.error(err)
+			if (err) utils.errorMessage(err);
 		});
-	}).catch(console.error);//I'm not sure if this is correct way, but I've seen people do it
+		utils.successMessage("The poll was created successfully!");
+	}).catch(function(err){
+		utils.errorMessage(err);
+		utils.errorMessage("There was an error when trying to make the poll.");
+		ch.send("The bot failed to make the poll. Perhaps you should ask the Developers of the bot.");
+	});
 	return polls["num"]+1;//Return the ID of the poll
 }
 
@@ -138,7 +148,8 @@ exports.startPollActual = function(client, data){
 */
 exports.checkPollCmd = function(msg, client, id){
 	if(!polls["polls"][id]){
-		console.log("The poll with id " + id + " doesn't exist, sadly. I haven't thought of what to do in that case.");
+		utils.errorMessage("The poll with id " + id + " doesn't exist, sadly.");
+		msg.reply(`The poll with ID \`${id}\` doesn't exist, or it's results have been checked already.`);
 		return;
 	}
 	//Get the poll and its details
@@ -154,11 +165,21 @@ exports.checkPollCmd = function(msg, client, id){
 			for(j = 0; j < poll["messages"][i]["options"].length; j++){
 				//Check if the message has all required emojis, add the missing ones.
 				var r = msgs[i].reactions.find(val => val.emoji.name === poll["messages"][i]["options"][j]["emoji"]);
-				if(!r || !r.me)msgs[i].react(poll["messages"][i]["options"][j]["emoji"]).catch("Not again! :(");
+				if(!r || !r.me){
+					msgs[i].react(poll["messages"][i]["options"][j]["emoji"]).catch(function(err){
+						utils.errorMessage(err);
+						utils.errorMessage("There was an error when trying to react to the messages. Again. No idea why. Perhaps I should just give up now.");
+						ch.send("It still didn't work :(");
+					});
+				}
 			}
 		}
 
-	}).catch(console.error);
+	}).catch(function(err){
+		utils.errorMessage(err);
+		utils.errorMessage("There was an error when trying to fetch the messages.");
+		ch.send("An error occurred.");
+	});
 }
 
 /**
@@ -171,7 +192,8 @@ exports.checkPollCmd = function(msg, client, id){
 */
 exports.endPollCmd = function(msg, client, id){
 	if(!polls["polls"][id]){
-		console.log("The poll with id " + id + " doesn't exist, sadly. I haven't thought of what to do in that case.");
+		utils.errorMessage("The poll with id " + id + " doesn't exist, sadly.");
+		msg.reply(`The poll with ID \`${id}\` doesn't exist, or it's results have been checked already.`);
 		return;
 	}
 	//Fetch the poll and its details
@@ -282,8 +304,17 @@ exports.endPollCmd = function(msg, client, id){
 			for(i = 0; i < msgs.length; i++){
 				msgs[i].delete();
 			}
+			utils.successMessage("Successfully ended poll!");
 			//Return the data
 			return results;
+		}).catch(err => {
+			utils.errorMessage(err);
+			utils.errorMessage("Couldn't fetch reactions.");
+			ch.send("Error occurred.");
 		});
+	}).catch(err => {
+		utils.errorMessage(err);
+		utils.errorMessage("Couldn't fetch messages.");
+		ch.send("Error occurred.");
 	});
 }
