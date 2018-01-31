@@ -74,6 +74,18 @@ exports.all_signed_up = function() {
   });
 }
 
+exports.all_alive = function() {
+  // promise of all alive users and their emojis
+  return new Promise(function(resolve, reject) {
+    userdb.all("select p.user_id, s.emoji from players as p inner join signed_up_users as s on p.user_id = s.user_id", [], function(err, rows){
+      if (err) throw err;
+      else{
+        resolve(rows)
+      }
+    })
+  });
+}
+
 exports.finalise_user = function(id, role) {
   // turns a signed up user into a player with a role
   userdb.serialize(function(){
