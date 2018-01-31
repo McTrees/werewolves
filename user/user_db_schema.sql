@@ -21,10 +21,10 @@ CREATE TABLE player_tags (
 );
 
 CREATE TABLE global_player (
-	username not null,
-	gender,
-	age,
-	record,
-	personal_desc
+  user_id char(21) not null unique,
+	gender char(1),
+	age integer,
+	record varchar(80),
+	personal_desc varchar(160)
 );
 COMMIT;
