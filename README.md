@@ -2,7 +2,7 @@
 
 A Discord bot designed to automate the heavy-lifting of game server Werewolves
 
-![https://scrutinizer-ci.com/g/McTrees/werewolves/](https://scrutinizer-ci.com/g/McTrees/werewolves/badges/quality-score.png)
+![Build Status](https://scrutinizer-ci.com/g/McTrees/werewolves/badges/quality-score.png)(https://scrutinizer-ci.com/g/McTrees/werewolves/)
 
 
 ## Getting Started
