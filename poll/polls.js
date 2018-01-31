@@ -8,13 +8,11 @@ const utils = require("../utils");
 
 //PS - I haven't actually finished anything much, only a base.
 exports.startPollCmd = function(msg, client, args){
+	utils.debugMessage(`@${msg.author} tried to create a poll.`);
 	var type = args[0].toLowerCase();//The type of poll - so far "lynch" (alias 'l'), "werewolves" (alias 'w'), "cult" (alias 'c')
 	var txt = args.slice(1).join(" ");//The text thats displayed at the top of the polls
 	if(aliases[type])type = aliases[type];//Convert full name to the alias
 	var id = -1;//Poll ID
-	
-	
-	
 	switch(type){
 		case ("l"):
 			//The daily lynch
@@ -71,6 +69,7 @@ exports.startPollCmd = function(msg, client, args){
 */
 //I'm exporting this just in case it's needed sometime
 exports.startPollActual = function(client, data){
+	utils.debugMessage(`Function startPollActual was called.`);
 	
 	var options = data.options;
 	var msg_text = data.msg_text;
@@ -147,8 +146,9 @@ exports.startPollActual = function(client, data){
 	id - The ID of the poll to check
 */
 exports.checkPollCmd = function(msg, client, id){
+	utils.debugMessage(`@${msg.author} tried to check if emojis were properly added to Poll ${id}`);
 	if(!polls["polls"][id]){
-		utils.errorMessage("The poll with id " + id + " doesn't exist, sadly.");
+		utils.errorMessage("The poll with id " + id + " doesn't exist (not anymore at least).");
 		msg.reply(`The poll with ID \`${id}\` doesn't exist, or it's results have been checked already.`);
 		return;
 	}
@@ -191,6 +191,7 @@ exports.checkPollCmd = function(msg, client, id){
 	id - The ID of the poll to end
 */
 exports.endPollCmd = function(msg, client, id){
+	utils.debugMessage(`@${msg.author} tried to end Poll ${id}.`);
 	if(!polls["polls"][id]){
 		utils.errorMessage("The poll with id " + id + " doesn't exist, sadly.");
 		msg.reply(`The poll with ID \`${id}\` doesn't exist, or it's results have been checked already.`);
