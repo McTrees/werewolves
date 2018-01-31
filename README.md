@@ -1,7 +1,7 @@
 # Werewolves Bot
 
 A Discord bot designed to automate the heavy-lifting of game server Werewolves
-[https://scrutinizer-ci.com/g/McTrees/werewolves/badges/quality-score.png?b=master](Build Quality)
+(https://scrutinizer-ci.com/g/McTrees/werewolves/badges/quality-score.png)[Build Quality]
 
 
 ## Getting Started
