@@ -1,4 +1,3 @@
-const discord = require("discord.js");
 const fs = require("fs");
 const config = require("../config");
 const aliases = require('./polls_aliases')
@@ -8,13 +7,13 @@ const utils = require("../utils");
 
 //PS - I haven't actually finished anything much, only a base.
 exports.startPollCmd = function(msg, client, args){
+	utils.debugMessage(`@${msg.author} tried to create a poll.`);
 	var type = args[0].toLowerCase();//The type of poll - so far "lynch" (alias 'l'), "werewolves" (alias 'w'), "cult" (alias 'c')
 	var txt = args.slice(1).join(" ");//The text thats displayed at the top of the polls
-	if(aliases[type])type = aliases[type];//Convert full name to the alias
+	if(aliases[type]){
+		type = aliases[type];//Convert full name to the alias
+	}
 	var id = -1;//Poll ID
-	
-	
-	
 	switch(type){
 		case ("l"):
 			//The daily lynch
@@ -32,7 +31,7 @@ exports.startPollCmd = function(msg, client, args){
 			msg.reply("I'm sorry, but `" + type + "` is not a valid poll type (Types are -\nl - The Daily Lynch\nw - The Werewolves poll\nc - The Cult poll");
 	}	
 	//Send message informing GMs of new poll
-	if(id !== -1)client.channels.get(config.channel_ids.gm_confirm).send("A new Poll, ``"+txt+"`` (id: "+num+") was created.");
+	if(id !== -1)client.channels.get(config.channel_ids.gm_confirm).send("A new Poll, ``"+txt+"`` (id: "+id+") was created.");
 }
 
 
@@ -71,6 +70,7 @@ exports.startPollCmd = function(msg, client, args){
 */
 //I'm exporting this just in case it's needed sometime
 exports.startPollActual = function(client, data){
+	utils.debugMessage(`Function startPollActual was called.`);
 	
 	var options = data.options;
 	var msg_text = data.msg_text;
@@ -79,10 +79,10 @@ exports.startPollActual = function(client, data){
 	
 	var nm = (options.length - ((options.length-1)%20 + 1))/20 + 1;//Number of messages the bot must send
 	var txt = new Array(nm);//The text of the messages themselves
-	for(i = 0; i < nm; i++){
+	for(var i = 0; i < nm; i++){
 		txt[i] = "";
 		if(i === 0)txt[0] = msg_text+"-\n";
-		for(j = 0; j < 20; j++){
+		for(var j = 0; j < 20; j++){
 			txt[i] += options[i*20 + j].emoji + " - " + options[i*20 + j].txt;
 			if(i*20 + j >= options.length-1)break;
 			txt[i] += "\n";
@@ -97,14 +97,14 @@ exports.startPollActual = function(client, data){
 	//Combine all the promises
 	Promise.all(promises).then(values => {
 		//This whole code just adds the emojis
-		msgs = new Array(values.length);
-		for(i = 0; i < values.length; i++){
+		var msgs = new Array(values.length);
+		for(var i = 0; i < values.length; i++){
 			msgs[i] = {
 				id:values[i].id,
 				options:"If you're seeing this, then the bot isn't working correctly."
 			};
-			opts = new Array(0);
-			for(j = 0; j < 20; j++){
+			var opts = new Array(0);
+			for(var j = 0; j < 20; j++){
 				if(i*20 + j >= options.length)break;
 				values[i].react(options[i*20 + j].emoji).catch(err => {
 					utils.errorMessage(err);
@@ -127,13 +127,17 @@ exports.startPollActual = function(client, data){
 			options:options
 		};
 		fs.writeFile("./poll/polls.json", JSON.stringify(polls, null, 2), (err) => {
-			if (err) utils.errorMessage(err);
+			if (err){
+				utils.errorMessage(err);
+				client.channels.get(config.channel_ids.gm_confirm).send("Error occurred when saving file.");
+			}else{
+				utils.successMessage("The poll was created successfully!");
+			}
 		});
-		utils.successMessage("The poll was created successfully!");
 	}).catch(function(err){
 		utils.errorMessage(err);
 		utils.errorMessage("There was an error when trying to make the poll.");
-		ch.send("The bot failed to make the poll. Perhaps you should ask the Developers of the bot.");
+		ch.send("The bot failed to make the poll. Perhaps you should contact the Developers of the bot.");
 	});
 	return polls["num"]+1;//Return the ID of the poll
 }
@@ -147,8 +151,9 @@ exports.startPollActual = function(client, data){
 	id - The ID of the poll to check
 */
 exports.checkPollCmd = function(msg, client, id){
+	utils.debugMessage(`@${msg.author} tried to check if emojis were properly added to Poll ${id}`);
 	if(!polls["polls"][id]){
-		utils.errorMessage("The poll with id " + id + " doesn't exist, sadly.");
+		utils.errorMessage("The poll with id " + id + " doesn't exist (not anymore at least).");
 		msg.reply(`The poll with ID \`${id}\` doesn't exist, or it's results have been checked already.`);
 		return;
 	}
@@ -157,12 +162,12 @@ exports.checkPollCmd = function(msg, client, id){
 	var ch = client.channels.get(poll["channel"]);
 	//Get the messages (promises of the messages really)
 	var promises = new Array(poll["messages"].length);
-	for(i = 0; i < promises.length; i++){
+	for(var i = 0; i < promises.length; i++){
 		promises[i] = msg.channel.fetchMessage(poll["messages"][i].id);
 	}
 	Promise.all(promises).then(msgs => {
-		for(i = 0; i < poll["messages"].length; i++){
-			for(j = 0; j < poll["messages"][i]["options"].length; j++){
+		for(var i = 0; i < poll["messages"].length; i++){
+			for(var j = 0; j < poll["messages"][i]["options"].length; j++){
 				//Check if the message has all required emojis, add the missing ones.
 				var r = msgs[i].reactions.find(val => val.emoji.name === poll["messages"][i]["options"][j]["emoji"]);
 				if(!r || !r.me){
@@ -191,6 +196,7 @@ exports.checkPollCmd = function(msg, client, id){
 	id - The ID of the poll to end
 */
 exports.endPollCmd = function(msg, client, id){
+	utils.debugMessage(`@${msg.author} tried to end Poll ${id}.`);
 	if(!polls["polls"][id]){
 		utils.errorMessage("The poll with id " + id + " doesn't exist, sadly.");
 		msg.reply(`The poll with ID \`${id}\` doesn't exist, or it's results have been checked already.`);
@@ -201,7 +207,7 @@ exports.endPollCmd = function(msg, client, id){
 	var ch = client.channels.get(poll["channel"]);
 	//Get the messages
 	var promises = new Array(poll["messages"].length);
-	for(i = 0; i < promises.length; i++){
+	for(var i = 0; i < promises.length; i++){
 		promises[i] = ch.fetchMessage(poll["messages"][i].id);
 	}
 	//Work on the messages, and then return a promise of the results
@@ -209,8 +215,8 @@ exports.endPollCmd = function(msg, client, id){
 		//Get the message reactions
 		var promises = new Array(poll["options"].length);
 		var s = 0;
-		for(i = 0; i < poll["messages"].length; i++){
-			for(j = 0; j < poll["messages"][i]["options"].length; j++){
+		for(var i = 0; i < poll["messages"].length; i++){
+			for(var j = 0; j < poll["messages"][i]["options"].length; j++){
 				var r = msgs[i].reactions.find(val => val.emoji.name === poll["messages"][i]["options"][j]["emoji"]);
 				promises[s] = r.fetchUsers();
 				s++;
@@ -228,7 +234,7 @@ exports.endPollCmd = function(msg, client, id){
 			//Disqualified persons
 			var disqualified = new Array(0);
 			var voted = new Array(0);//Who as voted?
-			for(i = 0; i < values.length; i++){
+			for(var i = 0; i < values.length; i++){
 				//Check if person has voted twice -> disqualify them
 				var users = Array.from(values[i]);
 				users.forEach(function(item){
@@ -238,7 +244,9 @@ exports.endPollCmd = function(msg, client, id){
 						})){
 							if(!disqualified.find(element => {
 								return element == item[1].id;
-							}))disqualified.push(item[1].id);
+							})){
+								disqualified.push(item[1].id);
+							}
 						}else{
 							voted.push(item[1].id);
 						}
@@ -248,7 +256,7 @@ exports.endPollCmd = function(msg, client, id){
 				});
 			}
 			//Delete the votes of the disqualified
-			for(i = 0; i < values.length; i++){
+			for(var i = 0; i < values.length; i++){
 				var users = Array.from(values[i]);	
 				users.forEach(function(item){
 					if(disqualified.find(element => {
@@ -259,7 +267,7 @@ exports.endPollCmd = function(msg, client, id){
 			
 			//Rank the results of the poll (descending order)
 			var ranked = new Array(0);
-			for(i = 0; i < values.length; i++){	
+			for(var i = 0; i < values.length; i++){	
 				results.options[i].votes = values[i].size;//Also add the vote tally to the results object
 				if(values[i].size === 0)continue;
 				ranked.push({
@@ -271,11 +279,11 @@ exports.endPollCmd = function(msg, client, id){
 				return b.num - a.num;
 			});
 			//Build the message to be sent
-			for(k = 0; k < ranked.length; k++){
+			for(var k = 0; k < ranked.length; k++){
 				var i = ranked[k].id;
 				var users = Array.from(values[i]);
 				txt += "\n" + (users.length + " voted for " + poll["options"][i]["txt"] + " (" + poll["options"][i]["emoji"] + "):\n");
-				for(j = 0; j < users.length; j++){
+				for(var j = 0; j < users.length; j++){
 					txt += ("\t<@" + users[j][1].id + ">\n");
 				}
 			}
@@ -295,16 +303,21 @@ exports.endPollCmd = function(msg, client, id){
 			}
 			//Send the message - Hooray!
 			ch.send(txt);
+			//Delete the messages
+			for(var i = 0; i < msgs.length; i++){
+				msgs[i].delete();
+			}
+			var fs_error = false;
 			//Delete the poll from storage
 			delete polls["polls"][id];
 			fs.writeFile("./poll/polls.json", JSON.stringify(polls, null, 2), (err) => {
-				if (err) console.error(err)
+				if (err){
+					utils.errorMessage(err);
+					fs_error = true;
+					client.channels.get(config.channel_ids.gm_confirm).send("Error occurred when trying to edit the polls.json file.");
+				}
 			});
-			//Delete the messages
-			for(i = 0; i < msgs.length; i++){
-				msgs[i].delete();
-			}
-			utils.successMessage("Successfully ended poll!");
+			if(!fs_error)utils.successMessage("Successfully ended poll!");
 			//Return the data
 			return results;
 		}).catch(err => {
