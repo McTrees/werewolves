@@ -304,7 +304,7 @@ exports.endPollCmd = function(msg, client, id){
 			//Send the message - Hooray!
 			ch.send(txt);
 			//Delete the messages
-			for(i = 0; i < msgs.length; i++){
+			for(var i = 0; i < msgs.length; i++){
 				msgs[i].delete();
 			}
 			var fs_error = false;
