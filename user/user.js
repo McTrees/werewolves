@@ -77,7 +77,7 @@ exports.all_signed_up = function() {
 exports.all_alive = function() {
   // promise of all the users/emojis who are currently alive
   return new Promise(function(resolve, reject) {
-    
+    userdb.all("select players.user_id, signed_up_users.emoji from players inner join ")
   });
 }
 
