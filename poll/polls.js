@@ -296,32 +296,8 @@ function calculateResults(poll, values, client) {
 	};
 	
 	var disqualified = findDisqualified(values, client);
-	
-	//Delete the votes of the disqualified
-	for (var i = 0; i < values.length; i++) {
-		var users = Array.from(values[i]);
-		users.forEach(function (item) {
-			if (disqualified.find(element => {
-					return element == item[1].id;
-				}))
-				values[i].delete (item[0]);
-		});
-	}
 
-	//Rank the results of the poll (descending order)
-	var ranked = new Array(0);
-	for (var i = 0; i < values.length; i++) {
-		results.options[i].votes = values[i].size; //Also add the vote tally to the results object
-		if (values[i].size === 0)
-			continue;
-		ranked.push({
-			id: i,
-			num: values[i].size
-		});
-	}
-	ranked.sort(function (a, b) {
-		return b.num - a.num;
-	});
+	var ranked = rankResults(results, values);
 	//Build the message to be sent
 	for (var k = 0; k < ranked.length; k++) {
 		var i = ranked[k].id;
@@ -352,6 +328,24 @@ function calculateResults(poll, values, client) {
 	return results;
 }
 
+function rankresults(results, values){
+	//Rank the results of the poll (descending order)
+	var ranked = new Array(0);
+	for (var i = 0; i < values.length; i++) {
+		results.options[i].votes = values[i].size; //Also add the vote tally to the results object
+		if (values[i].size === 0)
+			continue;
+		ranked.push({
+			id: i,
+			num: values[i].size
+		});
+	}
+	ranked.sort(function (a, b) {
+		return b.num - a.num;
+	});
+	return ranked;
+}
+
 function findDisqualified(values, client){
 	//Disqualified persons
 	var disqualified = new Array(0);
@@ -375,6 +369,16 @@ function findDisqualified(values, client){
 			} else {
 				values[i].delete (item[0]); //Forget the reactions the bot itself sent
 			}
+		});
+	}
+	//Delete the votes of the disqualified
+	for (var i = 0; i < values.length; i++) {
+		var users = Array.from(values[i]);
+		users.forEach(function (item) {
+			if (disqualified.find(element => {
+					return element == item[1].id;
+				}))
+				values[i].delete (item[0]);
 		});
 	}
 	return disqualified;
