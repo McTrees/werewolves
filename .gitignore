@@ -1,9 +1,6 @@
 node_modules/
-<<<<<<< HEAD
-=======
 *.db
 token.json
 poll/polls.json
 game.dat
 cc/cc.json
->>>>>>> 6263ef7ae7d5123104af7a527bffda272c82b871

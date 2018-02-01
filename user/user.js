@@ -51,8 +51,9 @@ exports.signupCmd = function (msg, client, content) {
               msg.channel.send(`<@${msg.author.id}>'s emoji changed from ${utils.fromBase64(old)} to ${content[0]}`)
             } else {
 			  registerIfNew(msg.author).then((result)=>{  
-			    if(result === 0)utils.debugMessage("A previous player of Werewolves has signed up for this season");
-				else if (result === 1){
+			    if(result === 0){
+					utils.debugMessage("A previous player of Werewolves has signed up for this season");
+				}else if (result === 1){
 					client.channels.get(config.channel_ids.gm_confirm).send(`<@${msg.author.id}> is a new player!`);
 				}else{
 					client.channels.get(config.channel_ids.gm_confirm).send(`Error in registering <@${msg.author.id}>!`);
@@ -95,6 +96,18 @@ exports.all_signed_up = function() {
       if (err) {
         throw err
       } else {
+        resolve(rows)
+      }
+    })
+  });
+}
+
+exports.all_alive = function() {
+  // promise of all alive users and their emojis
+  return new Promise(function(resolve, reject) {
+    userdb.all("select p.user_id, s.emoji from players as p inner join signed_up_users as s on p.user_id = s.user_id", [], function(err, rows){
+      if (err) throw err;
+      else{
         resolve(rows)
       }
     })

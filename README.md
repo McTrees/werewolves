@@ -2,6 +2,9 @@
 
 A Discord bot designed to automate the heavy-lifting of game server Werewolves
 
+[![Build Status](https://scrutinizer-ci.com/g/McTrees/werewolves/badges/quality-score.png)](https://scrutinizer-ci.com/g/McTrees/werewolves/)
+
+
 ## Getting Started
 
 Run the main file with `node index.js` or opening `run.bat` (windows only). Any setup functionality will be explained either on stdout or by discord messages.

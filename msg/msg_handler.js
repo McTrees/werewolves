@@ -10,20 +10,20 @@ it calls functions from other files with the message object
 // 3rd arg ("args") = an array containing the rest of the args.
 const config = require('../config');
 const aliases = require('./aliases');
-
+var
 /*syntax: "alias" :"defined as",
 all other arguments that get send with the alias get added to the send
 alieses need to be one word
 */
 
 module.exports = function(msg, client) {
-  if (msg.author == client.user) return; //ignore own messages
-  messageContent = msg.content.split(" ");
+  if (msg.author == client.user) {return}; //ignore own messages
+  var messageContent = msg.content.split(" ");
   if (messageContent[0][0] == config.bot_prefix) { //only run if it is a message starting with the bot prefix (if it's a command)
     messageContent[0] = messageContent[0].slice(1); //remove the prefix from the message
     try {
       messageContent = (aliases[messageContent[0]].split(" ").concat(messageContent.slice(1)));
-    } catch (err) {} //check aliases
+    } catch (err) {;} //check aliases
     try {
       switch (messageContent[0]) { //swicth the first part of the command, then run the function of the second part of the command, with any
         case ("u"):
@@ -53,7 +53,6 @@ module.exports = function(msg, client) {
         if ((config.developerOptions.showErrorsToDevs == "true" && msg.member.roles.has("395967396218667008" ) || config.developerOptions.showErrorsToUsers == "true")){
           msg.channel.send("the error was: ```" + err + "```")
         }
-        console.log(err);
       }
     }
   };
