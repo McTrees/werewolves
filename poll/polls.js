@@ -1,35 +1,54 @@
 const fs = require("fs");
 const config = require("../config");
 const aliases = require('./polls_aliases')
-	const polls = require("./polls");
+const polls = require("./polls.json");
 const utils = require("../utils");
 //The above is self-explanatory, I think
 
 //PS - I haven't actually finished anything much, only a base.
 exports.startPollCmd = function (msg, client, args) {
-	utils.debugMessage(`@${msg.author} tried to create a poll.`);
+	utils.debugMessage(`@${msg.author.username} tried to create a poll.`);
 	var type = args[0].toLowerCase(); //The type of poll - so far "lynch" (alias 'l'), "werewolves" (alias 'w'), "cult" (alias 'c')
 	var txt = args.slice(1).join(" "); //The text thats displayed at the top of the polls
 	if (aliases[type]) {
 		type = aliases[type]; //Convert full name to the alias
 	}
 	var id = -1; //Poll ID
+	var ch;
 	switch (type) {
 	case ("l"):
 		//The daily lynch
-
+		ch = config.channel_ids.voting_booth;
 		break;
 	case ("w"):
 		//The werewolves choose whom to kill
-
+		ch = config.channel_ids.werewolves;
 		break;
 	case ("c"):
 		//The cultists choose whom to kill
-
+		ch = config.channel_ids.cult;
 		break;
 	default:
 		msg.reply("I'm sorry, but `" + type + "` is not a valid poll type (Types are -\nl - The Daily Lynch\nw - The Werewolves poll\nc - The Cult poll");
+		return;
 	}
+	var ex = {
+		msg_text: txt,
+		channel_id: ch,
+		options: [{
+				txt: "<@329977469350445069>",
+				emoji: "😃"
+			}, {
+				txt: "<@402072907284480000>",
+				emoji: "😕"
+			}, {
+				txt: "A",
+				emoji: "💀"
+			}
+		]
+	};
+	id = exports.startPollActual(client, ex);
+	if(!id)id = -1;
 	//Send message informing GMs of new poll
 	if (id !== -1)
 		client.channels.get(config.channel_ids.gm_confirm).send("A new Poll, ``" + txt + "`` (id: " + id + ") was created.");
@@ -41,26 +60,26 @@ Start a poll.
 Arguments:
 client - The Discord Client the bot uses
 data - An object containing three properties - msg_text, channel_id, options:
-msg_text - A String, the text that is displayed at the start of the poll.
-channel_id - The ID of the channel in which to have the poll
-options - An array, the list of choices in the poll, along with thier emojis. Each element has two properties - txt, emoji:
-txt - The text corresponding to the option
-emoji - The emoji corresponding to the option (It's just a character BTW, just like all emojis in discord)
+	msg_text - A String, the text that is displayed at the start of the poll.
+	channel_id - The ID of the channel in which to have the poll
+	options - An array, the list of choices in the poll, along with thier emojis. Each element has two properties - txt, emoji:
+		txt - The text corresponding to the option
+		emoji - The emoji corresponding to the option (It's just a character BTW, just like all emojis in discord)
 
 Example for data:{
-msg_text:"Vote for your favourite!",
-channel_id:"4034578342784532XX",
-options:[{
-txt:"<@329977469350445069>",
-emoji:"😃"
-},{
-txt:"<@402072907284480000>",
-emoji:"😕"
-},{
-txt:"A",
-emoji:"💀"
-}
-]
+	msg_text: "Vote for your favourite!",
+	channel_id: "4034578342784532XX",
+	options: [{
+			txt: "<@329977469350445069>",
+			emoji: "😃"
+		}, {
+			txt: "<@402072907284480000>",
+			emoji: "😕"
+		}, {
+			txt: "A",
+			emoji: "💀"
+		}
+	]
 }
 As in example, the "txt" field of the options can be a mention or just some plain text
  */
@@ -115,9 +134,9 @@ exports.startPollActual = function (client, data) {
 			}
 			msgs[i]["options"] = opts;
 		}
+		utils.debugMessage("Added emojis.");
 		//Now save the poll so that a restart of the bot doesn't delete all the data
-		polls["num"]++;
-		var num = polls["num"];
+		var num = ++polls["num"];
 		//Here I'm saving some stuff twice. It makes my work easier, but it's not storage efficient.
 		//Though again, an extra kilobyte or two isn't much
 		polls["polls"][num] = {
@@ -125,6 +144,7 @@ exports.startPollActual = function (client, data) {
 			messages: msgs,
 			options: options
 		};
+		utils.debugMessage("Saving....");
 		fs.writeFile("./poll/polls.json", JSON.stringify(polls, null, 2), (err) => {
 			if (err) {
 				utils.errorMessage(err);
@@ -195,7 +215,7 @@ client - The Discord Client that the bot uses
 id - The ID of the poll to end
  */
 exports.endPollCmd = function (msg, client, id) {
-	utils.debugMessage(`@${msg.author} tried to end Poll ${id}.`);
+	utils.debugMessage(`@${msg.author.username} tried to end Poll ${id}.`);
 	if (!polls["polls"][id]) {
 		utils.errorMessage("The poll with id " + id + " doesn't exist, sadly.");
 		msg.reply(`The poll with ID \`${id}\` doesn't exist, or it's results have been checked already.`);
@@ -228,15 +248,9 @@ exports.endPollCmd = function (msg, client, id) {
 			};
 		});
 	}).then((dat) => {
-		
-		return calculateResults(poll, dat.values, client).then((results) => {
-			return {
-				results: results,
-				msgs: dat.msgs
-			}
-		});
-	}).then((dat) => {
-		ch.send(dat.results.txt);
+
+		var results = calculateResults(poll, dat.values, client);
+		ch.send(results.txt);
 		cleanUp(dat.msgs, id);
 		return "Success";
 	}).catch (err => {
@@ -330,7 +344,7 @@ function calculateResults(poll, values, client) {
 	return results;
 }
 
-function cleanUp(msgs, id){	
+function cleanUp(msgs, id) {
 	//Delete the messages
 	for (var i = 0; i < msgs.length; i++) {
 		msgs[i].delete ();

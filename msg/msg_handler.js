@@ -10,7 +10,6 @@ it calls functions from other files with the message object
 // 3rd arg ("args") = an array containing the rest of the args.
 const config = require('../config');
 const aliases = require('./aliases');
-var
 /*syntax: "alias" :"defined as",
 all other arguments that get send with the alias get added to the send
 alieses need to be one word
