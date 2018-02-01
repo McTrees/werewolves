@@ -294,30 +294,9 @@ function calculateResults(poll, values, client) {
 	var results = {
 		options: poll["options"]
 	};
-	//Disqualified persons
-	var disqualified = new Array(0);
-	var voted = new Array(0); //Who as voted?
-	for (var i = 0; i < values.length; i++) {
-		//Check if person has voted twice -> disqualify them
-		var users = Array.from(values[i]);
-		users.forEach(function (item) {
-			if (item[1].id !== client.user.id) {
-				if (voted.find(element => {
-						return element == item[1].id;
-					})) {
-					if (!disqualified.find(element => {
-							return element == item[1].id;
-						})) {
-						disqualified.push(item[1].id);
-					}
-				} else {
-					voted.push(item[1].id);
-				}
-			} else {
-				values[i].delete (item[0]); //Forget the reactions the bot itself sent
-			}
-		});
-	}
+	
+	var disqualified = findDisqualified(values, client);
+	
 	//Delete the votes of the disqualified
 	for (var i = 0; i < values.length; i++) {
 		var users = Array.from(values[i]);
@@ -371,6 +350,34 @@ function calculateResults(poll, values, client) {
 	results.txt = txt;
 	//Return the data
 	return results;
+}
+
+function findDisqualified(values, client){
+	//Disqualified persons
+	var disqualified = new Array(0);
+	var voted = new Array(0); //Who as voted?
+	for (var i = 0; i < values.length; i++) {
+		//Check if person has voted twice -> disqualify them
+		var users = Array.from(values[i]);
+		users.forEach(function (item) {
+			if (item[1].id !== client.user.id) {
+				if (voted.find(element => {
+						return element == item[1].id;
+					})) {
+					if (!disqualified.find(element => {
+							return element == item[1].id;
+						})) {
+						disqualified.push(item[1].id);
+					}
+				} else {
+					voted.push(item[1].id);
+				}
+			} else {
+				values[i].delete (item[0]); //Forget the reactions the bot itself sent
+			}
+		});
+	}
+	return disqualified;
 }
 
 function cleanUp(msgs, id) {
