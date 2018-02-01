@@ -74,6 +74,13 @@ exports.all_signed_up = function() {
   });
 }
 
+exports.all_alive = function() {
+  // promise of all the users/emojis who are currently alive
+  return new Promise(function(resolve, reject) {
+    
+  });
+}
+
 exports.finalise_user = function(id, role) {
   // turns a signed up user into a player with a role
   userdb.serialize(function(){
