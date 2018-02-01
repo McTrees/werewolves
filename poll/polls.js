@@ -328,7 +328,7 @@ function calculateResults(poll, values, client) {
 	return results;
 }
 
-function rankresults(results, values){
+function rankResults(results, values){
 	//Rank the results of the poll (descending order)
 	var ranked = new Array(0);
 	for (var i = 0; i < values.length; i++) {
