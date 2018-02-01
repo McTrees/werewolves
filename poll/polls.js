@@ -296,7 +296,6 @@ function calculateResults(poll, values, client) {
 	};
 	
 	var disqualified = findDisqualified(values, client);
-	//values = disq.new_values;
 	
 	//Delete the votes of the disqualified
 	for (var i = 0; i < values.length; i++) {
@@ -379,11 +378,6 @@ function findDisqualified(values, client){
 		});
 	}
 	return disqualified;
-	/*
-	return {
-		disq: disqualified,
-		new_values: values
-	};*/
 }
 
 function cleanUp(msgs, id) {
