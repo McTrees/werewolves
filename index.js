@@ -2,7 +2,7 @@
 const utils = require('./utils');
 update = true
 
-utils.infoMessage("Startup process beginning...");
+utils.infoMessage("Starting bot...");
 // Check to see if the user wants to run in debug mode
 if (process.argv.indexOf("--debug") > -1) {
 	utils.debugMode();
@@ -28,16 +28,16 @@ if (update) {
 utils.debugMessage("Debug messages enabled.");
 const config = require('./config');
 const token = require('./token').token;
-utils.successMessage("Config loaded!");
+utils.debugMessage("Config loaded!");
 
-utils.infoMessage("Loading external modules...");
+utils.debugMessage("Loading external modules...");
 const discord = require('discord.js');
 const client = new discord.Client();
 
-utils.infoMessage("Loaded external modules, loading other modules.");
+utils.debugMessage("Loaded external modules, loading other modules.");
 const msg_handler = require("./msg/msg_handler");
 const failsafes = require("./failsafes");
-utils.infoMessage("Loaded modules.");
+utils.debugMessage("Loaded modules.");
 
 if (token == 'insert-token-here') {
 	utils.errorMessage("Incorrect login credentials passed! Please edit token.json with your bot's token.", true)

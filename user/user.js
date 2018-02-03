@@ -23,7 +23,7 @@ exports.init = function() {
       fs.readFile(path.join(__dirname, 'user_db_schema.sql'), {encoding: "utf-8"}, function(er, schema) {
         if (er) throw er
         else {
-          utils.debugMessage("User database not found - creating a new one")
+          utils.warningMessage("User database not found - creating a new one")
           userdb.exec(schema)
         }
       })
