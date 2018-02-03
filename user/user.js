@@ -50,7 +50,7 @@ exports.signupCmd = function (msg, client, content) {
             if (old) {
               msg.channel.send(`<@${msg.author.id}>'s emoji changed from ${utils.fromBase64(old)} to ${content[0]}`)
             } else {
-			  registerIfNew(msg.author).then((result)=>{  
+			  registerIfNew(msg.author).then((result)=>{
 			    if(result === 0){
 					utils.debugMessage("A previous player of Werewolves has signed up for this season");
 				}else if (result === 1){
@@ -184,7 +184,7 @@ function getProfile(id){
 	});
 }
 
-async function registerIfNew(user){	
+async function registerIfNew(user){
 	try{
 		var username = await checkGlobal(user.id);
 		if(!username){
