@@ -10,7 +10,6 @@ it calls functions from other files with the message object
 // 3rd arg ("args") = an array containing the rest of the args.
 const config = require('../config');
 const aliases = require('./aliases');
-var
 /*syntax: "alias" :"defined as",
 all other arguments that get send with the alias get added to the send
 alieses need to be one word
@@ -49,7 +48,7 @@ module.exports = function(msg, client) {
       if (err instanceof TypeError) {
         msg.reply(`\`${msg.content}\` is an unknown command...`);
       } else {
-        msg.reply(`an error occurred...`)
+        msg.reply(`An error occurred...`);
         if ((config.developerOptions.showErrorsToDevs == "true" && msg.member.roles.has("395967396218667008" ) || config.developerOptions.showErrorsToUsers == "true")){
           msg.channel.send("the error was: ```" + err + "```")
         }
