@@ -126,15 +126,17 @@ exports.finalise_user = function(id, role) {
 
 exports.any_left_unfinalised = function() {
   // promise bool, whether any signed up users have not yet been asigned a role
-  userdb.get("select user_id from signed_up_users where finalised != 0", [], function(err, row){
-    if (err) throw err;
-    if (row === undefined) {
-      // none there
-      resolve(false)
-    } else {
-      // there is at least one user without a role
-      resolve(true)
-    }
+  return new Promise(function(resolve, reject){
+    userdb.get("select user_id from signed_up_users where finalised != 0", [], function(err, row){
+      if (err) throw err;
+      if (row === undefined) {
+        // none there
+        resolve(false)
+      } else {
+        // there is at least one user without a role
+        resolve(true)
+      }
+    })
   })
 }
 
