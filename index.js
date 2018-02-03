@@ -2,7 +2,7 @@
 const utils = require('./utils');
 update = true
 
-utils.infoMessage("Startup process begginning...");
+utils.infoMessage("Startup process beginning...");
 // Check to see if the user wants to run in debug mode
 if (process.argv.indexOf("--debug") > -1) {
 	utils.debugMode();

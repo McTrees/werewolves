@@ -189,7 +189,7 @@ async function registerIfNew(user){
 		var username = await checkGlobal(user.id);
 		if(!username){
 			await registerNewUser(user);
-			utils.successMessage(`Registered new user (@${user.username}) gloabally!`);
+			utils.successMessage(`Registered new user (@${user.username}) globally!`);
 			return 1;
 		}
 		return 0;
