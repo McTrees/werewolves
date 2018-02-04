@@ -2,7 +2,7 @@
 const utils = require('./utils');
 update = true
 
-utils.infoMessage("Startup process begginning...");
+utils.infoMessage("Startup process beginning...");
 // Check to see if the user wants to run in debug mode
 if (process.argv.indexOf("--debug") > -1) {
 	utils.debugMode();
@@ -12,16 +12,18 @@ if (process.argv.indexOf("--noupdate") > -1) {
 }
 
 // Check for updates
+/*
 if (update) {
 	try {
 	checkForUpdate();
 	} catch(err) {
 		utils.errorMessage("Could not check for updates. Please check your internet connection and try again.")
 	}
-} else {
+} else { */
     utils.infoMessage("Skipping update check.")
+		/*
 }
-
+*/
 
 utils.debugMessage("Debug messages enabled.");
 const config = require('./config');
@@ -62,7 +64,7 @@ client.login(token)
 // Internals
 
 
-
+/*
 function checkForUpdate() {
 const https = require('https');
 url = "https://ben.mctrees.net/api/checkGitVersion.php?repo=werewolves";
@@ -89,3 +91,4 @@ url = "https://ben.mctrees.net/api/checkGitVersion.php?repo=werewolves";
 	  });
 	});
 }
+*/

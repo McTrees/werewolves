@@ -3,6 +3,7 @@ const config = require("../config")
 const fs = require("fs")
 const user = require("../user/user.js")
 const discord = require("discord.js")
+const admin = require("../admin/admin")
 
 const VALID_ROLES = ["INNOCENT", "WEREWOLF"]
 
@@ -52,6 +53,11 @@ exports.setroleCmd = function (msg, client, args) {
       user.resolve_to_id(usr).then(id=>{
         user.finalise_user(id, role)
       })
+    }
+    if (!user.any_left_unfinalised()) {
+      // all players have a role assigned
+      msg.reply("all players now have a role assigned.")
+
     }
   }
 }

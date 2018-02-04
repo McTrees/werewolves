@@ -50,7 +50,7 @@ exports.signupCmd = function (msg, client, content) {
             if (old) {
               msg.channel.send(`<@${msg.author.id}>'s emoji changed from ${utils.fromBase64(old)} to ${content[0]}`)
             } else {
-			  registerIfNew(msg.author).then((result)=>{  
+			  registerIfNew(msg.author).then((result)=>{
 			    if(result === 0){
 					utils.debugMessage("A previous player of Werewolves has signed up for this season");
 				}else if (result === 1){
@@ -126,6 +126,22 @@ exports.finalise_user = function(id, role) {
   })
 }
 
+exports.any_left_unfinalised = function() {
+  // promise bool, whether any signed up users have not yet been asigned a role
+  return new Promise(function(resolve, reject){
+    userdb.get("select user_id from signed_up_users where finalised != 0", [], function(err, row){
+      if (err) throw err;
+      if (row === undefined) {
+        // none there
+        resolve(false)
+      } else {
+        // there is at least one user without a role
+        resolve(true)
+      }
+    })
+  })
+}
+
 exports.resolve_to_id = function(str) {
   // if str is a discord mention (<@id>), resolve with the id
   // if str is an emoji, resolve with the id of the user with that emoji
@@ -172,12 +188,12 @@ function getProfile(id){
 	});
 }
 
-async function registerIfNew(user){	
+async function registerIfNew(user){
 	try{
 		var username = await checkGlobal(user.id);
 		if(!username){
 			await registerNewUser(user);
-			utils.successMessage(`Registered new user (@${user.username}) gloabally!`);
+			utils.successMessage(`Registered new user (@${user.username}) globally!`);
 			return 1;
 		}
 		return 0;
