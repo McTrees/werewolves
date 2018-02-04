@@ -90,9 +90,8 @@ exports.profileCmd = function(msg, client, content){
 
 exports.all_signed_up = function() {
   // returns promise of a list of all signed up users' ids
-  //intentionally does not include emojis to prevent this being used for polls etc
   return new Promise(function(resolve, reject) {
-    userdb.all("select user_id from signed_up_users", [], function(err, rows){
+    userdb.all("select user_id, emoji from signed_up_users", [], function(err, rows){
       if (err) {
         throw err
       } else {
