@@ -70,6 +70,25 @@ exports.signupCmd = function (msg, client, content) {
   }
 }
 
+exports.signup_allCmd = function(msg, client, args) {
+  exports.all_signed_up().then(rows=>{
+    utils.debugMessage(`signup_all command - ${rows.length}`)
+
+    // split the rows
+    var i,max,chunk,j,row
+    var size = 20 // 20 fields per embed
+    for (i=0,max=rows.length; i<max; i+=size) {
+        temparray = rows.slice(i,i+size);
+        emb = new discord.RichEmbed(color=0xffff00)
+        for (j=0;j<temparray.length;j++) {
+          row = temparray[j]
+          emb.addField(`${client.users.get(row.user_id).username}#${client.users.get(row.user_id).discriminator}`, utils.fromBase64(row.emoji))
+        }
+        msg.channel.send(embed=emb)
+    }
+  })
+}
+
 exports.profileCmd = function(msg, client, content){
 	var user = msg.author;
 	utils.debugMessage(`@${user.username} wanted to see their profile.`);
