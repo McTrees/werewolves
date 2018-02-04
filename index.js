@@ -1,4 +1,6 @@
 /* werewolves bot */
+const fs = require('fs');
+
 const utils = require('./utils');
 update = true
 
@@ -42,6 +44,12 @@ utils.debugMessage("Loaded modules.");
 if (token == 'insert-token-here') {
 	utils.errorMessage("Incorrect login credentials passed! Please edit token.json with your bot's token.", true)
 	process.exit();
+}
+
+if (fs.existsSync("game.dat")) {
+	utils.infoMessage("A game is currently in progress")
+} else {
+	utils.infoMessage("No game is currently in progress")
 }
 
 client.on('ready', () => {
