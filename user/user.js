@@ -72,7 +72,7 @@ exports.signupCmd = function (msg, client, content) {
 
 exports.signup_allCmd = function(msg, client, args) {
   exports.all_signed_up().then(rows=>{
-    utils.debugMessage(`signup_all command - ${rows.length}`)
+    utils.debugMessage(`signup_all command - ${rows.length} rows`)
 
     // split the rows
     var i,max,chunk,j,row
