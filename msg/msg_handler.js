@@ -31,7 +31,7 @@ module.exports = function(msg, client) {
           break;
         case ("p"):
           require("../poll/polls.js")[messageContent[1] + "Cmd"](msg, client, messageContent.slice(2));
-          break;
+		  break;
         case ("c"):
           require("../cc/ccs.js")[messageContent[1] + "Cmd"](msg, client, messageContent.slice(2));
           break;
@@ -49,10 +49,10 @@ module.exports = function(msg, client) {
       if (err instanceof TypeError) {
         msg.reply(`\`${msg.content}\` is an unknown command...`);
       } else {
-        msg.reply(`An error occurred...`);
+		msg.reply(`An error occurred...`);
         if ((config.developerOptions.showErrorsToDevs == "true" && msg.member.roles.has("395967396218667008" ) || config.developerOptions.showErrorsToUsers == "true")){
-          msg.channel.send("the error was: ```" + err + "```\nand occurred at: ```" + err.trace + "```")
-          utils.errorMessage(`error ${err} at ${err.trace}`)
+          msg.channel.send("the error was: ```" + err + "```\nand occurred at: ```" + err.trace + "```");
+          utils.errorMessage(`error ${err} at ${err.trace}`);
         }
       }
     }

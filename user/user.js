@@ -104,6 +104,8 @@ exports.profileCmd = function(msg, client, content){
 		}else{
 			msg.reply(`User <@${user.id}> has not been registered in global database yet!`);
 		}
+	}).catch(err => {
+		utils.errorMessage(err);
 	});
 }
 
@@ -123,12 +125,12 @@ exports.all_signed_up = function() {
 exports.all_alive = function() {
   // promise of all alive users and their emojis
   return new Promise(function(resolve, reject) {
-    userdb.all("select p.user_id, s.emoji from players as p inner join signed_up_users as s on p.user_id = s.user_id", [], function(err, rows){
+    userdb.all("select p.user_id id, s.emoji emoji from players as p inner join signed_up_users as s on p.user_id = s.user_id", [], function(err, rows){
       if (err) throw err;
       else{
         resolve(rows)
       }
-    })
+    });
   });
 }
 
