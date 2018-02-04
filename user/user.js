@@ -81,6 +81,7 @@ exports.signup_allCmd = function(msg, client, args) {
         temparray = rows.slice(i,i+size);
         emb = new discord.RichEmbed()
         emb.color = 0xffff00
+        emb.title = "List of currently signed up players"
         for (j=0;j<temparray.length;j++) {
           row = temparray[j]
           emb.addField(`${client.users.get(row.user_id).username}#${client.users.get(row.user_id).discriminator}`, utils.fromBase64(row.emoji))
