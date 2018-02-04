@@ -79,7 +79,8 @@ exports.signup_allCmd = function(msg, client, args) {
     var size = 20 // 20 fields per embed
     for (i=0,max=rows.length; i<max; i+=size) {
         temparray = rows.slice(i,i+size);
-        emb = new discord.RichEmbed(color=0xffff00)
+        emb = new discord.RichEmbed()
+        emb.color = 0xffff00
         for (j=0;j<temparray.length;j++) {
           row = temparray[j]
           emb.addField(`${client.users.get(row.user_id).username}#${client.users.get(row.user_id).discriminator}`, utils.fromBase64(row.emoji))
