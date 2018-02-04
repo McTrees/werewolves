@@ -86,6 +86,7 @@ exports.signup_allCmd = function(msg, client, args) {
           row = temparray[j]
           emb.addField(`${client.users.get(row.user_id).username}#${client.users.get(row.user_id).discriminator}`, utils.fromBase64(row.emoji))
         }
+
         msg.channel.send(embed=emb)
     }
   })
