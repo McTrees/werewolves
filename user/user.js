@@ -84,7 +84,7 @@ exports.signup_allCmd = function(msg, client, args) {
         emb.title = "List of currently signed up players"
         for (j=0;j<temparray.length;j++) {
           row = temparray[j]
-          emb.addField(`${client.users.get(row.user_id).username}#${client.users.get(row.user_id).discriminator}`, utils.fromBase64(row.emoji))
+          emb.addField(`${client.users.get(row.user_id).username}#${client.users.get(row.user_id).discriminator} - ${utils.fromBase64(row.emoji)}`, '\u200B')
         }
 
         msg.channel.send(embed=emb)
