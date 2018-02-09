@@ -37,6 +37,15 @@ exports.startseasonCmd = function (msg, client) {
   }
 };
 
+function startgame(client) {
+  fs.writeFile("game.dat", "GAME", err =>{if (err) throw err})
+  user.all_signed_up().then(asu=>{
+    gm_confirm = client.channels.get(config.channel_ids.gm_confirm)
+    gm_confirm.send(`Signed up users: ${asu.map(id=>`\n- <@${id.user_id}>`)}`)
+    gm_confirm.send("For every user, please say `!g setrole @mention ROLE`, where ROLE is any of " + VALID_ROLES)
+  })
+}
+
 exports.setroleCmd = async function (msg, client, args) {
   if (args.length !== 2) {
     msg.reply("invalid syntax!")
@@ -62,13 +71,4 @@ exports.setroleCmd = async function (msg, client, args) {
       msg.reply("there are still user(s) with no role")
     }
   }
-}
-
-function startgame(client) {
-  fs.writeFile("game.dat", "GAME", err =>{if (err) throw err})
-  user.all_signed_up().then(asu=>{
-    gm_confirm = client.channels.get(config.channel_ids.gm_confirm)
-    gm_confirm.send(`Signed up users: ${asu.map(id=>`\n- <@${id.user_id}>`)}`)
-    gm_confirm.send("For every user, please say `!g setrole @mention ROLE`, where ROLE is any of " + VALID_ROLES)
-  })
 }
