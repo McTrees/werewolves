@@ -65,7 +65,7 @@ exports.setroleCmd = async function (msg, client, args) {
     }
     if (!await user.any_left_unfinalised()) {
       // all players have a role assigned
-      msg.reply("all players now have a role assigned.")
+      msg.reply("all players now have a role assigned.\nTo send everyone their roles, do `!g sendroles`")
 
     } else {
       msg.reply("there are still user(s) with no role")
