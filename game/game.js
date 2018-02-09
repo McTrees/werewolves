@@ -37,7 +37,7 @@ exports.startseasonCmd = function (msg, client) {
   }
 };
 
-exports.setroleCmd = function (msg, client, args) {
+exports.setroleCmd = async function (msg, client, args) {
   if (args.length !== 2) {
     msg.reply("invalid syntax!")
     return
@@ -50,14 +50,16 @@ exports.setroleCmd = function (msg, client, args) {
     if (!VALID_ROLES.includes(role)) {
       msg.reply("invalid role: `"+role+"`!")
     } else {
-      user.resolve_to_id(usr).then(id=>{
-        user.finalise_user(id, role)
-      })
+      var id = await user.resolve_to_id(usr)
+      msg.reply(`giving <@${id}> role ${role}`)
+      user.finalise_user(id, role)
     }
-    if (!user.any_left_unfinalised()) {
+    if (!await user.any_left_unfinalised()) {
       // all players have a role assigned
       msg.reply("all players now have a role assigned.")
 
+    } else {
+      msg.reply("there are still user(s) with no role")
     }
   }
 }
