@@ -31,7 +31,7 @@ module.exports = function(msg, client) {
           break;
         case ("p"):
           require("../poll/polls.js")[messageContent[1] + "Cmd"](msg, client, messageContent.slice(2));
-		  break;
+		      break;
         case ("c"):
           require("../cc/ccs.js")[messageContent[1] + "Cmd"](msg, client, messageContent.slice(2));
           break;
