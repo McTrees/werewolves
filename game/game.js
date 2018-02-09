@@ -72,3 +72,7 @@ exports.setroleCmd = async function (msg, client, args) {
     }
   }
 }
+
+exports.sendrolesCmd = async function(msg, client) {
+  msg.channel.send("TODO: this")
+}
