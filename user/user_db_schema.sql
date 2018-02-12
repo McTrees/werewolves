@@ -2,6 +2,7 @@ BEGIN TRANSACTION;
 DROP TABLE IF EXISTS signed_up_users;
 DROP TABLE IF EXISTS players;
 DROP TABLE IF EXISTS player_tags;
+DROP TABLE IF EXISTS global_player;
 
 CREATE TABLE signed_up_users (
     user_id char(21) not null unique,
