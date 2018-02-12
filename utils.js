@@ -29,7 +29,7 @@ exports.successMessage = function (str, force) {
 
 exports.warningMessage = function (str, force) {
 	if (config.developerOptions.logOtherMessages == "true" || force == "force" || force == true || debugmode == true) {
-		console.log('\x1b[2m\x1b[33m%s\x1b[0m', "[!] ".concat(str));
+		console.log('\x1b[2m\x1b[35m%s\x1b[0m', "[!] ".concat(str));
 	}
 }
 
