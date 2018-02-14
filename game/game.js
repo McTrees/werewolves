@@ -4,6 +4,7 @@ const fs = require("fs")
 const user = require("../user/user.js")
 const discord = require("discord.js")
 const admin = require("../admin/admin")
+const utils = require("../utils")
 
 const VALID_ROLES = ["INNOCENT", "WEREWOLF"]
 
