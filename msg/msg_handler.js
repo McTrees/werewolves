@@ -29,7 +29,10 @@ module.exports = function(msg, client) {
         case ("u"):
           require("../user/user.js")[messageContent[1] + "Cmd"](msg, client, messageContent.slice(2));
           break;
-        case ("p"):
+        case ("up"):
+          require("../user/userprofile.js")[messageContent[1] + "Cmd"](msg, client, messageContent.slice(2));
+          break;
+		case ("p"):
           require("../poll/polls.js")[messageContent[1] + "Cmd"](msg, client, messageContent.slice(2));
 		      break;
         case ("c"):
