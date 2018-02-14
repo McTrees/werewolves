@@ -149,22 +149,23 @@ exports.finalise_user = function(id, role) {
   })
 }
 
-exports.any_left_unfinalised = async function() {
-  // promise bool, whether any signed up users have not yet been asigned a role
-  utils.debugMessage("any left unfinalised")
-  userdb.get("select user_id from signed_up_users where finalised = 0;", [], function(err, row){
-    // we should have a row if anyone does not have a role
-    if (err) throw err;
-    if (row === undefined) {
-      utils.debugMessage("any left unfinalised -- resolving false")
-      // none there
-      return false
-    } else {
-      // there is at least one user without a role
-      utils.debugMessage("any left unfinalised -- resolving true")
-      return true
-    }
-  })
+exports.any_left_unfinalised = function() {
+  return new Promise(function(resolve, reject) {
+
+    userdb.get("select user_id from signed_up_users where finalised = 0;", [], function(err, row){
+      // we should have a row if anyone does not have a role
+      if (err) throw err;
+      if (row === undefined) {
+        utils.debugMessage("any left unfinalised -- resolving false")
+        // none there
+        resolve(false)
+      } else {
+        // there is at least one user without a role
+        utils.debugMessage("any left unfinalised -- resolving true")
+        resolve(true)
+      }
+    })
+  });
 }
 
 exports.resolve_to_id = function(str) {
