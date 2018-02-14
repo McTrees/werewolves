@@ -73,21 +73,23 @@ exports.signupCmd = function (msg, client, content) {
 exports.signup_allCmd = function(msg, client, args) {
   exports.all_signed_up().then(rows=>{
     utils.debugMessage(`signup_all command - ${rows.length} rows`)
-
-    // split the rows
-    var i,max,chunk,j,row
-    var size = 20 // 20 fields per embed
-    for (i=0,max=rows.length; i<max; i+=size) {
-        temparray = rows.slice(i,i+size);
-        emb = new discord.RichEmbed()
-        emb.color = 0xffff00
-        emb.title = "List of currently signed up players"
-        for (j=0;j<temparray.length;j++) {
-          row = temparray[j]
-          emb.addField(`${utils.fromBase64(row.emoji)} - ${client.users.get(row.user_id).username}#${client.users.get(row.user_id).discriminator}`, '\u200B')
-        }
-
-        msg.channel.send(embed=emb)
+    if (rows.length === 0) {
+      msg.reply("no one is signed up yet")
+    } else {
+      // split the rows
+      var i,max,chunk,j,row
+      var size = 20 // 20 fields per embed
+      for (i=0,max=rows.length; i<max; i+=size) {
+          temparray = rows.slice(i,i+size);
+          emb = new discord.RichEmbed()
+          emb.color = 0xffff00
+          emb.title = "List of currently signed up players"
+          for (j=0;j<temparray.length;j++) {
+            row = temparray[j]
+            emb.addField(`${utils.fromBase64(row.emoji)} - ${client.users.get(row.user_id).username}#${client.users.get(row.user_id).discriminator}`, '\u200B')
+          }
+          msg.channel.send(embed=emb)
+      }
     }
   })
 }
