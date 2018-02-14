@@ -120,7 +120,7 @@ exports.startPoll = function(client, data) {
 exports.fetchMessages = function(msg, client, id){
 	if (!polls["polls"][id]) {
 		utils.errorMessage("The poll with id " + id + " doesn't exist, sadly.");
-		msg.reply(`The poll with ID \`${id}\` doesn't exist, or it's results have been checked already.`);
+		msg.reply(`the poll with ID \`${id}\` doesn't exist, or it's results have been checked already.`);
 		return false;
 	}
 	//Fetch the poll and its details

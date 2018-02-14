@@ -9,7 +9,7 @@ exports.startPollCmd = function (msg, client, args){
 	utils.debugMessage(`@${msg.author.username} tried to create a poll.`);
 	if(args.length <= 1){
 		utils.errorMessage(`Insufficient arguments provided for startPollCmd!`);
-		msg.reply("Correct syntax: `!startPoll <type(werewolves/lynch/cult)> <heading>`");
+		msg.reply("correct syntax: `!startPoll <type(werewolves/lynch/cult)> <heading>`");
 		return;
 	}
 	var type = args[0].toLowerCase(); //The type of poll - so far "lynch" (alias 'l'), "werewolves" (alias 'w'), "cult" (alias 'c')
@@ -58,7 +58,7 @@ exports.startPollCmd = function (msg, client, args){
 		client.channels.get(config.channel_ids.gm_confirm).send("A new Poll, `" + txt + "` (id: " + id + ") was created.");
 	}).catch(err => {
 		utils.errorMessage(err);
-		msg.reply("An error occurred.");
+		msg.reply("an error occurred.");
 		if ((config.developerOptions.showErrorsToDevs == "true" && msg.member.roles.has("395967396218667008") || config.developerOptions.showErrorsToUsers == "true")){
           msg.channel.send("The error was: ```" + err + "```")
         }
@@ -75,7 +75,7 @@ id - The ID of the poll to check
  */
 exports.checkPollCmd = function (msg, client, id) {
 	if(id.length !== 1){
-		msg.reply(`Correct syntax is \`!checkPoll <pollID>\``);
+		msg.reply(`correct syntax is \`!checkPoll <pollID>\``);
 		utils.infoMessage(`@${msg.author.username} used wrong syntax for !checkPoll`);
 		return;
 	}
@@ -116,7 +116,7 @@ id - The ID of the poll to end
  */
 exports.endPollCmd = function (msg, client, id) {
 	if(id.length !== 1){
-		msg.reply(`Correct syntax is \`!checkPoll <pollID>\``);
+		msg.reply(`correct syntax is \`!checkPoll <pollID>\``);
 		utils.infoMessage(`@${msg.author.username} used wrong syntax for !checkPoll`);
 		return;
 	}
