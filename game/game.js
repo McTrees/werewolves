@@ -63,6 +63,7 @@ exports.setroleCmd = async function (msg, client, args) {
       msg.reply(`giving <@${id}> role ${role}`)
       user.finalise_user(id, role)
     }
+    setTimeout(()=>{ //delay by 1 sec to allow the database to be updated. it's not perfect but it works
       user.any_left_unfinalised().then(any_left => {
         if (!any_left) {
           // all players have a role assigned
@@ -72,6 +73,7 @@ exports.setroleCmd = async function (msg, client, args) {
           msg.reply("there are still user(s) with no role")
         }
       })
+    }, 1000)
   }
 }
 
