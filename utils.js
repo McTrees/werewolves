@@ -35,7 +35,7 @@ exports.warningMessage = function (str, force) {
 
 exports.errorMessage = function (str, force) {
 	if (config.developerOptions.logOtherMessages == "true" || force == "force" || force == true || debugmode == true) {
-		console.log('\x1b[2m\x1b[31m%s\x1b[0m', "[!] ".concat(str));
+		console.error('\x1b[2m\x1b[31m%s\x1b[0m', "[!] ".concat(str));
 	}
 }
 

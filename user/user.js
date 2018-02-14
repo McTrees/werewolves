@@ -24,7 +24,7 @@ exports.init = function() {
       fs.readFile(path.join(__dirname, 'user_db_schema.sql'), {encoding: "utf-8"}, function(er, schema) {
         if (er) throw er
         else {
-          utils.debugMessage("User database not found - creating a new one")
+          utils.warningMessage("User database not found - creating a new one")
           userdb.exec(schema)
         }
       })
@@ -51,7 +51,7 @@ exports.signupCmd = function (msg, client, content) {
             if (old) {
               msg.channel.send(`<@${msg.author.id}>'s emoji changed from ${utils.fromBase64(old)} to ${content[0]}`)
             } else {
-			  userprofile.registerIfNew(msg.author).then((result)=>{  
+			  userprofile.registerIfNew(msg.author).then((result)=>{
 			    if(result === 0){
 					utils.debugMessage("A previous player of Werewolves has signed up for this season");
 				}else if (result === 1){
@@ -71,11 +71,32 @@ exports.signupCmd = function (msg, client, content) {
   }
 }
 
+exports.signup_allCmd = function(msg, client, args) {
+  exports.all_signed_up().then(rows=>{
+    utils.debugMessage(`signup_all command - ${rows.length} rows`)
+
+    // split the rows
+    var i,max,chunk,j,row
+    var size = 20 // 20 fields per embed
+    for (i=0,max=rows.length; i<max; i+=size) {
+        temparray = rows.slice(i,i+size);
+        emb = new discord.RichEmbed()
+        emb.color = 0xffff00
+        emb.title = "List of currently signed up players"
+        for (j=0;j<temparray.length;j++) {
+          row = temparray[j]
+          emb.addField(`${client.users.get(row.user_id).username}#${client.users.get(row.user_id).discriminator} - ${utils.fromBase64(row.emoji)}`, '\u200B')
+        }
+
+        msg.channel.send(embed=emb)
+    }
+  })
+}
+
 exports.all_signed_up = function() {
   // returns promise of a list of all signed up users' ids
-  //intentionally does not include emojis to prevent this being used for polls etc
   return new Promise(function(resolve, reject) {
-    userdb.all("select user_id from signed_up_users", [], function(err, rows){
+    userdb.all("select user_id, emoji from signed_up_users", [], function(err, rows){
       if (err) {
         throw err
       } else {
@@ -104,6 +125,24 @@ exports.finalise_user = function(id, role) {
     userdb.run("replace into players (user_id, role) values ($id, $role);", {$id:id,$role:role})
     userdb.run("update signed_up_users set finalised = 1 where user_id = $id;", {$id:id})
     userdb.run("commit;")
+  })
+}
+
+exports.any_left_unfinalised = async function() {
+  // promise bool, whether any signed up users have not yet been asigned a role
+  utils.debugMessage("any left unfinalised")
+  userdb.get("select user_id from signed_up_users where finalised = 0;", [], function(err, row){
+    // we should have a row if anyone does not have a role
+    if (err) throw err;
+    if (row === undefined) {
+      utils.debugMessage("any left unfinalised -- resolving false")
+      // none there
+      return false
+    } else {
+      // there is at least one user without a role
+      utils.debugMessage("any left unfinalised -- resolving true")
+      return true
+    }
   })
 }
 
