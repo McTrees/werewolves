@@ -51,6 +51,7 @@ module.exports = function(msg, client) {
     } catch (err) {
       if (err instanceof TypeError) {
         msg.reply(`\`${msg.content}\` is an unknown command...`);
+		utils.debugMessage(err);
       } else {
 		msg.reply(`An error occurred...`);
         if ((config.developerOptions.showErrorsToDevs == "true" && msg.member.roles.has("395967396218667008" ) || config.developerOptions.showErrorsToUsers == "true")){
