@@ -1,8 +1,10 @@
 /* werewolves bot */
+const fs = require('fs');
+
 const utils = require('./utils');
 update = true
 
-utils.infoMessage("Startup process begginning...");
+utils.infoMessage("Starting bot...");
 // Check to see if the user wants to run in debug mode
 if (process.argv.indexOf("--debug") > -1) {
 	utils.debugMode();
@@ -12,34 +14,42 @@ if (process.argv.indexOf("--noupdate") > -1) {
 }
 
 // Check for updates
+/*
 if (update) {
 	try {
 	checkForUpdate();
 	} catch(err) {
 		utils.errorMessage("Could not check for updates. Please check your internet connection and try again.")
 	}
-} else {
+} else { */
     utils.infoMessage("Skipping update check.")
+		/*
 }
-
+*/
 
 utils.debugMessage("Debug messages enabled.");
 const config = require('./config');
 const token = require('./token').token;
-utils.successMessage("Config loaded!");
+utils.debugMessage("Config loaded!");
 
-utils.infoMessage("Loading external modules...");
+utils.debugMessage("Loading external modules...");
 const discord = require('discord.js');
 const client = new discord.Client();
 
-utils.infoMessage("Loaded external modules, loading other modules.");
+utils.debugMessage("Loaded external modules, loading other modules.");
 const msg_handler = require("./msg/msg_handler");
 const failsafes = require("./failsafes");
-utils.infoMessage("Loaded modules.");
+utils.debugMessage("Loaded modules.");
 
 if (token == 'insert-token-here') {
 	utils.errorMessage("Incorrect login credentials passed! Please edit token.json with your bot's token.", true)
 	process.exit();
+}
+
+if (fs.existsSync("game.dat")) {
+	utils.infoMessage("A game is currently in progress")
+} else {
+	utils.infoMessage("No game is currently in progress")
 }
 
 client.on('ready', () => {
@@ -62,7 +72,7 @@ client.login(token)
 // Internals
 
 
-
+/*
 function checkForUpdate() {
 const https = require('https');
 url = "https://ben.mctrees.net/api/checkGitVersion.php?repo=werewolves";
@@ -89,3 +99,4 @@ url = "https://ben.mctrees.net/api/checkGitVersion.php?repo=werewolves";
 	  });
 	});
 }
+*/

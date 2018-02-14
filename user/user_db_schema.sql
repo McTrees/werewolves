@@ -12,12 +12,14 @@ CREATE TABLE signed_up_users (
 CREATE TABLE players (
   user_id char(21) not null unique,
   alive boolean not null default 1,
-  role varchar(18) not null
+  role varchar(18) not null,
+  foreign key (user_id) references signed_up_users(user_id)
 );
 
 CREATE TABLE player_tags (
   user_id char(21) not null,
-  tag_name varchar(18) not null
+  tag_name varchar(18) not null,
+  foreign key (user_id) references players(user_id)
 );
 
 CREATE TABLE global_player (
