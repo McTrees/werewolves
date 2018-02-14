@@ -2,6 +2,7 @@ const fs = require("fs");
 const path = require("path")
 const sqlite3 = require("sqlite3")
 const userdb = new sqlite3.Database("user/user.db")
+const userprofile = require("./userprofile")
 const utils = require("../utils.js")
 const config = require('../config');
 const admin = require("../admin/admin")
@@ -35,7 +36,7 @@ exports.signupCmd = function (msg, client, content) {
   utils.debugMessage(`@${msg.author.username} ran signup command with emoji ${content[0]}`)
   // command for signing yourself up
   if (fs.existsSync("game.dat")) {
-    msg.reply('Sorry, but a game is already in progress! Please wait for next season to start.')
+    msg.reply('sorry, but a game is already in progress! Please wait for next season to start.')
   } else {
     if (content.length != 1){
       msg.reply(`I'm glad you want to sign up but the correct syntax is \`${config.bot_prefix}signup <emoji>\``)
@@ -50,7 +51,7 @@ exports.signupCmd = function (msg, client, content) {
             if (old) {
               msg.channel.send(`<@${msg.author.id}>'s emoji changed from ${utils.fromBase64(old)} to ${content[0]}`)
             } else {
-			  registerIfNew(msg.author).then((result)=>{
+			  userprofile.registerIfNew(msg.author).then((result)=>{
 			    if(result === 0){
 					utils.debugMessage("A previous player of Werewolves has signed up for this season");
 				}else if (result === 1){
@@ -90,26 +91,6 @@ exports.signup_allCmd = function(msg, client, args) {
         msg.channel.send(embed=emb)
     }
   })
-}
-
-exports.profileCmd = function(msg, client, content){
-	var user = msg.author;
-	utils.debugMessage(`@${user.username} wanted to see their profile.`);
-	getProfile(user.id).then((row) => {
-		if(row){
-			var embed = new discord.RichEmbed();
-			if(row.username === null)embed.setTitle(user.username);
-			else embed.setTitle(row.username);
-			if(row.profile_pic === null)embed.setThumbnail(user.avatarURL);
-			else embed.setThumbnail(row.profile_pic);
-			embed.setDescription(`Gender: ${row.gender}\nAge: ${row.age}\nGames Played: ${row.games}\nGames Won: ${row.wins}`);
-			msg.reply({embed});
-		}else{
-			msg.reply(`User <@${user.id}> has not been registered in global database yet!`);
-		}
-	}).catch(err => {
-		utils.errorMessage(err);
-	});
 }
 
 exports.all_signed_up = function() {
@@ -190,51 +171,6 @@ exports.resolve_to_id = function(str) {
 ██ ██  ██ ██    ██    ██      ██   ██ ██  ██ ██ ██   ██ ██
 ██ ██   ████    ██    ███████ ██   ██ ██   ████ ██   ██ ███████
 */
-
-function checkGlobal(id){
-	return new Promise((resolve, reject) =>{
-		userdb.get("select user_id from global_player where user_id = ?", id, function(err, row) {
-			if(err)reject(err);//If error occurred, reject
-			if(row)resolve(row.user_id);//if user was found, resolve with username
-			else resolve();//if user wasn't found, resolve without anything
-		});
-	});
-}
-
-function getProfile(id){
-	return new Promise((resolve, reject) => {
-		userdb.get("select username, ifnull(gender, 'Unknown') as gender, ifnull(age, 'Unknown') as age, ifnull(personal_record, 'No record yet') as record, ifnull(personal_desc, 'No description yet') as desc, games, wins, profile_pic from global_player where user_id = ?", id, function(err, row) {
-			if(err)reject(err);//If error occurred, reject
-			if(row)resolve(row);//if user was found, resolve with the profile
-			else resolve();//if user wasn't found, resolve without anything
-		});
-	});
-}
-
-async function registerIfNew(user){
-	try{
-		var username = await checkGlobal(user.id);
-		if(!username){
-			await registerNewUser(user);
-			utils.successMessage(`Registered new user (@${user.username}) globally!`);
-			return 1;
-		}
-		return 0;
-	}catch(err){
-		utils.errorMessage(err);
-		return -1;
-	}
-}
-
-function registerNewUser(user){
-	return new Promise((resolve, reject)=>{
-		utils.debugMessage(`Attempting to register user @${user.username} gloablly.`);
-		userdb.run("insert into global_player (user_id) values (?)", [user.id], (err) => {
-			if(err)reject(err);
-			else resolve();
-		});
-	});
-}
 
 // moved from db_fns.js
 

@@ -1,7 +1,12 @@
 {
   "signup": "u signup",
   "signuppoop": "u signup 💩",
-  "profile": "u profile",
+  "profile": "up profile",
+  "setAge":"up setAge",
+  "setUsername":"up setUsername",
+  "setGender":"up setGender",
+  "setInfo":"up setInfo",
+  "setDP":"up setDP",
   "startPoll": "p startPoll",
   "endPoll": "p endPoll",
   "checkPoll": "p checkPoll"
