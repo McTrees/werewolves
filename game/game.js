@@ -61,8 +61,16 @@ exports.setroleCmd = async function (msg, client, args) {
       msg.reply("invalid role: `"+role+"`!")
     } else {
       var id = await user.resolve_to_id(usr)
-      msg.reply(`giving <@${id}> role ${role}`)
-      user.finalise_user(id, role)
+      // now we need to check that user actually signed up
+      var all = await user.all_signed_up()
+      ids = all.map(row=>row.user_id) // get array of all the user ids
+      if (!ids.includes(id)) {
+        // that user hasn't signed up!
+        msg.reply(`the user <@${id}> hasn't signed up! You probably don't want to give them a role...`)
+      } else {
+        msg.reply(`giving <@${id}> role ${role}`)
+        user.finalise_user(id, role)
+      }
     }
     setTimeout(()=>{ //delay by 1 sec to allow the database to be updated. it's not perfect but it works
       user.any_left_unfinalised().then(any_left => {
