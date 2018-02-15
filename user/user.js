@@ -96,7 +96,7 @@ exports.signup_allCmd = function(msg, client, args) {
 }
 
 exports.all_signed_up = function() {
-  // returns promise of a list of all signed up users' ids
+  // returns promise of a list of all signed up users' ids and emojis
   return new Promise(function(resolve, reject) {
     userdb.all("select user_id, emoji from signed_up_users", [], function(err, rows){
       if (err) {
