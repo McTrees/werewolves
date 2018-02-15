@@ -52,6 +52,10 @@ if (fs.existsSync("game.dat")) {
 	utils.infoMessage("No game is currently in progress")
 }
 
+// this makes unhandled promise rejections a fatal error, not a supressed warning.
+// this should hopefully make debugging easier
+process.on('unhandledRejection', up => { throw up })
+
 client.on('ready', () => {
   utils.successMessage("Logged in!", true);
   failsafes(client) // run 'failsafes' module
