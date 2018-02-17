@@ -92,6 +92,7 @@ exports.sendrolesCmd = async function(msg, client) {
     msg.reply("how do you expect me to tell everyone their roles when you haven't even given everyone a role yet? ಠ_ಠ")
   } else {
     utils.infoMessage("sending roles to players")
+    msg.reply("sending roles to all players!")
     var all_users = await user.all_alive()
     var id_list = all_users.map(row=>row.id)
     id_list.forEach(async function(id) {
