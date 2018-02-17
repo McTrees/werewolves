@@ -20,7 +20,7 @@ exports.init = function() {
   // called on bot start
   fs.readFile(path.join(__dirname, 'user.db'), {encoding: "utf-8"}, function(err, data){
     if(err) throw err;
-	if (data === '') { // database is empty and needs to be created
+    if (data === '') { // database is empty and needs to be created
       fs.readFile(path.join(__dirname, 'user_db_schema.sql'), {encoding: "utf-8"}, function(er, schema) {
         if (er) throw er
         else {
