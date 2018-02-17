@@ -161,7 +161,7 @@ exports.resolve_to_id = function(str) {
     } else { // emoji or invalid
       db.get("select user_id from signed_up_users where emoji = ?", [utils.toBase64(str)], function(err, row){
         if (err) throw err //TODO: err handling
-        if (row.user_id) { resolve(row.user_id)}
+        if (row.user_id) { resolve(row.user_id) }
         else { reject() }
       })
     }
