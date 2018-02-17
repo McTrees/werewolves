@@ -33,8 +33,14 @@ exports.startseasonCmd = function (msg, client) {
   if (exports.is_started()) {
     msg.reply("It appears that we are already in a game... -_-")
   } else {
-    msg.channel.send("Starting season! Please check <#" + config.channel_ids.gm_confirm + "> and enter player's roles.");
-    startgame(client);
+    user.all_signed_up().then(asu=>{
+      if (asu.length == 0) { // 0 players isn't enough!
+        msg.reply("there aren't enough players signed up to do that.")
+      } else {
+        msg.channel.send("Starting season! Please check <#" + config.channel_ids.gm_confirm + "> and enter player's roles.");
+        startgame(client);
+      }
+    })
   }
 };
 
