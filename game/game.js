@@ -93,29 +93,33 @@ exports.setroleCmd = async function (msg, client, args) {
 }
 
 exports.sendrolesCmd = async function(msg, client) {
-  var any_left = await user.any_left_unfinalised()
-  if (any_left) {
-    msg.reply("how do you expect me to tell everyone their roles when you haven't even given everyone a role yet? ಠ_ಠ")
+  if (!exports.is_started()){
+    msg.reply("signups are currently open or a game is not being set up")
   } else {
-    utils.infoMessage("sending roles to players")
-    msg.reply("sending roles to all players!")
-    var all_users = await user.all_alive()
-    var id_list = all_users.map(row=>row.id)
-    id_list.forEach(async function(id) {
-      var role = await user.get_role(id)
-      var u = client.users.get(id)
-      if (u === undefined) {
-        utils.warningMessage("Couldn't send message to user with ID "+id+"!")
-        msg.reply("Couldn't send message to user with ID "+id+"!")
-      } else {
-        utils.infoMessage(`sending role to ${u.username}`)
-        u.send("your role is "+role).catch(e=>{
-          if (e.message == 'Cannot send messages to this user') {
-            msg.reply(`user <@${id}> has DMs disabled!`)
-            utils.warningMessage(`user ${u.username} has DMs disabled!`)
-          }
-        })
-      }
-    })
+    var any_left = await user.any_left_unfinalised()
+    if (any_left) {
+      msg.reply("how do you expect me to tell everyone their roles when you haven't even given everyone a role yet? ಠ_ಠ")
+    } else {
+      utils.infoMessage("sending roles to players")
+      msg.reply("sending roles to all players!")
+      var all_users = await user.all_alive()
+      var id_list = all_users.map(row=>row.id)
+      id_list.forEach(async function(id) {
+        var role = await user.get_role(id)
+        var u = client.users.get(id)
+        if (u === undefined) {
+          utils.warningMessage("Couldn't send message to user with ID "+id+"!")
+          msg.reply("Couldn't send message to user with ID "+id+"!")
+        } else {
+          utils.infoMessage(`sending role to ${u.username}`)
+          u.send("your role is "+role).catch(e=>{
+            if (e.message == 'Cannot send messages to this user') {
+              msg.reply(`user <@${id}> has DMs disabled!`)
+              utils.warningMessage(`user ${u.username} has DMs disabled!`)
+            }
+          })
+        }
+      })
+    }
   }
 }
