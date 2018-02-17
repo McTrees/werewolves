@@ -51,16 +51,16 @@ exports.signupCmd = function (msg, client, content) {
             if (old) {
               msg.channel.send(`<@${msg.author.id}>'s emoji changed from ${utils.fromBase64(old)} to ${content[0]}`)
             } else {
-			  userprofile.registerIfNew(msg.author).then((result)=>{
-			    if(result === 0){
-					utils.debugMessage("A previous player of Werewolves has signed up for this season");
-				}else if (result === 1){
-					client.channels.get(config.channel_ids.gm_confirm).send(`<@${msg.author.id}> is a new player!`);
-				}else{
-					client.channels.get(config.channel_ids.gm_confirm).send(`Error in registering <@${msg.author.id}>!`);
-				}
-				msg.channel.send(`<@${msg.author.id}> signed up with emoji ${content[0]}`);
-			  });
+              userprofile.registerIfNew(msg.author).then((result)=>{
+                if(result === 0){
+                  utils.debugMessage("A previous player of Werewolves has signed up for this season");
+                }else if (result === 1){
+                  client.channels.get(config.channel_ids.gm_confirm).send(`<@${msg.author.id}> is a new player!`);
+                }else{
+                  client.channels.get(config.channel_ids.gm_confirm).send(`Error in registering <@${msg.author.id}>!`);
+                }
+                msg.channel.send(`<@${msg.author.id}> signed up with emoji ${content[0]}`);
+              });
             }
           })
         })
