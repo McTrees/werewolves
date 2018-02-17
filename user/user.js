@@ -181,8 +181,8 @@ function addUser(id, emoji) {
   // if no one else is using that emoji, sign them up
   // or change their emoji
   // returns promise:
-    // reject = id of user using that emoji
-    // resolve: old emoji if changed, nothing (undefined) otherwise
+  // reject = id of user using that emoji
+  // resolve: old emoji if changed, nothing (undefined) otherwise
   utils.debugMessage("Function addUser called");
   return new Promise(function(resolve, reject) {
     getUserId(emoji).then(i=>{
