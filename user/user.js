@@ -78,18 +78,18 @@ exports.signup_allCmd = function(msg, client, args) {
       msg.reply("no one is signed up yet")
     } else {
       // split the rows
-      var i,max,chunk,j,row
+      var i,max,temparray,j,row
       var size = 20 // 20 fields per embed
       for (i=0,max=rows.length; i<max; i+=size) {
-          temparray = rows.slice(i,i+size);
-          emb = new discord.RichEmbed()
-          emb.color = 0xffff00
-          emb.title = "List of currently signed up players"
-          for (j=0;j<temparray.length;j++) {
-            row = temparray[j]
-            emb.addField(`${utils.fromBase64(row.emoji)} - ${client.users.get(row.user_id).username}#${client.users.get(row.user_id).discriminator}`, '\u200B')
-          }
-          msg.channel.send(embed=emb)
+        temparray = rows.slice(i,i+size);
+        emb = new discord.RichEmbed()
+        emb.color = 0xffff00
+        emb.title = "List of currently signed up players"
+        for (j=0;j<temparray.length;j++) {
+          row = temparray[j]
+          emb.addField(`${utils.fromBase64(row.emoji)} - ${client.users.get(row.user_id).username}#${client.users.get(row.user_id).discriminator}`, '\u200B')
+        }
+        msg.channel.send(embed=emb)
       }
     }
   })
