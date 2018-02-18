@@ -125,7 +125,7 @@ exports.get_role = function(id) {
   utils.debugMessage(`getting role of ${id}`)
   return new Promise(function(resolve, reject) {
     userdb.get("select role from players where user_id = ?", [id], function(err, row) {
-      if (err) {} throw err }
+      if (err) { throw err }
       else {
         if (row) {
           resolve(row.role)
