@@ -92,7 +92,7 @@ function getProfile(id){
 	});
 }
 
-async function registerIfNew(user){	
+exports.registerIfNew = async function /*registerIfNew*/(user){	
 	try{
 		var username = await checkGlobal(user.id);
 		if(!username){
