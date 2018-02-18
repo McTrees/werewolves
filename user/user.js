@@ -156,7 +156,7 @@ exports.resolve_to_id = function(str) {
     if (discordId.test(str)) { // str is a valid discord mention
       resolve(discordId.exec(str)[1])
     } else { // emoji or invalid
-      db.get("select user_id from signed_up_users where emoji = ?", [utils.toBase64(str)], function(err, row){
+      userdb.get("select user_id from signed_up_users where emoji = ?", [utils.toBase64(str)], function(err, row){
         if (err) throw err //TODO: err handling
         if (row.user_id) { resolve(row.user_id)}
         else { reject() }
