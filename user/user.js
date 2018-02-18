@@ -82,14 +82,14 @@ exports.signup_allCmd = function(msg, client, args) {
       var size = 20 // 20 fields per embed
       for (i=0,max=rows.length; i<max; i+=size) {
         temparray = rows.slice(i,i+size);
-        emb = new discord.RichEmbed()
+        var emb = new discord.RichEmbed()
         emb.color = 0xffff00
         emb.title = "List of currently signed up players"
         for (j=0;j<temparray.length;j++) {
           row = temparray[j]
           emb.addField(`${utils.fromBase64(row.emoji)} - ${client.users.get(row.user_id).username}#${client.users.get(row.user_id).discriminator}`, '\u200B')
         }
-        msg.channel.send(embed=emb)
+        msg.channel.send(emb)
       }
     }
   })
@@ -112,7 +112,7 @@ exports.all_alive = function() {
   // promise of all alive users and their emojis
   return new Promise(function(resolve, reject) {
     userdb.all("select p.user_id id, s.emoji emoji from players as p inner join signed_up_users as s on p.user_id = s.user_id", [], function(err, rows){
-      if (err) throw err;
+      if (err) { throw err }
       else{
         resolve(rows)
       }
@@ -125,7 +125,7 @@ exports.get_role = function(id) {
   utils.debugMessage(`getting role of ${id}`)
   return new Promise(function(resolve, reject) {
     userdb.get("select role from players where user_id = ?", [id], function(err, row) {
-      if (err) throw err;
+      if (err) {} throw err }
       else {
         if (row) {
           resolve(row.role)
@@ -176,7 +176,7 @@ exports.resolve_to_id = function(str) {
     if (discordId.test(str)) { // str is a valid discord mention
       resolve(discordId.exec(str)[1])
     } else { // emoji or invalid
-      db.get("select user_id from signed_up_users where emoji = ?", [utils.toBase64(str)], function(err, row){
+      userdb.get("select user_id from signed_up_users where emoji = ?", [utils.toBase64(str)], function(err, row){
         if (err) throw err //TODO: err handling
         if (row.user_id) { resolve(row.user_id) }
         else { reject() }
