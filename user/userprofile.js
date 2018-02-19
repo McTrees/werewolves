@@ -3,6 +3,7 @@ const sqlite3 = require("sqlite3")
 const userdb = new sqlite3.Database("user/user.db")
 const discord = require('discord.js')
 const config = require('../config');
+const aliases = require('./aliases.json');
 
 /*
 ███████ ██   ██ ██████   ██████  ██████  ████████ ███████ ██████
@@ -36,11 +37,11 @@ exports.registerGlobalCmd = async function(msg, client, args){
 		msg.reply("correct syntax is `!registerGlobal`");
 		return;
 	}
-	var result = await registerIfNew(user);
+	var result = await exports.registerIfNew(user);
 	if(result === 1){
-		msg.reply(user.id==msg.author.id?`${user} was successfully registered globally.`:"you were successfully registered globally.");
+		msg.reply(user.id==msg.author.id?"you were successfully registered globally.":`${user} was successfully registered globally.`);
 	}else if(result === 0){
-		msg.reply(user.id==msg.author.id?`${user} is already registered globally.`:"you are already registered globally.");
+		msg.reply(user.id==msg.author.id?"you are already registered globally.":`${user} is already registered globally.`);
 	}else{
 		msg.reply("an error occurred.");
 	}
@@ -56,30 +57,59 @@ exports.setGenderCmd = function(msg, client, args){
 	setProperty(msg, client, "Gender", args);
 }
 
+
 //Set the profile picture link of a user
+//CURRENTLY NOT IN USE
+/*
 exports.setDPLinkCmd = function(msg, client, args){
 	setProperty(msg, client, "DPLink", args);
 }
+*/
 
-//Set the username of a user
-exports.setUsernameCmd = function(msg, client, args){
-	setPropertyWithSpaces(msg, client, "Username", args);
-}
 
 //Set the personal description of a user
 exports.setInfoCmd = function(msg, client, args){
 	setPropertyWithSpaces(msg, client, "Info", args);
 }
 
+//Set the personal description of a user
+exports.setGamesCmd = function(msg, client, args){
+	if(msg.member.roles.has(config.role_ids.gameMaster)){
+		setProperty(msg, client, "Games", args);
+	}else{
+		msg.reply("you're not a GM -_-");
+	}
+}
+
+//Set the personal description of a user
+exports.setWinsCmd = function(msg, client, args){
+	if(msg.member.roles.has(config.role_ids.gameMaster)){
+		setProperty(msg, client, "Wins", args);
+	}else{
+		msg.reply("you're not a GM -_-");
+	}
+}
+
+//Set the personal description of a user
+exports.setRecordCmd = function(msg, client, args){
+	if(msg.member.roles.has(config.role_ids.gameMaster)){
+		setPropertyWithSpaces(msg, client, "Record", args);
+	}else{
+		msg.reply("you're not a GM -_-");
+	}
+}
+
+
 //Register a user in the global database if they aren't already registered
 exports.registerIfNew = async function(user){	
 	try{
 		//Does the player exist?
-		if(!await checkGlobal(user.id)){//If not
+		if(!(await checkGlobal(user.id))){//If not
 			await registerNewUser(user);//then register
 			utils.successMessage(`Registered new user (@${user.username}) gloabally!`);
 			return 1;//and return 1
 		}
+		utils.debugMessage(`@${user.username} is already registered globally.`);
 		return 0;//else return 0
 	}catch(err){
 		utils.errorMessage(err);//There was an error
@@ -112,23 +142,20 @@ exports.profileCmd = function(msg, client, args){
 			//Making the embed
 			var embed = new discord.RichEmbed()
 				.setColor(0x00CEFF);
-			if(row.username === null){
-				embed.setTitle("User profile for " + user.username);
-			}else{
-				embed.setTitle("User profile for " + row.username);
-			}
-			if(row.dplink === null){
+			embed.setTitle("User profile for " + user.username);
+			//For now we want it to not be changeable
+			//if(row.dplink === null){
 				embed.setThumbnail(user.avatarURL);
-			}else{
-				embed.setThumbnail(row.dplink);
-			}
+			//}else{
+				//embed.setThumbnail(row.dplink);
+			//}
 			embed.setDescription(`**Gender :**  ${row.gender}\n**Age :**  ${row.age}\n**Games Played :**  ${row.games}\n**Games Won :**  ${row.wins}`);
 			embed.addField("Description", row.desc)
 				.addField("Record", row.record);
 			//Now send the embed
 			msg.channel.send({embed});
 		}else{
-			msg.reply(user.id===msg.author.id?"you have":`user ${user} has` + " not been registered in global database yet!");
+			msg.reply((user.id===msg.author.id?"you have":`user ${user} has`) + " not been registered in global database yet!");
 		}
 	}).catch(err => {
 		//Error
@@ -160,7 +187,7 @@ function checkGlobal(id){
 
 function getProfile(id){
 	return new Promise((resolve, reject) => {
-		userdb.get("select username, ifnull(gender, 'Unknown') as gender, ifnull(age, 'Unknown') as age, ifnull(personal_record, 'No record yet') as record, ifnull(personal_desc, 'No description yet') as desc, games, wins, dplink from global_player where user_id = ?", id, function(err, row) {
+		userdb.get("select ifnull(gender, 'Unknown') as gender, ifnull(age, 'Unknown') as age, ifnull(personal_record, 'No record yet') as record, ifnull(personal_desc, 'No description yet') as desc, games, wins from global_player where user_id = ?", id, function(err, row) {
 			if(err)reject(err);//If error occurred, reject
 			if(row)resolve(row);//if user was found, resolve with the profile
 			else resolve();//if user wasn't found, resolve without anything
@@ -200,7 +227,9 @@ function setPropertyWithSpaces(msg, client, name, args){
 		}
 	}
 	var col_name = name;
-	if(name == "Info")col_name = "personal_desc";
+	if(aliases["dbanmes"][name]){
+		col_name = aliases["dbnames"][name];//If column name is different from the name in the command
+	}
 	updateDB(msg, name, col_name, data, user);
 }
 
@@ -234,10 +263,25 @@ function setProperty(msg, client, name, args){
 		msg.reply(`correct syntax is: \`!set${name} <${name.toLowerCase()}>\`.`);
 		return;
 	}
+	if(aliases["dbanmes"][name]){
+		col_name = aliases["dbnames"][name];//If column name is different from the name in the command
+	}
 	updateDB(msg, name, name, val, user);
 }
 
 function updateDB(msg, name, col_name, val, user){
+	if(aliases[(name + "Options")]){
+		if(aliases[(name + "Options")][val.toLowerCase()]){
+			val = aliases[(name + "Options")][val.toLowerCase()];
+		}else{
+			msg.reply(`\`${val}\` is not a valid option for \`!set${name}\``);
+			return;
+		}
+	}
+	if(aliases[(name + "CharacterLimit")] && val.length > aliases[(name + "CharacterLimit")]){
+		msg.reply(`\`${val}\` has too many characters for \`!set${name}\` (limit is ${aliases[(name + "CharacterLimit")]})`);
+		return;
+	}
 	userdb.run("update global_player set " + col_name + " = ? where user_id = ?", [val, user.id], function(err) {
 		if (err) {
 			utils.errorMessage(`There was an error: ${err}`);
@@ -249,7 +293,7 @@ function updateDB(msg, name, col_name, val, user){
 					utils.errorMessage(`Something is clearly wrong - ${checkGlobal(user.id)} returned by checkGlobal`);
 					msg.reply("an error occurred");
 				}else{
-					msg.reply(user.id===msg.author.id?"you have":`user ${user} has` + " not been registered in global database yet!");
+					msg.reply((user.id===msg.author.id?"you have":`user ${user} has`) + " not been registered in global database yet!");
 				}
 			}).catch(err =>{
 				utils.errorMessage(`There was another error: ${err}`);
@@ -260,7 +304,7 @@ function updateDB(msg, name, col_name, val, user){
 			msg.reply(`strange error - ${this.changes} people's data was updated. Contact the Devs.`);
 		}else if(this.changes === 1){
 			utils.successMessage(`${name} of @${user.username} successfully set to "${val}!"`);
-			msg.reply((msg.author.id==user.id?`your ${name}`:`${name} of ${user}`)+ ` successfully set to \`${val}\`!`);
+			msg.reply((msg.author.id==user.id?`your ${name.toLowerCase()}`:`${name.toLowerCase()} of ${user}`)+ ` successfully set to \`${val}\`!`);
 		}else{
 			msg.reply("an error occurred");
 		}
