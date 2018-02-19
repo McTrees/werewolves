@@ -20,6 +20,7 @@
 
 
 // available things:
+  // exports.nice_names            : nice names for game states
   // exports.init()                : init function, to be called when program starts
   // exports.data()                : promise of contents of state.JSON
   // exports.set_state_num(v)      : }
@@ -37,6 +38,7 @@ const path = require("path")
 const filename = path.join(__dirname, "state.json")
 const max_state = 4
 const season_code_max_length = 8
+
 const defaults = {
   state_num: 0,
   season_code: "??",
@@ -44,64 +46,70 @@ const defaults = {
   day_num: 0,
   night_time: false
 }
+
 const nice_names = {
-  0: "off",
+  0: "pre-signups",
   1: "signups open",
   2: "assigning roles",
-  3: "awaiting start",
+  3: "roles sent, awaiting start",
   4: "game in progress"
 }
+exports.nice_names = nice_names
 
 const utils = require("../utils")
 
-exports.init = function() {
+exports.init = function(reset) {
   // called when program starts
   // creates file if it doesn't exist, and if it does it checks it's valid
-  if (fs.existsSync("game/state.json")) {
-    // it exists, so do some checks
-    fs.readFile(filename, {encoding: 'utf-8'}, function(err, data){
-      try {
-        var pdata = JSON.parse(data)
-        if (0 <= pdata.state_num && pdata.state_num <= max_state) {
-          // good
-          utils.infoMessage(`game state is currently '${nice_names[pdata.state_num]}' (#${pdata.state_num}) `)
-        } else {
-          // bad
-          throw "out of range"
-        }
-
-      } catch(e) {
-        // oh no, the json file isn't valid!
-        // better complain loudly and stop the process
-        utils.errorMessage("Game state file is corrupted or invalid! please fix this, or delete the file to fix automatically")
-        process.exit(1)
-        /*fs.unlink(filename, function(err) {
-          if (err) {throw err; }
-          create_with_defaults(false)
-        })*/
-      }
-    })
-  } else {
-    // need to create one with some sensible defaults.
+  if (reset) {
     create_with_defaults(true)
+  } else {
+    if (fs.existsSync("game/state.json")) {
+      // it exists, so do some checks
+      fs.readFile(filename, {encoding: 'utf-8'}, function(err, data){
+        try {
+          var pdata = JSON.parse(data)
+          if (0 <= pdata.state_num && pdata.state_num <= max_state) {
+            // good
+            utils.infoMessage(`game state is currently '${nice_names[pdata.state_num]}' (#${pdata.state_num}) `)
+          } else {
+            // bad
+            throw "out of range"
+          }
+        } catch(e) {
+          // oh no, the json file isn't valid!
+          // better complain loudly and stop the process
+          utils.errorMessage("Game state file is corrupted or invalid! please fix this, or delete the file to fix automatically")
+          process.exit(1)
+          /*fs.unlink(filename, function(err) {
+            if (err) {throw err; }
+            create_with_defaults(false)
+          })*/
+        }
+      })
+    } else {
+      // need to create one with some sensible defaults.
+      create_with_defaults(false)
+    }
   }
 }
 
-function create_with_defaults(warn) {
-  if (warn) {
-    utils.warningMessage("game state file not found - creating a new one")
-  }
+function create_with_defaults(reset) {
+  utils.warningMessage(reset?"resetting game state":"game state file not found - creating a new one")
   fs.writeFile(filename, JSON.stringify(defaults), function(err) {
     if (err) {throw err;}
   })
 }
 
 exports.data = function() {
-  return require("./state.json")
+  var r = require("./state.json")
+  utils.debugMessage(`get state data called, data is ${JSON.stringify(r)}`)
+  return r
 }
 
 function set_data(d) {
   var datastring = JSON.stringify(d)
+  utils.debugMessage(`set_data : ${datastring}`)
   fs.writeFile(filename, datastring, function(err) {
     if (err) {throw err ;}
   })
@@ -110,41 +118,44 @@ function set_data(d) {
 exports.set_state_num = function(v) {
   // sets state_num to v
   if (typeof v == "number" && (0 <= v && v <= max_state)) {
-    exports.data().then(data=>{
-      data.state_num = v
-      set_data(data)
-    })
+    var data = exports.data()
+    data.state_num = v
+    set_data(data)
   }
 }
 
 exports.set_season_code = function(v) {
   // sets state_num to v
   if (typeof v == "string" && v.length >= season_code_max_length) {
-    exports.data().then(data=>{
-      data.season_code = v
-      set_data(data)
-    })
+    var data = exports.data()
+    data.season_code = v
+    set_data(data)
   }
+}
+
+exports.set_season_name = function(n) {
+  // sets season name to n
+  var data = exports.data()
+  data.season_name = n
+  set_data(data)
 }
 
 exports.set_day = function(night_time, n) {
   // sets state_num to v
-  if (typeof night_time == "boolean" && typeof n == "number" && n >= 0)) {
-    exports.data().then(data=>{
+  if (typeof night_time == "boolean" && typeof n == "number" && n >= 0) {
+      var data = exports.data()
       data.night_time = night_time
       data.day_num = n
       set_data(data)
-    })
   }
 }
 
 exports.next_day_or_night = function() {
   // next day or night :p
-  exports.data().then(data=>{
+    var data = exports.data()
     if (!data.night_time) {
       data.day_num += 1 // increment on day->night only
     }
     data.night_time = !data.night_time
     set_data(data)
-  })
 }
