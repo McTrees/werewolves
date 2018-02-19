@@ -8,20 +8,6 @@ const utils = require("../utils")
 
 const VALID_ROLES = ["INNOCENT", "WEREWOLF"]
 
-class Game extends events.EventEmitter {
-  constructor(season_number) {
-    this.season_number = season
-    this.cycle = 0 // incremented at the start of every day
-  }
-
-  day() {
-    this.emit("day", ++this.cycle)
-  }
-  night() {
-    this.emit("night", this.cycle)
-  }
-}
-
 exports.is_started = function () {
   // decides if a game is currently in progress.
   return fs.existsSync("game.dat")
