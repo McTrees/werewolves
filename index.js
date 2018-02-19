@@ -41,15 +41,14 @@ const msg_handler = require("./msg/msg_handler");
 const failsafes = require("./failsafes");
 utils.debugMessage("Loaded modules.");
 
+utils.debugMessage("Running inits:")
+require("./user/user").init()
+require("./game/game_state").init()
+utils.debugMessage("Inits done")
+
 if (token == 'insert-token-here') {
 	utils.errorMessage("Incorrect login credentials passed! Please edit token.json with your bot's token.", true)
 	process.exit();
-}
-
-if (fs.existsSync("game.dat")) {
-	utils.infoMessage("A game is currently in progress")
-} else {
-	utils.infoMessage("No game is currently in progress")
 }
 
 // this makes unhandled promise rejections a fatal error, not a supressed warning.
@@ -65,7 +64,6 @@ client.on('message', msg => {
   msg_handler(msg, client);
 });
 
-require("./user/user").init()
 client.login(token)
 
 
