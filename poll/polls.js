@@ -1,3 +1,6 @@
+//IMPORTANT NOTE - MAJOR OVERHAUL PROBABLY COMING UP SOON
+
+
 const config = require("../config");
 const aliases = require("./polls_aliases");
 const utils = require("../utils");
@@ -6,6 +9,7 @@ const internal = require("./internal");
 //The above is self-explanatory, I think
 
 exports.startPollCmd = function (msg, client, args){
+	if(fail(msg))return;
 	utils.debugMessage(`@${msg.author.username} tried to create a poll.`);
 	if(args.length <= 1){
 		utils.errorMessage(`Insufficient arguments provided for startPollCmd!`);
@@ -19,10 +23,12 @@ exports.startPollCmd = function (msg, client, args){
 	}
 	var id; //Poll ID
 	var ch;
+	var mayor_double = false;
 	switch (type) {
 	case ("l"):
 		//The daily lynch
 		ch = config.channel_ids.voting_booth;
+		mayor_double = true;
 		utils.debugMessage("A lynch poll.");
 		break;
 	case ("w"):
@@ -35,6 +41,12 @@ exports.startPollCmd = function (msg, client, args){
 		ch = config.channel_ids.cult;
 		utils.debugMessage("A cult poll.");
 		break;
+	case ("o"):
+		//Any other public polls - namely the mayor, reporter and guardian polls
+		ch = config.channel_ids.voting_booth;
+		mayor_double = true;
+		utils.debugMessage("A general poll.");
+		break;
 	default:
 		msg.reply("I'm sorry, but `" + type + "` is not a valid poll type (Types are -\nl - The Daily Lynch\nw - The Werewolves poll\nc - The Cult poll");
 		return;
@@ -42,9 +54,22 @@ exports.startPollCmd = function (msg, client, args){
 	var data = {
 		msg_text: txt,
 		channel_id: ch,
-		options: []
+		raven:(type === "l"),
+		mayor:mayor_double,
+		options: [{
+			txt: "<@329977469350445069>",
+			emoji: "😃"
+		}, {
+			txt: "<@402072907284480000>",
+			emoji: "😕"
+		}, {
+			txt: "ABCDEFGH",
+			emoji: "💀"
+		}
+		]
 	};
 	players.all_alive().then((rows) =>{
+		/*
 		if(!rows || rows.length === 0)throw new Error("The database returned nothing! The game has probably not started!");
 		rows.forEach((row) => {
 			utils.debugMessage("Row: " + row);
@@ -53,6 +78,7 @@ exports.startPollCmd = function (msg, client, args){
 				emoji: row.emoji
 			});
 		});
+		*/
 		id = internal.startPoll(client, data);
 		//Send message informing GMs of new poll
 		client.channels.get(config.channel_ids.gm_confirm).send("A new Poll, `" + txt + "` (id: " + id + ") was created.");
@@ -66,6 +92,51 @@ exports.startPollCmd = function (msg, client, args){
 }
 
 /**
+Function - threatenCmd
+Function for the Raven to threaten a player
+Arguments:
+msg - The message that triggered the function
+client - The Discord Client that the bot uses
+id - The ID of the poll to check
+ */
+exports.threatenCmd = async function (msg, client, args) {
+	if(fail(msg))return;
+	var user;
+	if(args.length === 1){
+		var id = "";
+		try{
+			id = await players.resolve_to_id(args[0])	
+		}catch(err){
+			if(err){
+				utils.errorMessage(err);
+				msg.reply("an error occurred.");
+				return;
+			}
+			utils.errorMessage(`Incorrect syntax for threatenCmd`);
+			msg.reply("correct syntax is: `!profile <user>` (`<user>` must either be a mention or the emoji of the player).");
+			return;
+		}
+		user = client.users.get(id);
+		utils.debugMessage(`Trying to threaten @${user.username}`);
+	}else{
+		utils.errorMessage(`Incorrect syntax used for threatenCmd.`);
+		msg.reply("correct syntax is: `!profile <user>` (`<user>` must either be a mention or the emoji of the player).");
+		return;
+	}
+	var val = internal.threaten(user.id);
+	if(val === 1){
+		utils.successMessage(`Successfully threatened @${user.username}!`);
+		msg.reply(`${user} has successfully been threatened`);
+	}else if(val === 0){
+		utils.warningMessage(`@${user.username} has already been threatened!`);
+		msg.reply(`${user} has already been threatened`);
+	}else{
+		utils.errorMessage(`Could not threaten @${user.username}!`);
+		msg.reply(`${user} could not be threatened`);
+	}
+}
+
+/**
 Function - checkPollCmd
 Checks if all the emojis have been added to the poll
 Arguments:
@@ -74,6 +145,7 @@ client - The Discord Client that the bot uses
 id - The ID of the poll to check
  */
 exports.checkPollCmd = function (msg, client, id) {
+	if(fail(msg))return;
 	if(id.length !== 1){
 		msg.reply(`correct syntax is \`!checkPoll <pollID>\``);
 		utils.infoMessage(`@${msg.author.username} used wrong syntax for !checkPoll`);
@@ -115,6 +187,7 @@ client - The Discord Client that the bot uses
 id - The ID of the poll to end
  */
 exports.endPollCmd = function (msg, client, id) {
+	if(fail(msg))return;
 	if(id.length !== 1){
 		msg.reply(`correct syntax is \`!checkPoll <pollID>\``);
 		utils.infoMessage(`@${msg.author.username} used wrong syntax for !checkPoll`);
@@ -143,7 +216,6 @@ exports.endPollCmd = function (msg, client, id) {
 			};
 		});
 	}).then((dat) => {
-
 		var results = internal.calculateResults(poll, dat.values, client);
 		ch.send(results.txt);
 		internal.cleanUp(dat.msgs, id);
@@ -152,4 +224,9 @@ exports.endPollCmd = function (msg, client, id) {
 		utils.errorMessage(err);
 		ch.send("Error occurred.");
 	});
+}
+
+//INTERNAL - JUST IN CASE
+function fail(msg){
+	return !msg.member.roles.has(config.role_ids.gameMaster);
 }

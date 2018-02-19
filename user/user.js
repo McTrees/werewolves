@@ -16,16 +16,21 @@ const discord = require('discord.js')
 ███████ ██   ██ ██       ██████  ██   ██    ██    ███████ ██████
 */
 
-exports.init = function() {
+exports.init = function(reset_data) {
   // called on bot start
   fs.readFile(path.join(__dirname, 'user.db'), {encoding: "utf-8"}, function(err, data){
     if(err) throw err;
-    if (data === '') { // database is empty and needs to be created
+	if (data === '' || reset_data) { // database is empty and needs to be created
       fs.readFile(path.join(__dirname, 'user_db_schema.sql'), {encoding: "utf-8"}, function(er, schema) {
         if (er) throw er
         else {
-          utils.warningMessage("User database not found - creating a new one")
-          userdb.exec(schema)
+          utils.infoMessage(reset_data?"You chose to reset the server data for this bot, now it's being done.":"User database not found - creating a new one");
+          userdb.exec(schema);
+		  if(reset_data){
+			  utils.warningMessage("Database reset.");
+		  }else{
+			  utils.successMessge("Database created!");
+		  }
         }
       })
     }

@@ -1,3 +1,6 @@
+//IMPORTANT NOTE - MAJOR OVERHAUL PROBABLY COMING UP SOON
+
+
 const fs = require("fs");
 const config = require("../config");
 const polls = require("./polls.json");
@@ -27,10 +30,10 @@ Example for data:{
 	msg_text: "Vote for your favourite!",
 	channel_id: "4034578342784532XX",
 	options: [{
-			txt: "<@329977469350445069>",
+			txt: "<@32997746935044XXXX>",
 			emoji: "😃"
 		}, {
-			txt: "<@402072907284480000>",
+			txt: "<@40207290728448XXXX>",
 			emoji: "😕"
 		}, {
 			txt: "A",
@@ -68,7 +71,7 @@ exports.startPoll = function(client, data) {
 		promises[i] = ch.send(txt[i]);
 	}
 	//Combine all the promises
-	Promise.all(promises).then(values => {
+	Promise.all(promises).then(async function(values){
 		//This whole code just adds the emojis
 		var msgs = new Array(values.length);
 		for (var i = 0; i < values.length; i++) {
@@ -80,7 +83,7 @@ exports.startPoll = function(client, data) {
 			for (var j = 0; j < 20; j++) {
 				if (i * 20 + j >= options.length)
 					break;
-				values[i].react(options[i * 20 + j].emoji).catch (err => {
+				await values[i].react(options[i * 20 + j].emoji).catch (err => {
 					utils.errorMessage(err);
 					utils.errorMessage("The bot failed to add an emoji to the message. If you know how I can set this right, please tell me.");
 					utils.infoMessage("For now, use !checkPoll <id> to set the poll right.");
@@ -97,6 +100,8 @@ exports.startPoll = function(client, data) {
 		//Though again, an extra kilobyte or two isn't much
 		polls["polls"][num] = {
 			channel: ch.id,
+			mayor:data.mayor,
+			raven:data.raven,
 			messages: msgs,
 			options: options
 		};
@@ -149,15 +154,27 @@ exports.calculateResults = function(poll, values, client) {
 	};
 	
 	var disqualified = findDisqualified(values, client);
-
-	var ranked = rankResults(results, values);
+	
+	var ranked;
+	var mayor_id = "000";
+	if(poll.mayor){
+		var mayor = getMayorRole(client);
+		if(mayor.members.size > 0)mayor_id = mayor.members.first().id;
+		if(!poll.raven){
+			ranked = rankResults(results, values, mayor_id, false);
+		}else{
+			ranked = rankResults(results, values, mayor_id, polls.threatened);
+		}
+	}else{
+		ranked = rankResults(results, values, false, false);
+	}
 	//Build the message to be sent
 	for (var k = 0; k < ranked.length; k++) {
 		var i = ranked[k].id;
 		var users = Array.from(values[i]);
-		txt += "\n" + (users.length + " voted for " + poll["options"][i]["txt"] + " (" + poll["options"][i]["emoji"] + "):\n");
+		txt += "\n" + (ranked[k].num + " votes for " + poll["options"][i]["txt"] + " (" + poll["options"][i]["emoji"] + "):\n");
 		for (var j = 0; j < users.length; j++) {
-			txt += ("\t<@" + users[j][1].id + ">\n");
+			txt += ("\t<@" + users[j][1].id + ((users[j][1].id === mayor_id)?`> (${mayor})\n`:">\n"));
 		}
 	}
 	//And make sure to mention who was disqualified
@@ -189,6 +206,7 @@ exports.cleanUp = function(msgs, id) {
 	var fs_error = false;
 	//Delete the poll from storage
 	delete polls["polls"][id];
+	polls.threatened = [];
 	fs.writeFile("./poll/polls.json", JSON.stringify(polls, null, 2), (err) => {
 		if (err) {
 			utils.errorMessage(err);
@@ -200,6 +218,23 @@ exports.cleanUp = function(msgs, id) {
 		utils.successMessage("Successfully ended poll!");
 }
 
+exports.threaten = function(id){
+	for(var i = 0; i < polls.threatened.length; i++) {
+		if (polls.threatened[i] === id) {
+			return 0;
+		}
+	}
+	polls.threatened.push(id);
+	fs.writeFile("./poll/polls.json", JSON.stringify(polls, null, 2), (err) => {
+		if (err) {
+			utils.errorMessage(err);
+			client.channels.get(config.channel_ids.gm_confirm).send("Error occurred when trying to edit the polls.json file.");
+			return -1;
+		}
+	});
+	return 1;
+}
+
 /*
 ██ ███    ██ ████████ ███████ ██████  ███    ██  █████  ██
 ██ ████   ██    ██    ██      ██   ██ ████   ██ ██   ██ ██
@@ -209,16 +244,27 @@ exports.cleanUp = function(msgs, id) {
 */
 
 
-function rankResults(results, values){
+function rankResults(results, values, mayor_id, threatened){
 	//Rank the results of the poll (descending order)
 	var ranked = new Array(0);
 	for (var i = 0; i < values.length; i++) {
-		results.options[i].votes = values[i].size; //Also add the vote tally to the results object
+		var n = values[i].size;
+		if(mayor_id && values[i].has(mayor_id)){
+			n++;
+		}
+		if(threatened){
+			for(var j = 0; j < threatened.length; j++){
+				if(results.options[i].txt == `<@${threatened[j]}>`){
+					n+=2;
+				}
+			}
+		}
+		results.options[i].votes = n; //Also add the vote tally to the results object
 		if (values[i].size === 0)
 			continue;
 		ranked.push({
 			id: i,
-			num: values[i].size
+			num: n
 		});
 	}
 	ranked.sort(function (a, b) {
@@ -263,4 +309,8 @@ function findDisqualified(values, client){
 		});
 	}
 	return disqualified;
+}
+
+function getMayorRole(client){
+	return client.guilds.get(config.guild_id).roles.get(config.role_ids.mayor);
 }

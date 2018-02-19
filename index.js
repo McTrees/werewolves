@@ -3,18 +3,28 @@ const fs = require('fs');
 
 const utils = require('./utils');
 update = true
+reset_data = false;
 
 utils.infoMessage("Starting bot...");
 // Check to see if the user wants to run in debug mode
 if (process.argv.indexOf("--debug") > -1) {
 	utils.debugMode();
 }
+
+//Check if the user wants to reset the entire server data (including global profiles)
+//WARNING - Use this flag only during the testing phase, or if the server is being reset.
+if(process.argv.indexOf("--reset-data") > -1){
+	reset_data = true;
+	utils.warningMessage("Will reset database.");
+}
+
 if (process.argv.indexOf("--noupdate") > -1) {
 	update = false; //dont check for updates
 }
 
 // Check for updates
 /*
+//Why was this commented out?
 if (update) {
 	try {
 	checkForUpdate();
@@ -64,6 +74,9 @@ client.on('message', msg => {
   msg_handler(msg, client);
 });
 
+require("./user/user").init(reset_data);//Reset the database if reset-data flag is present
+
+//Now login
 client.login(token)
 
 

@@ -1,0 +1,19 @@
+{
+	"dbnames":{
+		"Info":"personal_desc",
+		"Record":"personal_record"
+	},
+	
+	"GenderOptions":{
+		"male":"Male",
+		"m":"Male",
+		"female":"Female",
+		"f":"Female",
+		"other":"Other",
+		"o":"Other",
+		"unknown":"Unknown",
+		"u":"Unknown"
+	},
+	
+	"AgeCharacterLimit":7
+}
