@@ -18,8 +18,8 @@ alieses need to be one word
 
 module.exports = function(msg, client) {
   if (msg.author == client.user) {return}; //ignore own messages
-  var messageContent = msg.content.split(" ");
   if (messageContent[0][0] == config.bot_prefix) { //only run if it is a message starting with the bot prefix (if it's a command)
+    var messageContent = msg.content.split(" ");
     messageContent[0] = messageContent[0].slice(1); //remove the prefix from the message
     try {
       messageContent = (aliases[messageContent[0]].split(" ").concat(messageContent.slice(1)));
