@@ -7,6 +7,7 @@ const utils = require("../utils.js")
 const config = require('../config');
 const admin = require("../admin/admin")
 const discord = require('discord.js')
+const game_state = require("../game/game_state")
 
 /*
 ███████ ██   ██ ██████   ██████  ██████  ████████ ███████ ██████
@@ -20,17 +21,17 @@ exports.init = function(reset_data) {
   // called on bot start
   fs.readFile(path.join(__dirname, 'user.db'), {encoding: "utf-8"}, function(err, data){
     if(err) throw err;
-	if (data === '' || reset_data) { // database is empty and needs to be created
+    if (data === '' || reset_data) { // database is empty and needs to be created
       fs.readFile(path.join(__dirname, 'user_db_schema.sql'), {encoding: "utf-8"}, function(er, schema) {
         if (er) throw er
         else {
           utils.infoMessage(reset_data?"You chose to reset the server data for this bot, now it's being done.":"User database not found - creating a new one");
           userdb.exec(schema);
-		  if(reset_data){
-			  utils.warningMessage("Database reset.");
-		  }else{
-			  utils.successMessge("Database created!");
-		  }
+          if(reset_data){
+            utils.warningMessage("Database reset.");
+          }else{
+            utils.successMessge("Database created!");
+          }
         }
       })
     }
@@ -40,8 +41,12 @@ exports.init = function(reset_data) {
 exports.signupCmd = function (msg, client, content) {
   utils.debugMessage(`@${msg.author.username} ran signup command with emoji ${content[0]}`)
   // command for signing yourself up
-  if (fs.existsSync("game.dat")) {
-    msg.reply('sorry, but a game is already in progress! Please wait for next season to start.')
+  if (game_state.data().state_num !== 1) {
+    if (game_state.data().state_num == 0) {
+      msg.reply("signups aren't open yet!")
+    } else {
+      msg.reply("a game is currently in progress. please wait for it to finish before signing up")
+    }
   } else {
     if (content.length != 1){
       msg.reply(`I'm glad you want to sign up but the correct syntax is \`${config.bot_prefix}signup <emoji>\``)
@@ -94,7 +99,6 @@ exports.signup_allCmd = async function(msg, client, args) {
         for (j=0;j<temparray.length;j++) {
           row = temparray[j]
           role = await exports.get_role(row.user_id)
-          utils.debugMessage(`user list, ${row.user_id}'s role wass ${role}'`)
           if (role) {
             emb.addField(`${utils.fromBase64(row.emoji)} - ${client.users.get(row.user_id).username}#${client.users.get(row.user_id).discriminator}`, 'Has a role')
           } else {
@@ -140,12 +144,14 @@ exports.get_role = function(id) {
       //console.log("yes")
       if (err) { throw err }
       else {
-        if (row) {
-          utils.debugMessage(`role of ${id} was ${row}`)
-          resolve(row.role)
+        if (!row) {
+          resolve(undefined)
         } else {
-          reject()
+          resolve(row.role)
         }
+        //} else {
+      //    reject()
+      //  }
       }
     })
   });
