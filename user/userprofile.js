@@ -12,6 +12,40 @@ const config = require('../config');
 ███████ ██   ██ ██       ██████  ██   ██    ██    ███████ ██████
 */
 
+//Register yourself in global database
+exports.registerGlobalCmd = async function(msg, client, args){
+	var user = msg.author;
+	if(args.length === 0){
+		utils.debugMessage(`@${user.username} wants to register in global database`);
+	}else if(args.length === 1){
+		if(msg.member.roles.has(config.role_ids.gameMaster) && /^<@!?(\d+)>$/.test(args[0])){
+			user = client.users.get(/^<@!?(\d+)>$/.exec(args[0])[1]);
+			utils.debugMessage(`@${msg.author.username} wants to register @{user.username} in global database`);
+		}else{
+			if(msg.member.roles.has(config.role_ids.gameMaster)){
+				utils.warningMessage("A GM used incorrect syntax for registerGlobal - <user> wasn't a mention");// I should be more consistent
+				msg.reply("correct syntax is `!registerGlobal [<user>]` (`<user>` must be a mention).");
+			}else{
+				utils.warningMessage("A user used incorrect syntax for registerGlobal");
+				msg.reply("correct syntax is `!registerGlobal`");
+			}
+			return;
+		}
+	}else{
+		utils.warningMessage("A user used incorrect syntax for registerGlobal");
+		msg.reply("correct syntax is `!registerGlobal`");
+		return;
+	}
+	var result = await registerIfNew(user);
+	if(result === 1){
+		msg.reply(user.id==msg.author.id?`${user} was successfully registered globally.`:"you were successfully registered globally.");
+	}else if(result === 0){
+		msg.reply(user.id==msg.author.id?`${user} is already registered globally.`:"you are already registered globally.");
+	}else{
+		msg.reply("an error occurred.");
+	}
+}
+
 //Set the age of a user
 exports.setAgeCmd = function(msg, client, args){
 	setProperty(msg, client, "Age", args);
