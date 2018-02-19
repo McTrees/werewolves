@@ -99,3 +99,41 @@ exports.data = function() {
     })
   });
 }
+
+function set_data(d) {
+  var datastring = JSON.stringify(d)
+  fs.writeFile(filename, datastring, function(err) {
+    if (err) {throw err ;}
+  })
+}
+
+exports.set_state_num = function(v) {
+  // sets state_num to v
+  if (typeof v == "number" && (0 <= v && v <= max_state)) {
+    exports.data().then(data=>{
+      data.state_num = v
+      set_data(data)
+    })
+  }
+}
+
+exports.set_season_code = function(v) {
+  // sets state_num to v
+  if (typeof v == "string" && v.length >= season_code_max_length) {
+    exports.data().then(data=>{
+      data.season_code = v
+      set_data(data)
+    })
+  }
+}
+
+exports.set_day = function(night_time, n) {
+  // sets state_num to v
+  if (typeof night_time == "boolean" && typeof n == "number" && n >= 0)) {
+    exports.data().then(data=>{
+      data.night_time = night_time
+      data.day_num = n
+      set_data(data)
+    })
+  }
+}
