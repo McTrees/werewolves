@@ -5,19 +5,45 @@ const user = require("../user/user.js")
 const discord = require("discord.js")
 const admin = require("../admin/admin")
 const utils = require("../utils")
+const game_state = require("./game_state")
 
 const VALID_ROLES = ["INNOCENT", "WEREWOLF"]
 
 exports.is_started = function () {
   // decides if a game is currently in progress.
-  return fs.existsSync("game.dat")
+  // TODO: replace all uses of this with the proper one
+  // DEPRECIATED:: DON'T USE THIS!!!
+  return game_state.data().state_num > 1
 
 };
+exports.open_signupsCmd = function(msg, client) {
+  // game state 0->1
+  if (game_state.data().state_num !== 0){
+    msg.reply("wrong game state!")
+  } else {
+    game_state.set_state_num(1)
+    msg.reply("signups opened! yay!")
+  }
+}
+
+exports.game_infoCmd = function(msg, client) {
+  utils.debugMessage("game info command called")
+  var data = game_state.data()
+  var emb = new discord.RichEmbed()
+  emb.title = "Game info"
+  emb
+    .setColor(0x44009b)
+    .addField("Season name", `${data.season_name} (\`${data.season_code}\`)`)
+    .addField("Game phase", `${game_state.nice_names[data.state_num]} (#${data.state_num})`)
+    .addField("Game time", `${data.night_time ? "Night" : "Day"} #${data.day_num}`)
+  msg.channel.send(emb)
+}
 
 exports.startseasonCmd = function (msg, client) {
+  // game state 1 -> 2
   // start a new season
-  if (exports.is_started()) {
-    msg.reply("It appears that we are already in a game... -_-")
+  if (game_state.data().state_num !== 1) {
+    msg.reply("we are not in the right game state to do that")
   } else {
     user.all_signed_up().then(asu=>{
       if (asu.length == 0) { // 0 players isn't enough!
@@ -31,7 +57,7 @@ exports.startseasonCmd = function (msg, client) {
 };
 
 function startgame(client) {
-  fs.writeFile("game.dat", "GAME", err =>{if (err) throw err})
+  game_state.set_state_num(2)
   user.all_signed_up().then(asu=>{
     gm_confirm = client.channels.get(config.channel_ids.gm_confirm)
     gm_confirm.send(`Signed up users: ${asu.map(id=>`\n- <@${id.user_id}>`)}`)
@@ -40,13 +66,14 @@ function startgame(client) {
 }
 
 exports.setroleCmd = async function (msg, client, args) {
+  // game state 2 only
   if (args.length !== 2) {
     msg.reply("invalid syntax!")
     return
   }
   let usr = args[0]
   let role = args[1]
-  if (!exports.is_started()) {
+  if (game_state.data().state_num !== 2) {
     msg.reply("signups are currently open or a game is not being set up")
   } else {
     if (!VALID_ROLES.includes(role)) {
@@ -79,13 +106,15 @@ exports.setroleCmd = async function (msg, client, args) {
 }
 
 exports.sendrolesCmd = async function(msg, client) {
-  if (!exports.is_started()){
+  // game state 2->3
+  if (game_state.data().state_num !== 2){
     msg.reply("signups are currently open or a game is not being set up")
   } else {
     var any_left = await user.any_left_unfinalised()
     if (any_left) {
       msg.reply("how do you expect me to tell everyone their roles when you haven't even given everyone a role yet? ಠ_ಠ")
     } else {
+      game_state.set_state_num(3)
       utils.infoMessage("sending roles to players")
       msg.reply("sending roles to all players!")
       var all_users = await user.all_alive()
@@ -111,7 +140,7 @@ exports.sendrolesCmd = async function(msg, client) {
 }
 
 exports.dayCmd = async function(msg, client) {
-  
+
 }
 
 exports.nightCmd = async function(msg, client) {
