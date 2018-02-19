@@ -95,7 +95,7 @@ exports.data = function() {
   return new Promise(function(resolve, reject) {
     fs.readFile(filename, {encoding: 'utf-8'}, function(err, data) {
       if (err) {throw err;}
-      resolve(data)
+      resolve(JSON.parse(data))
     })
   });
 }
