@@ -260,7 +260,7 @@ function updateDB(msg, name, col_name, val, user){
 			msg.reply(`strange error - ${this.changes} people's data was updated. Contact the Devs.`);
 		}else if(this.changes === 1){
 			utils.successMessage(`${name} of @${user.username} successfully set to "${val}!"`);
-			msg.reply(`${name} of ${user} successfully set to \`${val}\`!`);
+			msg.reply((msg.author.id==user.id?`your ${name}`:`${name} of ${user}`)+ ` successfully set to \`${val}\`!`);
 		}else{
 			msg.reply("an error occurred");
 		}
