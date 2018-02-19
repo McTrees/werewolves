@@ -30,7 +30,7 @@ exports.init = function(reset_data) {
           if(reset_data){
             utils.warningMessage("Database reset.");
           }else{
-            utils.successMessge("Database created!");
+            utils.successMessage("Database created!");
           }
         }
       })
