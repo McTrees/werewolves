@@ -23,8 +23,9 @@
   // exports.init()                : init function, to be called when program starts
   // exports.data()                : promise of contents of state.JSON
   // exports.set_state_num(v)      : }
-  // exports.set_season_code(v)    :  } you can probably guess these 3
+  // exports.set_season_code(v)    : } you can probably guess these 4
   // exports.set_day(night_time, n): }
+  // exports.set_season_name(n)    : }
 
 // utility things:
   // exports.next_day_or_night()   : goes to the next day or night.
@@ -39,6 +40,7 @@ const season_code_max_length = 8
 const defaults = {
   state_num: 0,
   season_code: "??",
+  season_name: "No Season Name Yet!",
   day_num: 0,
   night_time: false
 }
