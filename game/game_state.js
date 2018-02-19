@@ -57,7 +57,7 @@ exports.init = function() {
       } catch(e) {
         // oh no, the json file isn't valid!
         // better complain loudly and stop the process
-        utils.errorMessage("game state file is corrupted or invalid! please fix this, or delete the file to fix automatically")
+        utils.errorMessage("Game state file is corrupted or invalid! please fix this, or delete the file to fix automatically")
         process.exit(1)
         /*fs.unlink(filename, function(err) {
           if (err) {throw err; }
