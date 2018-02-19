@@ -26,6 +26,9 @@
   // exports.set_season_code(v)    :  } you can probably guess these 3
   // exports.set_day(night_time, n): }
 
+// utility things:
+  // exports.next_day_or_night()   : goes to the next day or night.
+
 // TODO in the future probably: make this use getters and setters rather than lots of functions
 
 const fs = require("fs")
@@ -136,4 +139,15 @@ exports.set_day = function(night_time, n) {
       set_data(data)
     })
   }
+}
+
+exports.next_day_or_night = function() {
+  // next day or night :p
+  exports.data().then(data=>{
+    if (!data.night_time) {
+      data.day_num += 1 // increment on day->night only
+    }
+    data.night_time = !data.night_time
+    set_data(data)
+  })
 }
