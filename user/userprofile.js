@@ -227,7 +227,7 @@ function setPropertyWithSpaces(msg, client, name, args){
 		}
 	}
 	var col_name = name;
-	if(aliases["dbanmes"][name]){
+	if(aliases["dbnames"][name]){
 		col_name = aliases["dbnames"][name];//If column name is different from the name in the command
 	}
 	updateDB(msg, name, col_name, data, user);
@@ -263,7 +263,7 @@ function setProperty(msg, client, name, args){
 		msg.reply(`correct syntax is: \`!set${name} <${name.toLowerCase()}>\`.`);
 		return;
 	}
-	if(aliases["dbanmes"][name]){
+	if(aliases["dbnames"][name]){
 		col_name = aliases["dbnames"][name];//If column name is different from the name in the command
 	}
 	updateDB(msg, name, name, val, user);

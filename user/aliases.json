@@ -2,7 +2,7 @@
 	"dbnames":{
 		"Info":"personal_desc",
 		"Record":"personal_record"
-	}
+	},
 	
 	"GenderOptions":{
 		"male":"Male",
@@ -13,7 +13,7 @@
 		"o":"Other",
 		"unknown":"Unknown",
 		"u":"Unknown"
-	}
+	},
 	
-	"AgeCharacterLimit":5
+	"AgeCharacterLimit":7
 }
