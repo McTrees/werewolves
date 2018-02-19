@@ -11,6 +11,7 @@ it calls functions from other files with the message object
 const config = require('../config');
 const aliases = require('./aliases');
 const utils = require("../utils")
+const permissions = require("./permissions")
 /*syntax: "alias" :"defined as",
 all other arguments that get send with the alias get added to the send
 alieses need to be one word
@@ -24,6 +25,15 @@ module.exports = function(msg, client) {
     try {
       messageContent = (aliases[messageContent[0]].split(" ").concat(messageContent.slice(1)));
     } catch (err) {;} //check aliases
+
+    // permissions checks
+    var messageContent = msg.content.split(" ");
+
+    cmd = messageContent[1]
+    utils.debugMessage(`Checking ${cmd} against permissions.json`)
+    p = permissions[cmd]
+    utils.debugMessage(`got ${p} from permissions.json`)
+
     try {
       switch (messageContent[0]) { //swicth the first part of the command, then run the function of the second part of the command, with any
         case ("u"):
