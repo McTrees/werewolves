@@ -17,7 +17,11 @@ exports.all_roles_list = function() {
 class RoleInterface {
   // class for wrapping a role and getting info about it
   constructor(data){
-    // TODO
+    this._name = data.name
+  }
+
+  get name() {
+    return this._name
   }
 
   static from(role_name) {
