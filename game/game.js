@@ -58,9 +58,12 @@ exports.startseasonCmd = function (msg, client) {
 function startgame(client) {
   game_state.set_state_num(2)
   user.all_signed_up().then(asu=>{
-    gm_confirm = client.channels.get(config.channel_ids.gm_confirm)
-    gm_confirm.send(`Signed up users: ${asu.map(id=>`\n- <@${id.user_id}>`)}`)
-    gm_confirm.send("For every user, please say `!g setrole @mention ROLE`, where ROLE is any of " + VALID_ROLES)
+    role_manager.all_roles_list().then(VALID_ROLES=>{
+      gm_confirm = client.channels.get(config.channel_ids.gm_confirm)
+      gm_confirm.send(`Signed up users: ${asu.map(id=>`\n- <@${id.user_id}>`)}`)
+      gm_confirm.send(`Valid roles: ${VALID_ROLES.map(n=>`\n- \`${n}\` (${role_manager.RoleInterface.from(n).name})`)}`)
+      gm_confirm.send("For every user, please say `!g setrole @mention ROLE`, where ROLE is any of " + VALID_ROLES)
+    })
   })
 }
 
@@ -70,6 +73,7 @@ exports.setroleCmd = async function (msg, client, args) {
     msg.reply("invalid syntax!")
     return
   }
+  let VALID_ROLES = await role_manager.all_roles_list()
   let usr = args[0]
   let role = args[1]
   if (game_state.data().state_num !== 2) {
