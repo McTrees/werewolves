@@ -56,16 +56,16 @@ exports.signupCmd = function (msg, client, content) {
             if (old) {
               msg.channel.send(`<@${msg.author.id}>'s emoji changed from ${utils.fromBase64(old)} to ${content[0]}`)
             } else {
-			  userprofile.registerIfNew(msg.author).then((result)=>{
-			    if(result === 0){
-					utils.debugMessage("A previous player of Werewolves has signed up for this season");
-				}else if (result === 1){
-					client.channels.get(config.channel_ids.gm_confirm).send(`<@${msg.author.id}> is a new player!`);
-				}else{
-					client.channels.get(config.channel_ids.gm_confirm).send(`Error in registering <@${msg.author.id}>!`);
-				}
-				msg.channel.send(`<@${msg.author.id}> signed up with emoji ${content[0]}`);
-			  });
+              userprofile.registerIfNew(msg.author).then((result)=>{
+                if(result === 0){
+                  utils.debugMessage("A previous player of Werewolves has signed up for this season");
+                }else if (result === 1){
+                  client.channels.get(config.channel_ids.gm_confirm).send(`<@${msg.author.id}> is a new player!`);
+                }else{
+                  client.channels.get(config.channel_ids.gm_confirm).send(`Error in registering <@${msg.author.id}>!`);
+                }
+                msg.channel.send(`<@${msg.author.id}> signed up with emoji ${content[0]}`);
+              });
             }
           })
         })
@@ -76,30 +76,39 @@ exports.signupCmd = function (msg, client, content) {
   }
 }
 
-exports.signup_allCmd = function(msg, client, args) {
-  exports.all_signed_up().then(rows=>{
+exports.signup_allCmd = async function(msg, client, args) {
+  //exports.all_signed_up().then(rows=>{
+  var rows = await exports.all_signed_up()
     utils.debugMessage(`signup_all command - ${rows.length} rows`)
-
-    // split the rows
-    var i,max,chunk,j,row
-    var size = 20 // 20 fields per embed
-    for (i=0,max=rows.length; i<max; i+=size) {
+    if (rows.length === 0) {
+      msg.reply("no one is signed up yet")
+    } else {
+      // split the rows
+      var i,max,temparray,j,row,emb,role
+      var size = 20 // 20 fields per embed
+      for (i=0,max=rows.length; i<max; i+=size) {
         temparray = rows.slice(i,i+size);
         emb = new discord.RichEmbed()
         emb.color = 0xffff00
         emb.title = "List of currently signed up players"
         for (j=0;j<temparray.length;j++) {
           row = temparray[j]
-          emb.addField(`${client.users.get(row.user_id).username}#${client.users.get(row.user_id).discriminator} - ${utils.fromBase64(row.emoji)}`, '\u200B')
+          role = await exports.get_role(row.user_id)
+          utils.debugMessage(`user list, ${row.user_id}'s role wass ${role}'`)
+          if (role) {
+            emb.addField(`${utils.fromBase64(row.emoji)} - ${client.users.get(row.user_id).username}#${client.users.get(row.user_id).discriminator}`, 'Has a role')
+          } else {
+            emb.addField(`${utils.fromBase64(row.emoji)} - ${client.users.get(row.user_id).username}#${client.users.get(row.user_id).discriminator}`, '\u200B')
+          }
         }
-
-        msg.channel.send(embed=emb)
+        msg.channel.send(emb)
+      }
     }
-  })
+  //})
 }
 
 exports.all_signed_up = function() {
-  // returns promise of a list of all signed up users' ids
+  // returns promise of a list of all signed up users' ids and emojis
   return new Promise(function(resolve, reject) {
     userdb.all("select user_id, emoji from signed_up_users", [], function(err, rows){
       if (err) {
@@ -115,11 +124,30 @@ exports.all_alive = function() {
   // promise of all alive users and their emojis
   return new Promise(function(resolve, reject) {
     userdb.all("select p.user_id id, s.emoji emoji from players as p inner join signed_up_users as s on p.user_id = s.user_id", [], function(err, rows){
-      if (err) throw err;
+      if (err) { throw err }
       else{
         resolve(rows)
       }
     });
+  });
+}
+
+exports.get_role = function(id) {
+  // get the role of a player
+  utils.debugMessage(`getting role of ${id}`)
+  return new Promise(function(resolve, reject) {
+    userdb.get("select role from players where user_id = ?", [id], function(err, row) {
+      //console.log("yes")
+      if (err) { throw err }
+      else {
+        if (row) {
+          utils.debugMessage(`role of ${id} was ${row}`)
+          resolve(row.role)
+        } else {
+          reject()
+        }
+      }
+    })
   });
 }
 
@@ -133,22 +161,23 @@ exports.finalise_user = function(id, role) {
   })
 }
 
-exports.any_left_unfinalised = async function() {
-  // promise bool, whether any signed up users have not yet been asigned a role
-  utils.debugMessage("any left unfinalised")
-  userdb.get("select user_id from signed_up_users where finalised = 0;", [], function(err, row){
-    // we should have a row if anyone does not have a role
-    if (err) throw err;
-    if (row === undefined) {
-      utils.debugMessage("any left unfinalised -- resolving false")
-      // none there
-      return false
-    } else {
-      // there is at least one user without a role
-      utils.debugMessage("any left unfinalised -- resolving true")
-      return true
-    }
-  })
+exports.any_left_unfinalised = function() {
+  return new Promise(function(resolve, reject) {
+
+    userdb.get("select user_id from signed_up_users where finalised = 0;", [], function(err, row){
+      // we should have a row if anyone does not have a role
+      if (err) throw err;
+      if (row === undefined) {
+        utils.debugMessage("any left unfinalised -- resolving false")
+        // none there
+        resolve(false)
+      } else {
+        // there is at least one user without a role
+        utils.debugMessage("any left unfinalised -- resolving true")
+        resolve(true)
+      }
+    })
+  });
 }
 
 exports.resolve_to_id = function(str) {
@@ -163,7 +192,7 @@ exports.resolve_to_id = function(str) {
     } else { // emoji or invalid
       userdb.get("select user_id from signed_up_users where emoji = ?", [utils.toBase64(str)], function(err, row){
         if (err) throw err //TODO: err handling
-        if (row.user_id) { resolve(row.user_id)}
+        if (row.user_id) { resolve(row.user_id) }
         else { reject() }
       })
     }
@@ -183,8 +212,8 @@ function addUser(id, emoji) {
   // if no one else is using that emoji, sign them up
   // or change their emoji
   // returns promise:
-    // reject = id of user using that emoji
-    // resolve: old emoji if changed, nothing (undefined) otherwise
+  // reject = id of user using that emoji
+  // resolve: old emoji if changed, nothing (undefined) otherwise
   utils.debugMessage("Function addUser called");
   return new Promise(function(resolve, reject) {
     getUserId(emoji).then(i=>{

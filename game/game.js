@@ -4,6 +4,7 @@ const fs = require("fs")
 const user = require("../user/user.js")
 const discord = require("discord.js")
 const admin = require("../admin/admin")
+const utils = require("../utils")
 
 const VALID_ROLES = ["INNOCENT", "WEREWOLF"]
 
@@ -32,8 +33,14 @@ exports.startseasonCmd = function (msg, client) {
   if (exports.is_started()) {
     msg.reply("It appears that we are already in a game... -_-")
   } else {
-    msg.channel.send("Starting season! Please check <#" + config.channel_ids.gm_confirm + "> and enter player's roles.");
-    startgame(client);
+    user.all_signed_up().then(asu=>{
+      if (asu.length == 0) { // 0 players isn't enough!
+        msg.reply("there aren't enough players signed up to do that.")
+      } else {
+        msg.channel.send("Starting season! Please check <#" + config.channel_ids.gm_confirm + "> and enter player's roles.");
+        startgame(client);
+      }
+    })
   }
 };
 
@@ -60,19 +67,67 @@ exports.setroleCmd = async function (msg, client, args) {
       msg.reply("invalid role: `"+role+"`!")
     } else {
       var id = await user.resolve_to_id(usr)
-      msg.reply(`giving <@${id}> role ${role}`)
-      user.finalise_user(id, role)
+      // now we need to check that user actually signed up
+      var all = await user.all_signed_up()
+      ids = all.map(row=>row.user_id) // get array of all the user ids
+      if (!ids.includes(id)) {
+        // that user hasn't signed up!
+        msg.reply(`the user <@${id}> hasn't signed up! You probably don't want to give them a role...`)
+      } else {
+        msg.reply(`giving <@${id}> role ${role}`)
+        user.finalise_user(id, role)
+      }
     }
-    if (!await user.any_left_unfinalised()) {
-      // all players have a role assigned
-      msg.reply("all players now have a role assigned.\nTo send everyone their roles, do `!g sendroles`")
-
-    } else {
-      msg.reply("there are still user(s) with no role")
-    }
+    setTimeout(()=>{ //delay by 1 sec to allow the database to be updated. it's not perfect but it works
+      user.any_left_unfinalised().then(any_left => {
+        if (!any_left) {
+          // all players have a role assigned
+          msg.reply("all players now have a role assigned.\nTo send everyone their roles, do `!g sendroles`")
+        } else {
+          // still some left
+          msg.reply("there are still user(s) with no role")
+        }
+      })
+    }, 1000)
   }
 }
 
 exports.sendrolesCmd = async function(msg, client) {
-  msg.channel.send("TODO: this")
+  if (!exports.is_started()){
+    msg.reply("signups are currently open or a game is not being set up")
+  } else {
+    var any_left = await user.any_left_unfinalised()
+    if (any_left) {
+      msg.reply("how do you expect me to tell everyone their roles when you haven't even given everyone a role yet? ಠ_ಠ")
+    } else {
+      utils.infoMessage("sending roles to players")
+      msg.reply("sending roles to all players!")
+      var all_users = await user.all_alive()
+      var id_list = all_users.map(row=>row.id)
+      id_list.forEach(async function(id) {
+        var role = await user.get_role(id)
+        var u = client.users.get(id)
+        if (u === undefined) {
+          utils.warningMessage("Couldn't send message to user with ID "+id+"!")
+          msg.reply("Couldn't send message to user with ID "+id+"!")
+        } else {
+          utils.infoMessage(`sending role to ${u.username}`)
+          u.send("your role is "+role).catch(e=>{
+            if (e.message == 'Cannot send messages to this user') {
+              msg.reply(`user <@${id}> has DMs disabled!`)
+              utils.warningMessage(`user ${u.username} has DMs disabled!`)
+            }
+          })
+        }
+      })
+    }
+  }
+}
+
+exports.dayCmd = async function(msg, client) {
+  
+}
+
+exports.nightCmd = async function(msg, client) {
+
 }
