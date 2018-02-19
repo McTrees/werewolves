@@ -85,11 +85,9 @@ client.login(token)
 
 // Internals
 
-
-/*
 function checkForUpdate() {
 const https = require('https');
-url = "https://ben.mctrees.net/api/checkGitVersion.php?repo=werewolves";
+url = "https://raw.githubusercontent.com/McTrees/werewolves/master/package.json";
 
 	currentVer = require('./package').version;
       https.get(url, res => {
@@ -99,9 +97,11 @@ url = "https://ben.mctrees.net/api/checkGitVersion.php?repo=werewolves";
 	    body += data;
 	  });
 	  res.on("end", () => {
-	    	utils.debugMessage(`got ${body} from version API`);
+	  		remoteVer = JSON.parse(body)
+	  		remoteVer = remoteVer.version
+	    	utils.debugMessage(`got ${remoteVer} from version API`);
 	    	utils.debugMessage(`Current version from package.json is ${currentVer}`)
-	    	if (currentVer == body) {
+	    	if (currentVer == remoteVer) {
 	    		utils.infoMessage("You are up-to-date with the latest version from Github.")
 	    	}
 	    	else {
@@ -113,4 +113,3 @@ url = "https://ben.mctrees.net/api/checkGitVersion.php?repo=werewolves";
 	  });
 	});
 }
-*/
