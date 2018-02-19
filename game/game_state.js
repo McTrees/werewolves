@@ -87,5 +87,4 @@ exports.data = function() {
       resolve(data)
     })
   });
-
 }
