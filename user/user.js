@@ -71,28 +71,35 @@ exports.signupCmd = function (msg, client, content) {
   }
 }
 
-exports.signup_allCmd = function(msg, client, args) {
-  exports.all_signed_up().then(rows=>{
+exports.signup_allCmd = async function(msg, client, args) {
+  //exports.all_signed_up().then(rows=>{
+  var rows = await exports.all_signed_up()
     utils.debugMessage(`signup_all command - ${rows.length} rows`)
     if (rows.length === 0) {
       msg.reply("no one is signed up yet")
     } else {
       // split the rows
-      var i,max,temparray,j,row
+      var i,max,temparray,j,row,emb,role
       var size = 20 // 20 fields per embed
       for (i=0,max=rows.length; i<max; i+=size) {
         temparray = rows.slice(i,i+size);
-        var emb = new discord.RichEmbed()
+        emb = new discord.RichEmbed()
         emb.color = 0xffff00
         emb.title = "List of currently signed up players"
         for (j=0;j<temparray.length;j++) {
           row = temparray[j]
-          emb.addField(`${utils.fromBase64(row.emoji)} - ${client.users.get(row.user_id).username}#${client.users.get(row.user_id).discriminator}`, '\u200B')
+          role = await exports.get_role(row.user_id)
+          utils.debugMessage(`user list, ${row.user_id}'s role wass ${role}'`)
+          if (role) {
+            emb.addField(`${utils.fromBase64(row.emoji)} - ${client.users.get(row.user_id).username}#${client.users.get(row.user_id).discriminator}`, 'Has a role')
+          } else {
+            emb.addField(`${utils.fromBase64(row.emoji)} - ${client.users.get(row.user_id).username}#${client.users.get(row.user_id).discriminator}`, '\u200B')
+          }
         }
         msg.channel.send(emb)
       }
     }
-  })
+  //})
 }
 
 exports.all_signed_up = function() {
@@ -125,9 +132,11 @@ exports.get_role = function(id) {
   utils.debugMessage(`getting role of ${id}`)
   return new Promise(function(resolve, reject) {
     userdb.get("select role from players where user_id = ?", [id], function(err, row) {
+      //console.log("yes")
       if (err) { throw err }
       else {
         if (row) {
+          utils.debugMessage(`role of ${id} was ${row}`)
           resolve(row.role)
         } else {
           reject()
