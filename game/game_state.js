@@ -95,12 +95,7 @@ function create_with_defaults(warn) {
 }
 
 exports.data = function() {
-  return new Promise(function(resolve, reject) {
-    fs.readFile(filename, {encoding: 'utf-8'}, function(err, data) {
-      if (err) {throw err;}
-      resolve(JSON.parse(data))
-    })
-  });
+  return require("./state.json")
 }
 
 function set_data(d) {
