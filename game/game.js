@@ -123,3 +123,11 @@ exports.sendrolesCmd = async function(msg, client) {
     }
   }
 }
+
+exports.dayCmd = async function(msg, client) {
+  
+}
+
+exports.nightCmd = async function(msg, client) {
+
+}
