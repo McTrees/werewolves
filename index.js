@@ -52,8 +52,8 @@ const failsafes = require("./failsafes");
 utils.debugMessage("Loaded modules.");
 
 utils.debugMessage("Running inits:")
-require("./user/user").init()
-require("./game/game_state").init()
+require("./user/user").init(reset_data)
+require("./game/game_state").init(reset_data)
 utils.debugMessage("Inits done")
 
 if (token == 'insert-token-here') {
@@ -74,7 +74,6 @@ client.on('message', msg => {
   msg_handler(msg, client);
 });
 
-require("./user/user").init(reset_data);//Reset the database if reset-data flag is present
 
 //Now login
 client.login(token)
