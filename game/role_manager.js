@@ -21,6 +21,12 @@ class RoleInterface {
   }
 
   static from(role_name) {
-    
+    try {
+      var data = require("./roles/"+role_name+".role.js")
+      return new this(data)
+    } catch (e) {
+      throw "invalid role!"
+    }
   }
 }
+exports.RoleInterface = RoleInterface
