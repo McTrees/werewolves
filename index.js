@@ -23,7 +23,7 @@ if (process.argv.indexOf("--noupdate") > -1) {
 }
 
 // Check for updates
-/*
+
 //Why was this commented out?
 if (update) {
 	try {
@@ -31,11 +31,11 @@ if (update) {
 	} catch(err) {
 		utils.errorMessage("Could not check for updates. Please check your internet connection and try again.")
 	}
-} else { */
+} else { 
     utils.infoMessage("Skipping update check.")
-		/*
+		
 }
-*/
+
 
 utils.debugMessage("Debug messages enabled.");
 const config = require('./config');
