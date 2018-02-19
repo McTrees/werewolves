@@ -6,7 +6,6 @@ const discord = require("discord.js")
 const admin = require("../admin/admin")
 const utils = require("../utils")
 const game_state = require("./game_state")
-const VALID_ROLES = ["INNOCENT", "WEREWOLF"]
 
 exports.is_started = function () {
   // decides if a game is currently in progress.
