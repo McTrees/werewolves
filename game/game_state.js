@@ -11,6 +11,14 @@
 // 3 - roles sent, awaiting start
 // 4 - game in progress
 
+// day/night numbering:
+// game start         :   day 0   : {night_time: false, day_num: 0}
+// first night        :  night 1  : {night_time: true,  day_num: 1}
+// first lynching day :   day 1   : {night_time: false, day_num: 1}
+// etc.
+// in other words: number gets incremented day->night, but not night->day.
+
+
 // available things:
   // exports.init()                : init function, to be called when program starts
   // exports.data()                : promise of contents of state.JSON
@@ -18,6 +26,7 @@
   // exports.set_season_code(v)    :  } you can probably guess these 3
   // exports.set_day(night_time, n): }
 
+// TODO in the future probably: make this use getters and setters rather than lots of functions
 
 const fs = require("fs")
 const path = require("path")
