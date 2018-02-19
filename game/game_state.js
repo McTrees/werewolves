@@ -31,6 +31,8 @@
 const fs = require("fs")
 const path = require("path")
 const filename = path.join(__dirname, "state.json")
+const max_state = 4
+const season_code_max_length = 8
 const defaults = {
   state_num: 0,
   season_code: "??",
@@ -55,7 +57,7 @@ exports.init = function() {
     fs.readFile(filename, {encoding: 'utf-8'}, function(err, data){
       try {
         var pdata = JSON.parse(data)
-        if (0 <= pdata.state_num && pdata.state_num <= 4) {
+        if (0 <= pdata.state_num && pdata.state_num <= max_state) {
           // good
           utils.infoMessage(`game state is currently '${nice_names[pdata.state_num]}' (#${pdata.state_num}) `)
         } else {
