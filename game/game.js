@@ -38,6 +38,13 @@ exports.game_infoCmd = function(msg, client) {
   msg.channel.send(emb)
 }
 
+exports.set_season_infoCmd = function(msg, client, args) {
+  utils.debugMessage("set season info command called")
+  console.log(args)
+  game_state.set_season_code(args[0])
+  game_state.set_season_name(args.slice(1).join(" "))
+}
+
 exports.startseasonCmd = function (msg, client) {
   // game state 1 -> 2
   // start a new season
