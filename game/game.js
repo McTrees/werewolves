@@ -8,6 +8,7 @@ const utils = require("../utils")
 const game_state = require("./game_state")
 const role_manager = require("./role_manager")
 
+
 exports.is_started = function () {
   // decides if a game is currently in progress.
   // TODO: replace all uses of this with the proper one
