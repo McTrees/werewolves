@@ -26,12 +26,17 @@ exports.helpCmd = function(msg, client, args, cmd) {
       messageContent = (aliases[messageContent[0]].split(" ").concat(messageContent.slice(1)));
     } catch (err) {} //check aliases
     utils.debugMessage('Reading file: ' + './help/cmds/' + args[0] + "/" +cmd[0] + '.md')
-    fs.readFile('./help/cmds/' + args[0] + '.md', {
+    try {
+    fs.readFile('./help/cmds/' + args[0] + '/' + cmd[0] + '.md', {
       encoding: 'utf-8'
-    }), function(err, data) {
+    }, function(err, data) {
       if (err) {
         msg.channel.send("Sorry, I dont have any help for that topic. ")
+        return
       }
       msg.channel.send(data);
+    })
+  } catch (err) {
+    msg.channel.send("Sorry, I don't have any help for that topic.")
   }
 }
