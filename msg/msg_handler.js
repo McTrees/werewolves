@@ -31,20 +31,20 @@ module.exports = function(msg, client) {
 
     cmd = messageContent[0] + " " + messageContent[1]
     utils.debugMessage(`Checking ${cmd} against permissions.json`)
-    p = permissions[cmd]
-    if(p == undefined) {
-      utils.debugMessage(`Command ${cmd} wasn't in permissions.json; assuming everyone can run it.`)
-    }
-    else {
-      utils.debugMessage(`got ${p} from permissions.json; checking if user has that role now against ${msg.member.roles}.`)
-      if (msg.member.roles.has(p)) {
-        utils.debugMessage(`User had permission to run command.`)
+    p = permissions.gm_only
+    if(permissions.gm_only.includes(cmd)) {
+      utils.debugMessage(`Command ${cmd} was in permissions.json; Checking roles now.`)
+      if (msg.member.roles.has(config.role_ids.gameMaster)) {
+        utils.debugMessage(`User had permissions; continuing execution.`)
       }
       else {
-        utils.debugMessage(`${p} was not in ${msg.author.roles}, user did not have permission to run command.`)
+        utils.debugMessage(`User did not have permissions; returning.`)
         msg.reply(config.messages.general.permission_denied)
         return
       }
+    }
+    else {
+      utils.debugMessage(`Anyone can run this command, it was not in permissions.json`)
     }
 
     try {
