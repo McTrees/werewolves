@@ -41,6 +41,7 @@ module.exports = function(msg, client) {
       }
       else {
         utils.debugMessage(`${p} was not in ${msg.author.roles}, user did not have permission to run command.`)
+        msg.reply(config.messages.general.permission_denied)
         return
       }
     }
