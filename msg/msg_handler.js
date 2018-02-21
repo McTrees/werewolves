@@ -27,22 +27,33 @@ module.exports = function(msg, client) {
     } catch (err) {;} //check aliases
 
     // permissions checks
-    var messageContent = msg.content.split(" ");
 
-    cmd = messageContent[1]
+    cmd = messageContent[0] + " " + messageContent[1]
     utils.debugMessage(`Checking ${cmd} against permissions.json`)
     p = permissions[cmd]
-    utils.debugMessage(`got ${p} from permissions.json`)
+    if(p == undefined) {
+      utils.debugMessage(`Command ${cmd} wasn't in permissions.json; assuming everyone can run it.`)
+    }
+    else {
+      utils.debugMessage(`got ${p} from permissions.json; checking if user has that role now against ${msg.member.roles}.`)
+      if (msg.member.roles.has(p)) {
+        utils.debugMessage(`User had permission to run command.`)
+      }
+      else {
+        utils.debugMessage(`${p} was not in ${msg.author.roles}, user did not have permission to run command.`)
+        return
+      }
+    }
 
     try {
-      switch (messageContent[0]) { //swicth the first part of the command, then run the function of the second part of the command, with any
+      switch (messageContent[0]) { //swicth the first part of the command, then run the function of the second part of the command, with any args
         case ("u"):
           require("../user/user.js")[messageContent[1] + "Cmd"](msg, client, messageContent.slice(2));
           break;
         case ("up"):
           require("../user/userprofile.js")[messageContent[1] + "Cmd"](msg, client, messageContent.slice(2));
           break;
-		case ("p"):
+		    case ("p"):
           require("../poll/polls.js")[messageContent[1] + "Cmd"](msg, client, messageContent.slice(2));
 		      break;
         case ("c"):
@@ -61,9 +72,9 @@ module.exports = function(msg, client) {
     } catch (err) {
       if (err instanceof TypeError) {
         msg.reply(`\`${msg.content}\` is an unknown command...`);
-		utils.debugMessage(err);
+		    utils.debugMessage(err);
       } else {
-		msg.reply(`An error occurred...`);
+		    msg.reply(`An error occurred...`);
         if ((config.developerOptions.showErrorsToDevs == "true" && msg.member.roles.has("395967396218667008" ) || config.developerOptions.showErrorsToUsers == "true")){
           msg.channel.send("the error was: ```" + err + "```\nand occurred at: ```" + err.stack + "```");
           utils.errorMessage(`error ${err} at ${err.stack}`);
