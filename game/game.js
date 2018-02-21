@@ -8,6 +8,7 @@ const utils = require("../utils")
 const game_state = require("./game_state")
 const role_manager = require("./role_manager")
 
+
 exports.is_started = function () {
   // decides if a game is currently in progress.
   // TODO: replace all uses of this with the proper one
@@ -36,6 +37,12 @@ exports.game_infoCmd = function(msg, client) {
     .addField("Game phase", `${game_state.nice_names[data.state_num]} (#${data.state_num})`)
     .addField("Game time", `${data.night_time ? "Night" : "Day"} #${data.day_num}`)
   msg.channel.send(emb)
+}
+
+exports.set_season_infoCmd = function(msg, client, args) {
+  utils.debugMessage("set season info command called")
+  game_state.set_season_code(args[0])
+  game_state.set_season_name(args.slice(1).join(" "))
 }
 
 exports.startseasonCmd = function (msg, client) {

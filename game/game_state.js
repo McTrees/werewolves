@@ -125,8 +125,8 @@ exports.set_state_num = function(v) {
 }
 
 exports.set_season_code = function(v) {
-  // sets state_num to v
-  if (typeof v == "string" && v.length >= season_code_max_length) {
+  // sets season code to v
+  if (typeof v == "string" && v.length <= season_code_max_length) {
     var data = exports.data()
     data.season_code = v
     set_data(data)
