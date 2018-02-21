@@ -53,9 +53,9 @@ module.exports = function(msg, client) {
         case ("up"):
           require("../user/userprofile.js")[messageContent[1] + "Cmd"](msg, client, messageContent.slice(2));
           break;
-		    case ("p"):
+	case ("p"):
           require("../poll/polls.js")[messageContent[1] + "Cmd"](msg, client, messageContent.slice(2));
-		      break;
+	  break;
         case ("c"):
           require("../cc/ccs.js")[messageContent[1] + "Cmd"](msg, client, messageContent.slice(2));
           break;
@@ -72,9 +72,9 @@ module.exports = function(msg, client) {
     } catch (err) {
       if (err instanceof TypeError) {
         msg.reply(`\`${msg.content}\` is an unknown command...`);
-		    utils.debugMessage(err);
+	utils.debugMessage(err);
       } else {
-		    msg.reply(`An error occurred...`);
+	msg.reply(`An error occurred...`);
         if ((config.developerOptions.showErrorsToDevs == "true" && msg.member.roles.has("395967396218667008" ) || config.developerOptions.showErrorsToUsers == "true")){
           msg.channel.send("the error was: ```" + err + "```\nand occurred at: ```" + err.stack + "```");
           utils.errorMessage(`error ${err} at ${err.stack}`);
