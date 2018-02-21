@@ -7,6 +7,9 @@
 	"messages": {
 		"CC": {
 			"createAnonymous": "Look, look! Over @here, a new conspiracy channel has been created! Someone who prefers to remain anonymous has brought you together! Maybe they have something to say..."
+		},
+		"general": {
+			"permission_denied": "I'm sorry, but you don't have permission to run that command!"
 		}
 	},
 
