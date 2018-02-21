@@ -3,6 +3,7 @@ const aliases = require('../msg/aliases');
 const user = require("../user/user")
 const utils = require("../utils")
 const discord = require("discord.js")
+const path = require("path")
 var fs = require('fs')
 
 
@@ -15,11 +16,19 @@ exports.helpCmd = function(msg, client, args, cmd) {
     }
 
     if (args == undefined) {
-      msg.reply("This will probably list categories in the future")
+      msg.reply(`Help:
+        **Usage:** !help category commands
+        **Example:** !help u signup
+
+        *Possible categories: wip*`)
       return
+
     } else if (cmd == undefined) {
       msg.reply("This will eventually list all commands in the category specified")
       return
+
+    } else {
+      utils.debugMessage(`Help cmd called w/ ${cmd} & ${args}`)
     }
 
     try {
