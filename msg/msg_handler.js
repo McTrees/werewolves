@@ -63,8 +63,8 @@ module.exports = function(msg, client) {
         case ("g"):
           require("../game/game.js")[messageContent[1] + "Cmd"](msg, client, messageContent.slice(2));
           break;
-        case("h"):
-          require("../help/main.js")[messageContent[1] + "Cmd"](msg, client, messageContent.slice(2));
+        case("help"):
+          require("../help/help.js")["helpCmd"](msg, client, messageContent.slice(1), messageContent.slice(2));
           break;
         default: //replies if no command found
           msg.reply(`\`${msg.content}\` is an unknown command...`);
