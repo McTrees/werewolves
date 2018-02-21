@@ -17,12 +17,6 @@ CREATE TABLE players (
   foreign key (user_id) references signed_up_users(user_id)
 );
 
-CREATE TABLE player_tags (
-  user_id char(21) not null,
-  tag_name varchar(18) not null,
-  foreign key (user_id) references players(user_id)
-);
-
 CREATE TABLE global_player (
 	user_id char(21) not null unique,
 	gender varchar(10),
