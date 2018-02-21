@@ -1,3 +1,3 @@
 {
-	"c command": "id_of_role_which_can_run"
+	"gm_only": ["g game_info", "g testing"]
 }
