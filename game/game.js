@@ -8,6 +8,11 @@ const utils = require("../utils")
 const game_state = require("./game_state")
 const role_manager = require("./role_manager")
 
+const scripts = {
+  every_day: require("./scripts/every_day"),
+  every_night: require("./scripts/every_night"),
+  start: require("./scripts/start")
+}
 
 exports.is_started = function () {
   // decides if a game is currently in progress.
