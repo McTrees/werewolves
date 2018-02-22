@@ -31,7 +31,15 @@ Help:
     } else if (cmd == [] || cmd == undefined || cmd == "") {
       glob("**.md", { cwd: path.join(__dirname, "cmds/" + args) }, function(err, matches) {
         if (matches) {
-          msg.channel.send(`Here are the commands in that category:\n${matches}`)
+          commands = []
+          for (var match in matches) {
+            match = matches[match]
+            match = match.replace(/\.md$/, "") /*This general section could be a ton more efficient; I'll do that once it works*/
+            match = match + "\n"
+            match = " - " + match
+            commands.push(match)
+          }
+          msg.channel.send(`**Commands in category ${args}:**\n${commands.join("")}\n\n*Need more help on a command? Use !help ${args} <command>.*`)
         }
         else {
           msg.channel.send("Sorry, but I don't have any commands in that help category. Valid categories are: *[WIP/TODO]*")
