@@ -63,15 +63,16 @@ module.exports = function(msg, client) {
         case ("g"):
           require("../game/game.js")[messageContent[1] + "Cmd"](msg, client, messageContent.slice(2));
           break;
-        case("help"):
-          require("../help/help.js")["helpCmd"](msg, client, messageContent.slice(1), messageContent.slice(2));
-          break;
         default: //replies if no command found
+          console.log(["helpCmd"](msg, client, messageContent.slice(1), messageContent.slice(2)))
           msg.reply(`\`${msg.content}\` is an unknown command...`);
           break;
       }
     } catch (err) {
-      if (err instanceof TypeError) {
+      if ( messageContent.slice(0)=="h"){             //help command
+        require("../help/help.js")["helpCmd"](msg, client, messageContent.slice(1), messageContent.slice(2));
+      }
+      else if (err instanceof TypeError) {
         msg.reply(`\`${msg.content}\` is an unknown command...`);
 	utils.debugMessage(err);
       } else {
