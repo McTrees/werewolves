@@ -1,4 +1,6 @@
 const config = require('../config'); //include main config
+const utils = require('../utils'); //include main config
+const game_state = require('../game/game_state');
 var fs = require('fs')
 
 var ccconf; //decalre cc conf var as global
@@ -42,15 +44,15 @@ exports.createCmd = function(msg, client, args) { //mgs = msg obdj, client = bot
     }, function(err, data) { //read cc.json to ccconfig
       if (err) throw err; //throw error
       ccconf = JSON.parse(data); //turns string into JSON object
+      name = game_state.data().season_code + "_CC_" + name; //phrase name of channel
 
-      name = "S" + config.season + "_CC_" + name; //phrase name of channel
       ccconf.CC_catagory_number = parseInt(ccconf.CC_catagory_number) + 1 //increment the number of catgories
-      categoryName = "S" + config.season + "_CC_" + ccconf.CC_catagory_number; //phrase name of catgories
+      categoryName = game_state.data().season_code + "_CC_" + ccconf.CC_catagory_number; //phrase name of catgories
 
       function createChannel(name, ccconf, msg) { //function to make a channel in a category, and make new category if full
         if (msg.guild.channels.get(ccconf.CC_curent_category_id) == undefined){
           msg.guild.createChannel(categoryName, "category").then(function(channel) { //make a new category
-            console.log("had to make a new CC category")
+          utils.infoMessage("had to make a new CC category")
             ccconf.CC_curent_category_id = channel.id //update current category id
             writecc(); //write new channel id and number to cc.json
           })
@@ -87,7 +89,6 @@ exports.createCmd = function(msg, client, args) { //mgs = msg obdj, client = bot
           })
           if (showCreator == true) {
             channel.send("<@" + msg.author.id + "> brought you together: " + people.join(", ")) //say whos in the CC
-            console.log(people)
           }
         });
       }
