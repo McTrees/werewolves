@@ -8,7 +8,6 @@ var fs = require('fs')
 const glob = require('glob')
 
 
-
 exports.helpCmd = function(msg, client, args, cmd) {
   if (msg.content.split(" ").length == 1){
     msg.reply("`help` help")
@@ -24,13 +23,13 @@ exports.helpCmd = function(msg, client, args, cmd) {
     if (args == [] || args == undefined || args == "") {
       p = "./cmds/"
       const dirs = p => fs.readdirSync(p).filter(f => fs.statSync(path.join(p, f)).isDirectory())
-      
+
       msg.channel.send(`
 Help:
 **Usage:** !help category commands
 **Example:** !help u signup
 
-Possible categories: ` + dirs)
+` + dirs())
       return
 }
      else if (cmd == [] || cmd == undefined || cmd == "") {
