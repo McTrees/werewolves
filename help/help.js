@@ -9,6 +9,10 @@ const glob = require('glob')
 
 
 exports.helpCmd = function(msg, client, args, cmd) {
+  if (msg.content.split(" ").length == 1){
+    msg.reply("`help` help")
+  }
+  console.log(msg.content.split(" ").length == 1)
   utils.debugMessage("helpCmd called with args: '" + args + "' and cmd '" + cmd + "'")
   if (msg.author == client.user) return; //ignore own messages
   messageContent = msg.content.split(" ");
@@ -19,7 +23,7 @@ exports.helpCmd = function(msg, client, args, cmd) {
     if (args == [] || args == undefined || args == "") {
       p = "./cmds/"
       const dirs = p => fs.readdirSync(p).filter(f => fs.statSync(path.join(p, f)).isDirectory())
-      
+
       msg.channel.send(`
 Help:
 **Usage:** !help category commands
@@ -27,8 +31,8 @@ Help:
 
 ` + dirs())
       return
-
-    } else if (cmd == [] || cmd == undefined || cmd == "") {
+}
+     else if (cmd == [] || cmd == undefined || cmd == "") {
       glob("**.md", { cwd: path.join(__dirname, "cmds/" + args) }, function(err, matches) {
         if (matches) {
           commands = []

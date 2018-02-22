@@ -47,6 +47,7 @@ module.exports = function(msg, client) {
     }
 
     try {
+
       switch (messageContent[0]) { //swicth the first part of the command, then run the function of the second part of the command, with any args
         case ("u"):
           require("../user/user.js")[messageContent[1] + "Cmd"](msg, client, messageContent.slice(2));
@@ -68,8 +69,10 @@ module.exports = function(msg, client) {
           msg.reply(`\`${msg.content}\` is an unknown command...`);
           break;
       }
+
     } catch (err) {
-      if ( messageContent.slice(0)=="h"){             //help command
+      if (messageContent[0]=="h"){             //help command
+        console.log("help command")
         require("../help/help.js")["helpCmd"](msg, client, messageContent.slice(1), messageContent.slice(2));
       }
       else if (err instanceof TypeError) {
