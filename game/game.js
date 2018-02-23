@@ -50,7 +50,7 @@ exports.set_season_infoCmd = function(msg, client, args) {
   game_state.set_season_name(args.slice(1).join(" "))
 }
 
-exports.startseasonCmd = function (msg, client) {
+exports.start_seasonCmd = function (msg, client) {
   // game state 1 -> 2
   // start a new season
   if (game_state.data().state_num !== 1) {
