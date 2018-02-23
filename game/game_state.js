@@ -22,7 +22,7 @@
 // available things:
   // exports.nice_names            : nice names for game states
   // exports.init()                : init function, to be called when program starts
-  // exports.data()                : promise of contents of state.JSON
+  // exports.data()                : contents of state.json
   // exports.set_state_num(v)      : }
   // exports.set_season_code(v)    : } you can probably guess these 4
   // exports.set_day(night_time, n): }

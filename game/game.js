@@ -8,6 +8,11 @@ const utils = require("../utils")
 const game_state = require("./game_state")
 const role_manager = require("./role_manager")
 
+const scripts = {
+  every_day: require("./scripts/every_day"),
+  every_night: require("./scripts/every_night"),
+  start: require("./scripts/start")
+}
 
 exports.is_started = function () {
   // decides if a game is currently in progress.
@@ -149,10 +154,42 @@ exports.sendrolesCmd = async function(msg, client) {
   }
 }
 
-exports.dayCmd = async function(msg, client) {
+exports.beginCmd = async function(msg, client) {
+  // game state 3->4
+  // TODO: scripts/start here too
+  if (game_state.data().state_num !== 3 ){
+    msg.reply("wrong game state")
+  } else {
+    msg.reply("😁 game started actually yay")
+    game_state.set_state_num(4)
+  }
 
 }
 
-exports.nightCmd = async function(msg, client) {
+exports.dayCmd = async function(msg, client) {
+  if (game_state.data().state_num !== 4) {
+    msg.reply("wrong game state")
+    return
+  }
+  var d = game_state.data()
+  if (!d.night_time) {
+    msg.reply("it's already day time! specifically day "+d.day_num)
+  } else {
+    game_state.next_day_or_night()
+    msg.reply(`👍 now it's day ${d.day_num}`)
+  }
+}
 
+exports.nightCmd = async function(msg, client) {
+  if (game_state.data().state_num !== 4) {
+    msg.reply("wrong game state")
+    return
+  }
+  var d = game_state.data()
+  if (d.night_time) {
+    msg.reply("it's already night time! specifically night "+d.day_num)
+  } else {
+    game_state.next_day_or_night()
+    msg.reply(`👍 now it's night ${d.day_num}`)
+  }
 }

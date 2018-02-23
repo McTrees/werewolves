@@ -1,3 +1,11 @@
 {
-	"gm_only": ["g game_info", "g testing"]
+	"gm_only": [
+		"g open_signups",
+		"g set_season_info",
+		"g startseason",
+		"g setrole",
+		"g sendroles",
+		"g day",
+		"g night"
+	]
 }

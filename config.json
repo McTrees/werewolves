@@ -3,7 +3,7 @@
 	"season": "5",
 	"messageTimeout": 3000,
 	"guild_id":"395966781589815296",
-	
+
 	"messages": {
 		"CC": {
 			"createAnonymous": "Look, look! Over @here, a new conspiracy channel has been created! Someone who prefers to remain anonymous has brought you together! Maybe they have something to say..."
@@ -22,7 +22,7 @@
 	},
 
 	"role_ids": {
-		"gameMaster": "403220526903853066",
+		"gameMaster": "414734541614350347",
 		"mayor":"413347795437879297"
 	},
 
