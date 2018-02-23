@@ -110,7 +110,7 @@ exports.setroleCmd = async function (msg, client, args) {
       user.any_left_unfinalised().then(any_left => {
         if (!any_left) {
           // all players have a role assigned
-          msg.reply("all players now have a role assigned.\nTo send everyone their roles, do `!g sendroles`")
+          msg.reply("all players now have a role assigned.\nTo send everyone their roles, do `!g send_roles`")
         } else {
           // still some left
           msg.reply("there are still user(s) with no role")
@@ -120,7 +120,7 @@ exports.setroleCmd = async function (msg, client, args) {
   }
 }
 
-exports.sendrolesCmd = async function(msg, client) {
+exports.send_rolesCmd = async function(msg, client) {
   // game state 2->3
   if (game_state.data().state_num !== 2){
     msg.reply("signups are currently open or a game is not being set up")
