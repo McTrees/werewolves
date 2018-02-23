@@ -24,7 +24,7 @@ git clone https://github.com/McTrees/werewolves.git
 npm install
 ```
 
-Edit `config.json` and `token.json` with required settings. See [Configuration](#configuration)for options.
+Edit `config.json` and `token.json` with required settings. See [Configuration](#configuration) for options.
 
 Run with `node index.js` or by opening `run.bat` (windows only)
 
