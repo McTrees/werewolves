@@ -7,7 +7,7 @@ A Discord bot designed to automate the heavy-lifting of game server Werewolves
 
 ## Getting Started
 
-Run the main file with `node index.js` or opening `run.bat` (windows only). Note that you should first edit `config.json` and `token.json` with the correct infos
+Run the main file with `node index.js` or opening `run.bat` (windows only). Note that you should first edit `config.json` and `token.json` with the correct settings. See [Configuration](#configuration)for options.
 
 
 ### Installing
@@ -18,15 +18,27 @@ Download the project to your local machine using git (or by downloading the zip)
 git clone https://github.com/McTrees/werewolves.git
 ```
 
-#### Install dependencies
+### Install dependencies
 
 ```
 npm install
 ```
 
-Edit `config.json` and `token.json` with required settings
+Edit `config.json` and `token.json` with required settings. See [Configuration](#configuration)for options.
 
 Run with `node index.js` or by opening `run.bat` (windows only)
+
+
+## Configuration
+This project offers several configuration options via both `config.json` and `token.json`:
+ - `config.json`
+   - bot_prefix: the prefix the bot should respond to (defaults to `!`)
+   - season: likely to be removed soon in favour of game_state managing seasons.
+   - messageTimeout: how long the bot should wait before deleteing some of it's own error messages.
+   - messages: categorised messages which the bot sends upon several actions being completed.
+   - channel_ids: IDs of channels the bot should send several types of message in.
+   - role_ids: IDs of roles which the bot should use to establish permissions, etc.
+   - developerOptions: Whether or not the bot should do things like show messages to users or create logs.
 
 
 ## Attribution
