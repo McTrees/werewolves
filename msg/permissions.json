@@ -3,7 +3,7 @@
 		"g open_signups",
 		"g set_season_info",
 		"g startseason",
-		"g setrole",
+		"g set_role",
 		"g send_roles",
 		"g day",
 		"g night"
