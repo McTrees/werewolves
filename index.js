@@ -1,10 +1,12 @@
 /* werewolves bot */
 
 // error logging
-var Raven = require('raven');
-Raven.config('https://5529708190f94ec1b4dbd700ba797143:82cfe1fd3c594172b4db17ccbbc117ce@sentry.io/294000', {
-	autoBreadcrumbs: true
-}).install();
+if (config.developerOptions.remoteErrorReporting == "true") {
+	var Raven = require('raven');
+	Raven.config('https://5529708190f94ec1b4dbd700ba797143:82cfe1fd3c594172b4db17ccbbc117ce@sentry.io/294000', {
+		autoBreadcrumbs: true
+	}).install();
+}
 
 const fs = require('fs');
 

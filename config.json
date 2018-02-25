@@ -31,6 +31,7 @@
 		"showErrorsToUsers": "false",
 		"logDebugMessages": "false",
 		"logOtherMessages": "true",
-		"saveLogFiles": "true"
+		"saveLogFiles": "true",
+		"remoteErrorReporting": "true"
 	}
 }
