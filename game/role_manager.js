@@ -1,6 +1,9 @@
 // fns for managing the roles in files and making it easier to access them.
 const glob = require("glob")
 const path = require("path")
+const utils = require("../utils")
+
+const BASE = "./roles/" // change if you want roles somewhere else
 
 exports.all_roles_list = function() {
   // promise of a list of the internal names of all available roles.
@@ -14,23 +17,16 @@ exports.all_roles_list = function() {
   });
 }
 
-class RoleInterface {
-  // class for wrapping a role and getting info about it
-  constructor(data){
-    this._name = data.name
-  }
-
-  get name() {
-    return this._name
-  }
-
-  static from(role_name) {
-    try {
-      var data = require("./roles/"+role_name+".role.js")
-      return new this(data)
-    } catch (e) {
-      throw "invalid role!"
-    }
-  }
+exports.role = function(name) {
+  var d = require(BASE+name+".role.js")
+  d.id = name
+  return d
 }
-exports.RoleInterface = RoleInterface
+
+exports.fallback = function(name) {
+  let res = name.replace(/\w+$/, "defaults.js")
+  let data = require(BASE+res)
+  return data
+}
+
+//exports.RoleInterface.from = exports.role // depreciated, don't use

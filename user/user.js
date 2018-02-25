@@ -157,6 +157,12 @@ exports.get_role = function(id) {
   });
 }
 
+exports.set_role = function(id, role) {
+  // sets a users role
+  utils.debugMessage(`setting ${id}'s role to ${role}`)
+  userdb.run("replace into players (user_id, role) values ($id, $role);", {$id:id,$role:role})
+}
+
 exports.finalise_user = function(id, role) {
   // turns a signed up user into a player with a role
   userdb.serialize(function(){
