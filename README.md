@@ -41,6 +41,7 @@ This project offers several configuration options via both `config.json` and `to
    - developerOptions: Whether or not the bot should do things like show messages to users or create logs.
  - `token.json`
    - token: The token of the account which the bot should run under. Will throw an error if set to default value.
+   
 For more info see the [docs](https://github.com/McTrees/werewolves/blob/master/docs/readme.md)
 
 ## Attribution
