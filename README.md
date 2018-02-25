@@ -31,7 +31,7 @@ Run with `node index.js` or by opening `run.bat` (windows only)
 
 ## Configuration
 This project offers several configuration options via both `config.json` and `token.json`:
- - `config.json`
+ - [`config.json`](https://github.com/McTrees/werewolves/blob/master/docs/config.md)
    - bot_prefix: the prefix the bot should respond to (defaults to `!`)
    - season: likely to be removed soon in favour of game_state managing seasons.
    - messageTimeout: how long the bot should wait before deleteing some of it's own error messages.
@@ -41,7 +41,8 @@ This project offers several configuration options via both `config.json` and `to
    - developerOptions: Whether or not the bot should do things like show messages to users or create logs.
  - `token.json`
    - token: The token of the account which the bot should run under. Will throw an error if set to default value.
-
+   
+For more info see the [docs](https://github.com/McTrees/werewolves/blob/master/docs/readme.md)
 
 ## Attribution
 This code has been developed by [Ben Griffiths](https://github.com/BenTechy66), [Calvin Edwards](https://github.com/ed588), [Robbie Bradshaw](https://github.com/trebor97351), [Oliver Hynds](https://github.com/oliverh57) and [Lord of Galaxy](https://github.com/Lord-of-the-Galaxy).
