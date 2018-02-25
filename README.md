@@ -31,7 +31,7 @@ Run with `node index.js` or by opening `run.bat` (windows only)
 
 ## Configuration
 This project offers several configuration options via both `config.json` and `token.json`:
- - `config.json`
+ - [`config.json`](https://github.com/McTrees/werewolves/blob/master/docs/config.md)
    - bot_prefix: the prefix the bot should respond to (defaults to `!`)
    - season: likely to be removed soon in favour of game_state managing seasons.
    - messageTimeout: how long the bot should wait before deleteing some of it's own error messages.
