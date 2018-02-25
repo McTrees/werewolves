@@ -39,6 +39,8 @@ This project offers several configuration options via both `config.json` and `to
    - channel_ids: IDs of channels the bot should send several types of message in.
    - role_ids: IDs of roles which the bot should use to establish permissions, etc.
    - developerOptions: Whether or not the bot should do things like show messages to users or create logs.
+     - saveLogFiles: Whether the bot should create files and save to ./logs, this shouldn't be neccessary if remoteErrorReporting is on.
+     - remoteErrorReporting: Whether to send errors to the devs so we can fix them
  - `token.json`
    - token: The token of the account which the bot should run under. Will throw an error if set to default value.
    
