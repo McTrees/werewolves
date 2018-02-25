@@ -7,6 +7,7 @@ const admin = require("../admin/admin")
 const utils = require("../utils")
 const game_state = require("./game_state")
 const role_manager = require("./role_manager")
+const PlayerController = require("./player_controller").PlayerController
 
 const scripts = {
   every_day: require("./scripts/every_day"),
@@ -50,7 +51,7 @@ exports.set_season_infoCmd = function(msg, client, args) {
   game_state.set_season_name(args.slice(1).join(" "))
 }
 
-exports.startseasonCmd = function (msg, client) {
+exports.start_seasonCmd = function (msg, client) {
   // game state 1 -> 2
   // start a new season
   if (game_state.data().state_num !== 1) {
@@ -73,13 +74,13 @@ function startgame(client) {
     role_manager.all_roles_list().then(VALID_ROLES=>{
       gm_confirm = client.channels.get(config.channel_ids.gm_confirm)
       gm_confirm.send(`Signed up users: ${asu.map(id=>`\n- <@${id.user_id}>`)}`)
-      gm_confirm.send(`Valid roles: ${VALID_ROLES.map(n=>`\n- \`${n}\` (${role_manager.RoleInterface.from(n).name})`)}`)
-      gm_confirm.send("For every user, please say `!g setrole @mention ROLE`, where ROLE is any of " + VALID_ROLES)
+      gm_confirm.send(`Valid roles: ${VALID_ROLES.map(n=>`\n- \`${n}\` (${role_manager.role(n).name})`)}`)
+      gm_confirm.send("For every user, please say `!g set_role @mention ROLE`, where ROLE is any of " + VALID_ROLES)
     })
   })
 }
 
-exports.setroleCmd = async function (msg, client, args) {
+exports.set_roleCmd = async function (msg, client, args) {
   // game state 2 only
   if (args.length !== 2) {
     msg.reply("invalid syntax!")
@@ -110,7 +111,7 @@ exports.setroleCmd = async function (msg, client, args) {
       user.any_left_unfinalised().then(any_left => {
         if (!any_left) {
           // all players have a role assigned
-          msg.reply("all players now have a role assigned.\nTo send everyone their roles, do `!g sendroles`")
+          msg.reply("all players now have a role assigned.\nTo send everyone their roles, do `!g send_roles`")
         } else {
           // still some left
           msg.reply("there are still user(s) with no role")
@@ -120,7 +121,7 @@ exports.setroleCmd = async function (msg, client, args) {
   }
 }
 
-exports.sendrolesCmd = async function(msg, client) {
+exports.send_rolesCmd = async function(msg, client) {
   // game state 2->3
   if (game_state.data().state_num !== 2){
     msg.reply("signups are currently open or a game is not being set up")
@@ -192,4 +193,52 @@ exports.nightCmd = async function(msg, client) {
     game_state.next_day_or_night()
     msg.reply(`👍 now it's night ${d.day_num}`)
   }
+}
+
+exports.killCmd = async function(msg, client, args) {
+  // kills someone
+  // args[0] should be who killed them (how they died). currently 'l' for lynch or 'w' for werewolves.
+  // args[1] should be who to kill
+  if (args.length !== 2) {
+    msg.reply("wrong syntax!")
+  } else {
+    var dead_person_id = await user.resolve_to_id(args[1])
+    kill(dead_person_id, args[0], client)
+  }
+}
+
+async function kill(who, why, client) {
+  // who should be id of who to kill
+  // why should be who killed them (how they died)
+  var their_role = await user.get_role(who)
+  var their_role_i = role_manager.role(their_role)
+
+  // TODO: more info available to functions
+  var kill_desc = { by: why }
+  var game = { masters: client.channels.get(config.channel_ids.gm_confirm)}
+  var me = new PlayerController(who)
+  var did_they_die
+  if (typeof their_role_i.on_death === "function") {
+    // there is a custom death function
+    did_they_die = their_role_i.on_death(kill_desc, game, me)
+  } else {
+    // no custom death function
+    // so we should use the fallback
+    did_they_die = role_manager.fallback(their_role).on_death(kill_desc, game, me)
+  }
+  if (did_they_die){
+    set_dead(who, client)
+  }
+}
+
+function set_dead(id, client) {
+  // gives them the dead role
+  let ch = client.channels.get(config.channel_ids.gm_confirm)
+  ch.send(`<@${id}> is dead!`)
+  ch.guild.fetchMember(id).then(m=>{
+    if (m) {
+      m.addRole(config.role_ids.dead)
+      //TODO remove living role
+    }
+  })
 }
