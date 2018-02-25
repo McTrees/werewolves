@@ -43,7 +43,6 @@ Possible categories: ` + dirs)
             match = " - " + match
             commands.push(match)
           }
-          msg.channel.send(`**Commands in category ${args}:**\n${commands.join("")}\n\n*Need more help on a command? Use !help ${args} <command>.*`)
         }
         else {
           msg.channel.send("Sorry, but I don't have any commands in that help category. Valid categories are: *[WIP/TODO]*")
