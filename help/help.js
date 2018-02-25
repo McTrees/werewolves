@@ -9,7 +9,15 @@ const glob = require('glob')
 
 
 
+function getDirectories(path) {
+  return fs.readdirSync(path).filter(function (file) {
+    return fs.statSync(path+'/'+file).isDirectory();
+  });
+}
+
+
 exports.helpCmd = function(msg, client, args, cmd) {
+  const dirs = getDirectories("./help/cmds/")
   utils.debugMessage("helpCmd called with args: '" + args + "' and cmd '" + cmd + "'")
   if (msg.author == client.user) return; //ignore own messages
   messageContent = msg.content.split(" ");
@@ -19,14 +27,17 @@ exports.helpCmd = function(msg, client, args, cmd) {
 
     if (args == [] || args == undefined || args == "") {
       p = "./cmds/"
-      const dirs = p => fs.readdirSync(p).filter(f => fs.statSync(path.join(p, f)).isDirectory())
+      
       
       msg.channel.send(`
-Help:
-**Usage:** !help category commands
+\`help\` help:
+
+**Usage:** !help category command
+
 **Example:** !help u signup
 
-Possible categories: ` + dirs)
+
+Possible categories: ` + dirs.join(", "))
       return
 }
      else if (cmd == [] || cmd == undefined || cmd == "") {
