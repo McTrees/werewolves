@@ -3,7 +3,7 @@ const utils = require("../utils")
 
 class PlayerController {
   constructor(id) {
-    console.log(`PlayerController constructed with id ${id}`)
+//    console.log(`PlayerController constructed with id ${id}`)
     this.id = id
   }
 
