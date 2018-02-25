@@ -63,7 +63,7 @@ if (token == 'insert-token-here') {
 
 // this makes unhandled promise rejections a fatal error, not a supressed warning.
 // this should hopefully make debugging easier
-process.on('unhandledRejection', up => { throw up })
+process.on('unhandledRejection', ball => { throw ball })
 
 client.on('ready', () => {
   utils.successMessage("Logged in!", true);
