@@ -6,4 +6,3 @@
   - Several commands in this category are only avaliable to Game Masters. This has been detailed in the help files.
 
 **Commands in this category:**
-%commands

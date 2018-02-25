@@ -4,4 +4,3 @@
 
 
 **Commands in this category:**
-%commands
