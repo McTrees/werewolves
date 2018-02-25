@@ -13,7 +13,6 @@ exports.helpCmd = function(msg, client, args, cmd) {
   if (msg.content.split(" ").length == 1){
     msg.reply("`help` help")
   }
-  console.log(msg.content.split(" ").length == 1)
   utils.debugMessage("helpCmd called with args: '" + args + "' and cmd '" + cmd + "'")
   if (msg.author == client.user) return; //ignore own messages
   messageContent = msg.content.split(" ");
