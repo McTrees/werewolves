@@ -1,4 +1,14 @@
 /* werewolves bot */
+
+// error logging
+const config = require('./config')
+if (config.developerOptions.remoteErrorReporting == "true") {
+	var Raven = require('raven');
+	Raven.config('https://5529708190f94ec1b4dbd700ba797143:82cfe1fd3c594172b4db17ccbbc117ce@sentry.io/294000', {
+		autoBreadcrumbs: true
+	}).install();
+}
+
 const fs = require('fs');
 
 const utils = require('./utils');
@@ -36,9 +46,7 @@ if (update) {
 
 }
 
-
 utils.debugMessage("Debug messages enabled.");
-const config = require('./config');
 const token = require('./token').token;
 utils.debugMessage("Config loaded!");
 
@@ -63,7 +71,7 @@ if (token == 'insert-token-here') {
 
 // this makes unhandled promise rejections a fatal error, not a supressed warning.
 // this should hopefully make debugging easier
-process.on('unhandledRejection', up => { throw up })
+process.on('unhandledRejection', ball => { throw ball })
 
 client.on('ready', () => {
   utils.successMessage("Logged in!", true);

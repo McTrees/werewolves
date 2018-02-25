@@ -73,7 +73,7 @@ module.exports = function(msg, client) {
 
     } catch (err) {
       if (messageContent[0]=="h"){             //help command
-        console.log("help command")
+        // console.log("help command")
         require("../help/help.js")["helpCmd"](msg, client, messageContent.slice(1), messageContent.slice(2));
       }
       else if (err instanceof TypeError) {

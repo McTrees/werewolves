@@ -9,11 +9,15 @@ const glob = require('glob')
 
 
 
+function getDirectories(path) {
+  return fs.readdirSync(path).filter(function (file) {
+    return fs.statSync(path+'/'+file).isDirectory();
+  });
+}
+
+
 exports.helpCmd = function(msg, client, args, cmd) {
-  if (msg.content.split(" ").length == 1){
-    msg.reply("`help` help")
-  }
-  console.log(msg.content.split(" ").length == 1)
+  const dirs = getDirectories("./help/cmds/")
   utils.debugMessage("helpCmd called with args: '" + args + "' and cmd '" + cmd + "'")
   if (msg.author == client.user) return; //ignore own messages
   messageContent = msg.content.split(" ");
@@ -23,20 +27,27 @@ exports.helpCmd = function(msg, client, args, cmd) {
 
     if (args == [] || args == undefined || args == "") {
       p = "./cmds/"
-      const dirs = p => fs.readdirSync(p).filter(f => fs.statSync(path.join(p, f)).isDirectory())
+      
       
       msg.channel.send(`
-Help:
-**Usage:** !help category commands
+\`help\` help:
+
+**Usage:** !help category command
+
 **Example:** !help u signup
 
-Possible categories: ` + dirs)
+
+Possible categories: ` + dirs.join(", "))
       return
 }
      else if (cmd == [] || cmd == undefined || cmd == "") {
       glob("**.md", { cwd: path.join(__dirname, "cmds/" + args) }, function(err, matches) {
         if (matches) {
           commands = []
+          var i = matches.indexOf("index.md");
+          if(i != -1) {
+            matches.splice(i, 1);
+          }
           for (var match in matches) {
             match = matches[match]
             match = match.replace(/\.md$/, "") /*This general section could be a ton more efficient; I'll do that once it works*/
@@ -44,7 +55,18 @@ Possible categories: ` + dirs)
             match = " - " + match
             commands.push(match)
           }
-          msg.channel.send(`**Commands in category ${args}:**\n${commands.join("")}\n\n*Need more help on a command? Use !help ${args} <command>.*`)
+          fs.readFile('./help/cmds/' + args[0] + '/index.md', {
+            encoding: 'utf-8'
+          }, function(err, data) {
+            if (err) {
+              utils.debugMessage("Index.md was not present; assuming category does not exist")
+              msg.channel.send(`Sorry, but that category does not exist.`)
+            } else {
+              utils.debugMessage("Sending help data")
+              msg.channel.send(`${data}${commands.join("")}\n\n*Need more info? Use \`help category command\`. For example: \`!help ${args} ${matches[0].replace(/\.md$/, "")}\``)
+            }
+          })
+          
         }
         else {
           msg.channel.send("Sorry, but I don't have any commands in that help category. Valid categories are: *[WIP/TODO]*")

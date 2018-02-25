@@ -14,7 +14,7 @@ const aliases = require('./aliases.json');
 */
 
 //Register yourself in global database
-exports.registerGlobalCmd = async function(msg, client, args){
+exports.register_globalCmd = async function(msg, client, args){
 	var user = msg.author;
 	if(args.length === 0){
 		utils.debugMessage(`@${user.username} wants to register in global database`);
@@ -48,12 +48,12 @@ exports.registerGlobalCmd = async function(msg, client, args){
 }
 
 //Set the age of a user
-exports.setAgeCmd = function(msg, client, args){
+exports.set_ageCmd = function(msg, client, args){
 	setProperty(msg, client, "Age", args);
 }
 
 //Set the gender of a user
-exports.setGenderCmd = function(msg, client, args){
+exports.set_genderCmd = function(msg, client, args){
 	setProperty(msg, client, "Gender", args);
 }
 
@@ -68,12 +68,12 @@ exports.setDPLinkCmd = function(msg, client, args){
 
 
 //Set the personal description of a user
-exports.setInfoCmd = function(msg, client, args){
+exports.set_infoCmd = function(msg, client, args){
 	setPropertyWithSpaces(msg, client, "Info", args);
 }
 
 //Set the personal description of a user
-exports.setGamesCmd = function(msg, client, args){
+exports.set_gamesCmd = function(msg, client, args){
 	if(msg.member.roles.has(config.role_ids.gameMaster)){
 		setProperty(msg, client, "Games", args);
 	}else{
@@ -82,7 +82,7 @@ exports.setGamesCmd = function(msg, client, args){
 }
 
 //Set the personal description of a user
-exports.setWinsCmd = function(msg, client, args){
+exports.set_winsCmd = function(msg, client, args){
 	if(msg.member.roles.has(config.role_ids.gameMaster)){
 		setProperty(msg, client, "Wins", args);
 	}else{
@@ -91,7 +91,7 @@ exports.setWinsCmd = function(msg, client, args){
 }
 
 //Set the personal description of a user
-exports.setRecordCmd = function(msg, client, args){
+exports.set_recordCmd = function(msg, client, args){
 	if(msg.member.roles.has(config.role_ids.gameMaster)){
 		setPropertyWithSpaces(msg, client, "Record", args);
 	}else{
