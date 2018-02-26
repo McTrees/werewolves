@@ -25,7 +25,7 @@ if (process.argv.indexOf("--debug") > -1) {
 //WARNING - Use this flag only during the testing phase, or if the server is being reset.
 if(process.argv.indexOf("--reset-data") > -1){
 	reset_data = true;
-	utils.warningMessage("Will reset database. Exit the process with Ctrl-C if you wish for this not to happen.", true);
+	utils.warningMessage("Will reset database.");
 }
 
 if (process.argv.indexOf("--noupdate") > -1) {
@@ -66,7 +66,6 @@ utils.debugMessage("Inits done")
 
 if (token == 'insert-token-here') {
 	utils.errorMessage("Incorrect login credentials passed! Please edit token.json with your bot's token.", true)
-	
 	process.exit();
 }
 
@@ -86,6 +85,7 @@ client.on('message', msg => {
 
 //Now login
 client.login(token)
+
 
 
 

@@ -5,5 +5,4 @@ poll/polls.json
 game.dat
 cc/cc.json
 game/state.json
-.*
 *.log
