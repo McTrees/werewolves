@@ -1,5 +1,6 @@
 {
   "signup": "u signup",
+  "users":"u signup_all",
   "help": "h",
   "signuppoop": "u signup 💩",
   "register_global":"up registerGlobal",
@@ -13,5 +14,10 @@
   "startPoll": "p startPoll",
   "endPoll": "p endPoll",
   "checkPoll": "p checkPoll",
-  "threaten":"p threaten"
+  "threaten":"p threaten",
+
+  "day":"g day",
+  "night":"g night",
+  "info":"g game_info"
+
 }
