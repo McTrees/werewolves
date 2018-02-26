@@ -18,6 +18,10 @@
 
   "day":"g day",
   "night":"g night",
-  "info":"g game_info"
+  "info":"g game_info",
+
+  "kill":"g kill",
+  "ww_kill":"g kill w",
+  "lynch_kill":"g kill l"
 
 }
