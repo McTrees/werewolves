@@ -56,18 +56,24 @@ module.exports = function(msg, client) {
         case ("up"):
           require("../user/userprofile.js")[messageContent[1] + "Cmd"](msg, client, messageContent.slice(2));
           break;
-	case ("p"):
+	      case ("p"):
           require("../poll/polls.js")[messageContent[1] + "Cmd"](msg, client, messageContent.slice(2));
-	  break;
+	        break;
         case ("c"):
           require("../cc/ccs.js")[messageContent[1] + "Cmd"](msg, client, messageContent.slice(2));
           break;
         case ("g"):
           require("../game/game.js")[messageContent[1] + "Cmd"](msg, client, messageContent.slice(2));
           break;
+
+
+        //This is the help module
+        case ("h"):
+          require("../help/help.js")["helpCmd"](msg, client, messageContent.slice(1), messageContent.slice(2));
+          break;
         default: //replies if no command found
-          console.log(["helpCmd"](msg, client, messageContent.slice(1), messageContent.slice(2)))
-          msg.reply(`\`${msg.content}\` is an unknown command...`);
+          // console.log(["helpCmd"](msg, client, messageContent.slice(1), messageContent.slice(2)))
+          msg.reply(`\`${msg.content}\` is an unknown command... Try \`!help\``);
           break;
       }
 
