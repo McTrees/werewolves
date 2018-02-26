@@ -4,7 +4,7 @@
 const config = require('./config')
 if (config.developerOptions.remoteErrorReporting == "true") {
 	var Raven = require('raven');
-	Raven.config('https://5529708190f94ec1b4dbd700ba797143:82cfe1fd3c594172b4db17ccbbc117ce@sentry.io/294000', {
+	Raven.config('https://f130c38544d84f40943f88d1928b1d37:d2d56d0897934121aca1ba66e3daad72@sentry.io/294260', {
 		autoBreadcrumbs: true
 	}).install();
 }
