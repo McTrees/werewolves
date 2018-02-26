@@ -52,7 +52,9 @@ Possible categories: ` + dirs.join(", "))
           if(i != -1) {
             matches.splice(i, 1);
           }
+          matches_2 = Array.from(matches)
           for (var match in matches) {
+            utils.debugMessage(`Checking ID ${match} (${matches[match]})`)
             match = matches[match]
             match = match.replace(/\.md$/, "")
             cmd = args[0] + " " + match
@@ -66,13 +68,18 @@ Possible categories: ` + dirs.join(", "))
               }
               else {
                 utils.debugMessage(`User did not have permissions; removing from list.`)
-                var i = matches.indexOf(cmd)
-                matches.splice(i, 1)
+                var i = matches_2.indexOf(match + ".md")
+                utils.debugMessage(`Removing ${i} (${matches_2[i]}) from ${matches_2}`)
+                matches_2.splice(i, 1)
                 items_removed = true
 
               }
+              
+            } else {
+              utils.debugMessage("Command not in permissions; assuming all can run")
             }
           }
+          matches = matches_2
           for (var match in matches) {
             match = matches[match]
             match = match.replace(/\.md$/, "") /*This general section could be a ton more efficient; I'll do that once it works*/
@@ -88,7 +95,11 @@ Possible categories: ` + dirs.join(", "))
               msg.channel.send(`Sorry, but that category does not exist.`)
             } else {
               utils.debugMessage("Sending help data")
-              msg.channel.send(`${data}${commands.join("")}\n\n*Need more info? Use \`help category command\`. For example: \`!help ${args} ${matches[0].replace(/\.md$/, "")}\``)
+              append = ""
+              if (items_removed) {
+                append = "\n\n*Some items have been removed as you did not have permission to run them.*"
+              }
+              msg.channel.send(`${data}${commands.join("")}\n\n*Need more info? Use \`help category command\`. For example: \`!help ${args} ${matches[0].replace(/\.md$/, "")}\`*${append}`)
             }
           })
           
