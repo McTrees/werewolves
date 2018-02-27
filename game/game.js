@@ -22,7 +22,7 @@ exports.is_started = function () {
   return game_state.data().state_num > 1
 };
 
-exports.open_signupsCmd = function(msg, client) {
+exports.commands.open_signups = function(msg, client) {
   // game state 0->1
   if (game_state.data().state_num !== 0){
     msg.reply("wrong game state!")
@@ -32,7 +32,7 @@ exports.open_signupsCmd = function(msg, client) {
   }
 }
 
-exports.game_infoCmd = function(msg, client) {
+exports.commands.game_info = function(msg, client) {
   utils.debugMessage("game info command called")
   var data = game_state.data()
   var emb = new discord.RichEmbed()
@@ -45,13 +45,13 @@ exports.game_infoCmd = function(msg, client) {
   msg.channel.send(emb)
 }
 
-exports.set_season_infoCmd = function(msg, client, args) {
+exports.commands.set_season_info = function(msg, client, args) {
   utils.debugMessage("set season info command called")
   game_state.set_season_code(args[0])
   game_state.set_season_name(args.slice(1).join(" "))
 }
 
-exports.start_seasonCmd = function (msg, client) {
+exports.commands.start_season = function (msg, client) {
   // game state 1 -> 2
   // start a new season
   if (game_state.data().state_num !== 1) {
@@ -80,7 +80,7 @@ function startgame(client) {
   })
 }
 
-exports.set_roleCmd = async function (msg, client, args) {
+exports.commands.set_role = async function (msg, client, args) {
   // game state 2 only
   if (args.length !== 2) {
     msg.reply("invalid syntax!")
@@ -121,7 +121,7 @@ exports.set_roleCmd = async function (msg, client, args) {
   }
 }
 
-exports.send_rolesCmd = async function(msg, client) {
+exports.commands.send_roles = async function(msg, client) {
   // game state 2->3
   if (game_state.data().state_num !== 2){
     msg.reply("signups are currently open or a game is not being set up")
@@ -155,7 +155,7 @@ exports.send_rolesCmd = async function(msg, client) {
   }
 }
 
-exports.beginCmd = async function(msg, client) {
+exports.commands.begin = async function(msg, client) {
   // game state 3->4
   // TODO: scripts/start here too
   if (game_state.data().state_num !== 3 ){
@@ -167,7 +167,7 @@ exports.beginCmd = async function(msg, client) {
 
 }
 
-exports.dayCmd = async function(msg, client) {
+exports.commands.day = async function(msg, client) {
   if (game_state.data().state_num !== 4) {
     msg.reply("wrong game state")
     return
@@ -181,7 +181,7 @@ exports.dayCmd = async function(msg, client) {
   }
 }
 
-exports.nightCmd = async function(msg, client) {
+exports.commands.night = async function(msg, client) {
   if (game_state.data().state_num !== 4) {
     msg.reply("wrong game state")
     return
@@ -195,7 +195,7 @@ exports.nightCmd = async function(msg, client) {
   }
 }
 
-exports.killCmd = async function(msg, client, args) {
+exports.commands.kill = async function(msg, client, args) {
   // kills someone
   // args[0] should be who killed them (how they died). currently 'l' for lynch or 'w' for werewolves.
   // args[1] should be who to kill
