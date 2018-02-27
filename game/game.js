@@ -101,7 +101,7 @@ exports.set_roleCmd = async function (msg, client, args) {
       ids = all.map(row=>row.user_id) // get array of all the user ids
       if (!ids.includes(id)) {
         // that user hasn't signed up!
-        msg.reply(`user <@${id}> hasn't signed up! Don't to give them a role, silly. :smirk:`)
+        msg.reply(`user <@${id}> hasn't signed up! Don't to give them a role, silly. 😏`)
       } else {
         msg.reply(`giving <@${id}> role ${role}`)
         user.finalise_user(id, role)
