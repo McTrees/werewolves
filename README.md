@@ -32,18 +32,18 @@ Run with `node index.js` or by opening `run.bat` (windows only)
 ## Configuration
 This project offers several configuration options via both `config.json` and `token.json`:
  - [`config.json`](https://github.com/McTrees/werewolves/blob/master/docs/config.md)
-   - bot_prefix: the prefix the bot should respond to (defaults to `!`)
-   - season: likely to be removed soon in favour of game_state managing seasons.
-   - messageTimeout: how long the bot should wait before deleteing some of it's own error messages.
-   - messages: categorised messages which the bot sends upon several actions being completed.
-   - channel_ids: IDs of channels the bot should send several types of message in.
+   - bot_prefix: the prefix the bot should respond to (defaults to `!`). **THIS MUST BE A SINGLE CHARACTER!**
+   - ~~season: likely to be removed soon in favour of game_state managing seasons.~~
+   - messageTimeout: how long the bot should wait before deleting some of it's own error messages.
+   - messages: categorised messages which the bot sends upon several actions being completed. Will soon be moved to a new file.
+   - channel_ids: IDs of channels the bot should send several types of message in. Might soon be moved to a new file.
    - role_ids: IDs of roles which the bot should use to establish permissions, etc.
    - developerOptions: Whether or not the bot should do things like show messages to users or create logs.
      - saveLogFiles: Whether the bot should create files and save to ./logs, this shouldn't be neccessary if remoteErrorReporting is on.
-     - remoteErrorReporting: Whether to send errors to the devs so we can fix them
+     - remoteErrorReporting: Whether to send errors to the devs so we can fix them.
  - `token.json`
    - token: The token of the account which the bot should run under. Will throw an error if set to default value.
-   
+
 For more info see the [docs](https://github.com/McTrees/werewolves/blob/master/docs/readme.md)
 
 ## Attribution
