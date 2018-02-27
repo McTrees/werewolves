@@ -17,7 +17,7 @@ function getDirectories(path) {
 }
 
 
-exports = function(msg, client, args) {
+module.exports = function(msg, client, args) {
   cmd = args.slice(1)
   items_removed = false
   var messageContent = msg.content.split(" ");
@@ -32,17 +32,19 @@ exports = function(msg, client, args) {
 
     if (args == [] || args == undefined || args == "") {
       p = "./cmds/"
-
-
       msg.channel.send(`
-\`help\` help:
+**Werewolves bot**
+*A bot designed to automate the heavy-lifting of werewolves*
 
-**Usage:** !help category command
+Possible command categories:
+\`${dirs.join("`, `")}\`
 
-**Example:** !help u signup
+Quick start guides:
+\`!help signing_up\`
+\`!help managing_cc\`
 
-
-Possible categories: ` + dirs.join(", "))
+*Code developed by Lord of Galaxy, BenTechy66, ed588, Oliverh57, trebor97351
+Source code avaliable at: https://github.com/mctrees/werewolves*`)
       return
 }
      else if (cmd == [] || cmd == undefined || cmd == "") {
