@@ -8,7 +8,7 @@ const players = require("../user/user");
 const internal = require("./internal");
 //The above is self-explanatory, I think
 
-exports.start_pollCmd = function (msg, client, args){
+exports.commands.start_poll = function (msg, client, args){
 	utils.debugMessage(`@${msg.author.username} tried to create a poll.`);
 	if(args.length <= 1){
 		utils.errorMessage(`Insufficient arguments provided for start_pollCmd!`);
@@ -98,7 +98,7 @@ msg - The message that triggered the function
 client - The Discord Client that the bot uses
 id - The ID of the poll to check
  */
-exports.threatenCmd = async function (msg, client, args) {
+exports.commands.threaten = async function (msg, client, args) {
 	var user;
 	if(args.length === 1){
 		var id = "";
@@ -142,7 +142,7 @@ msg - The message that triggered the function
 client - The Discord Client that the bot uses
 id - The ID of the poll to check
  */
-exports.check_pollCmd = function (msg, client, id) {
+exports.commands.check_poll = function (msg, client, id) {
 	if(id.length !== 1){
 		msg.reply(`correct syntax is \`!check_poll <pollID>\``);
 		utils.infoMessage(`@${msg.author.username} used wrong syntax for !check_poll`);
@@ -183,7 +183,7 @@ msg - The message that triggered the function
 client - The Discord Client that the bot uses
 id - The ID of the poll to end
  */
-exports.end_pollCmd = function (msg, client, id) {
+exports.commands.end_poll = function (msg, client, id) {
 	if(id.length !== 1){
 		msg.reply(`correct syntax is \`!end_poll <pollID>\``);
 		utils.infoMessage(`@${msg.author.username} used wrong syntax for !end_poll`);
