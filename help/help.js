@@ -43,7 +43,7 @@ Quick start guides:
 \`!help signing_up\`
 \`!help managing_cc\`
 
-*Code developed by Lord of Galaxy, BenTechy66, ed588, Oliverh57, trebor97351
+*Code developed by BenTechy66, ed588, Lord of Galaxy, Oliverh57, trebor97351
 Source code avaliable at: https://github.com/mctrees/werewolves*`)
       return
 }

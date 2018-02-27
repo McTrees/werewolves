@@ -9,6 +9,10 @@
 		"g night",
 		"up set_games",
 		"up set_wins",
-		"up set_record"
+		"up set_record",
+		"p start_poll",
+		"p check_poll",
+		"p end_poll",
+		"p threaten"
 	]
 }

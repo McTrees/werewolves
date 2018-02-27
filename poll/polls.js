@@ -1,5 +1,5 @@
 //IMPORTANT NOTE - MAJOR OVERHAUL PROBABLY COMING UP SOON
-
+//Eh, I've forgotten what changes are necessary.
 
 const config = require("../config");
 const aliases = require("./polls_aliases");
@@ -8,12 +8,11 @@ const players = require("../user/user");
 const internal = require("./internal");
 //The above is self-explanatory, I think
 
-exports.startPollCmd = function (msg, client, args){
-	if(fail(msg))return;
+exports.start_pollCmd = function (msg, client, args){
 	utils.debugMessage(`@${msg.author.username} tried to create a poll.`);
 	if(args.length <= 1){
-		utils.errorMessage(`Insufficient arguments provided for startPollCmd!`);
-		msg.reply("correct syntax: `!startPoll <type(werewolves/lynch/cult)> <heading>`");
+		utils.errorMessage(`Insufficient arguments provided for start_pollCmd!`);
+		msg.reply("correct syntax: `!start_poll <type(werewolves/lynch/cult)> <heading>`");
 		return;
 	}
 	var type = args[0].toLowerCase(); //The type of poll - so far "lynch" (alias 'l'), "werewolves" (alias 'w'), "cult" (alias 'c')
@@ -100,7 +99,6 @@ client - The Discord Client that the bot uses
 id - The ID of the poll to check
  */
 exports.threatenCmd = async function (msg, client, args) {
-	if(fail(msg))return;
 	var user;
 	if(args.length === 1){
 		var id = "";
@@ -137,18 +135,17 @@ exports.threatenCmd = async function (msg, client, args) {
 }
 
 /**
-Function - checkPollCmd
+Function - check_pollCmd
 Checks if all the emojis have been added to the poll
 Arguments:
 msg - The message that triggered the function
 client - The Discord Client that the bot uses
 id - The ID of the poll to check
  */
-exports.checkPollCmd = function (msg, client, id) {
-	if(fail(msg))return;
+exports.check_pollCmd = function (msg, client, id) {
 	if(id.length !== 1){
-		msg.reply(`correct syntax is \`!checkPoll <pollID>\``);
-		utils.infoMessage(`@${msg.author.username} used wrong syntax for !checkPoll`);
+		msg.reply(`correct syntax is \`!check_poll <pollID>\``);
+		utils.infoMessage(`@${msg.author.username} used wrong syntax for !check_poll`);
 		return;
 	}
 	utils.debugMessage(`@${msg.author.username} tried to check if emojis were properly added to Poll ${id}`);
@@ -179,18 +176,17 @@ exports.checkPollCmd = function (msg, client, id) {
 }
 
 /**
-Function - endPollCmd
+Function - end_pollCmd
 Ends a poll
 Arguments:
 msg - The message that triggered the function
 client - The Discord Client that the bot uses
 id - The ID of the poll to end
  */
-exports.endPollCmd = function (msg, client, id) {
-	if(fail(msg))return;
+exports.end_pollCmd = function (msg, client, id) {
 	if(id.length !== 1){
-		msg.reply(`correct syntax is \`!checkPoll <pollID>\``);
-		utils.infoMessage(`@${msg.author.username} used wrong syntax for !checkPoll`);
+		msg.reply(`correct syntax is \`!end_poll <pollID>\``);
+		utils.infoMessage(`@${msg.author.username} used wrong syntax for !end_poll`);
 		return;
 	}
 	utils.debugMessage(`@${msg.author.username} tried to end Poll ${id}.`);
@@ -224,9 +220,4 @@ exports.endPollCmd = function (msg, client, id) {
 		utils.errorMessage(err);
 		ch.send("Error occurred.");
 	});
-}
-
-//INTERNAL - JUST IN CASE
-function fail(msg){
-	return !msg.member.roles.has(config.role_ids.gameMaster);
 }
