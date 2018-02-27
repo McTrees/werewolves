@@ -83,8 +83,12 @@ module.exports = function(msg, client) {
     } catch (em_all) {
       msg.reply(`An error occurred...`);
       if ((config.developerOptions.showErrorsToDevs == "true" && msg.member.roles.has("395967396218667008" ) || config.developerOptions.showErrorsToUsers == "true")){
-       msg.channel.send("the error was: ```" + em_all + "```\nand occurred at: ```" + em_all.stack + "```");
-       utils.errorMessage(`error ${em_all} at ${em_all.stack}`);
+        if (em_all.stack.length < 1900) {
+          msg.channel.send("the error was: ```" + em_all + "```\nand occurred at: ```" + em_all.stack + "```");
+        } else {
+          msg.channel.send("the error was: ```" + em_all + "```The stack trace is too long for me to send, please check the console.")
+        }
+        utils.errorMessage(`error ${em_all} at ${em_all.stack}`);
      }
     }
   }
