@@ -49,6 +49,3 @@ For more info see the [docs](https://github.com/McTrees/werewolves/blob/master/d
 ## Attribution
 This code has been developed by [Ben Griffiths](https://github.com/BenTechy66), [Calvin Edwards](https://github.com/ed588), [Robbie Bradshaw](https://github.com/trebor97351), [Oliver Hynds](https://github.com/oliverh57) and [Lord of Galaxy](https://github.com/Lord-of-the-Galaxy).
 It is licensed under the MIT license, a copy of which can be found in this repository, in the `LICENSE` file.
-
-
-[![forthebadge](http://forthebadge.com/images/badges/built-with-love.svg)](http://forthebadge.com)  [![forthebadge](http://forthebadge.com/images/badges/built-with-swag.svg)](http://forthebadge.com)  [![forthebadge](http://forthebadge.com/images/badges/uses-js.svg)](http://forthebadge.com)  [![forthebadge](http://forthebadge.com/images/badges/gluten-free.svg)](http://forthebadge.com)  [![forthebadge](http://forthebadge.com/images/badges/uses-badges.svg)](http://forthebadge.com)  [![forthebadge](http://forthebadge.com/images/badges/built-by-developers.svg)](http://forthebadge.com) [![forthebadge](http://forthebadge.com/images/badges/powered-by-electricity.svg)](http://forthebadge.com)
