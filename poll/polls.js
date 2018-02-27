@@ -105,7 +105,7 @@ exports.threatenCmd = async function (msg, client, args) {
 	if(args.length === 1){
 		var id = "";
 		try{
-			id = await players.resolve_to_id(args[0])	
+			id = await players.resolve_to_id(args[0])
 		}catch(err){
 			if(err){
 				utils.errorMessage(err);
