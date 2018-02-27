@@ -14,7 +14,7 @@ const aliases = require('./aliases.json');
 */
 
 //Register yourself in global database
-exports.register_globalCmd = async function(msg, client, args){
+exports.commands.register_global = async function(msg, client, args){
 	var user = msg.author;
 	if(args.length === 0){
 		utils.debugMessage(`@${user.username} wants to register in global database`);
@@ -48,12 +48,12 @@ exports.register_globalCmd = async function(msg, client, args){
 }
 
 //Set the age of a user
-exports.set_ageCmd = function(msg, client, args){
+exports.commands.set_age = function(msg, client, args){
 	setProperty(msg, client, "age", args);
 }
 
 //Set the gender of a user
-exports.set_genderCmd = function(msg, client, args){
+exports.commands.set_gender = function(msg, client, args){
 	setProperty(msg, client, "gender", args);
 }
 
@@ -61,35 +61,35 @@ exports.set_genderCmd = function(msg, client, args){
 //Set the profile picture link of a user
 //CURRENTLY NOT IN USE
 /*
-exports.setDPLinkCmd = function(msg, client, args){
+exports.commands.setDPLink = function(msg, client, args){
 	setProperty(msg, client, "DPLink", args);
 }
 */
 
 
 //Set the personal description of a user
-exports.set_infoCmd = function(msg, client, args){
+exports.commands.set_info = function(msg, client, args){
 	setPropertyWithSpaces(msg, client, "info", args);
 }
 
 //Set the number of games of a user
-exports.set_gamesCmd = function(msg, client, args){
+exports.commands.set_games = function(msg, client, args){
 	setProperty(msg, client, "games", args);
 }
 
 //Set the number of wins of a user
-exports.set_winsCmd = function(msg, client, args){
+exports.commands.set_wins = function(msg, client, args){
 	setProperty(msg, client, "wins", args);
 }
 
 //Set the personal record of a user
-exports.set_recordCmd = function(msg, client, args){
+exports.commands.set_record = function(msg, client, args){
 	setPropertyWithSpaces(msg, client, "record", args);
 }
 
 
 //Register a user in the global database if they aren't already registered
-exports.registerIfNew = async function(user){	
+exports.registerIfNew = async function(user){
 	try{
 		//Does the player exist?
 		if(!(await checkGlobal(user.id))){//If not
@@ -106,7 +106,7 @@ exports.registerIfNew = async function(user){
 }
 
 //Show the profile of a user
-exports.profileCmd = function(msg, client, args){
+exports.commands.profile = function(msg, client, args){
 	var user = msg.author;//currently just show the author's profile
 	if(args.length > 1){
 		utils.errorMessage(`Too many arguments provided for profileCmd!`);
