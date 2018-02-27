@@ -33,7 +33,7 @@ exports.open_signupsCmd = function(msg, client) {
 } 
 
 exports.game_infoCmd = function(msg, client) {
-  utils.debugMessage("game info command called")
+  utils.debugMessage("Game info command called")
   var data = game_state.data()
   var emb = new discord.RichEmbed()
   emb.title = "Game info"
@@ -46,7 +46,7 @@ exports.game_infoCmd = function(msg, client) {
 }
 
 exports.set_season_infoCmd = function(msg, client, args) {
-  utils.debugMessage("set season info command called")
+  utils.debugMessage("Set season info command called")
   game_state.set_season_code(args[0])
   game_state.set_season_name(args.slice(1).join(" "))
 }
@@ -132,7 +132,7 @@ exports.send_rolesCmd = async function(msg, client) {
     } else {
       game_state.set_state_num(3)
       utils.infoMessage("Sending roles to players...")
-      msg.reply("Sending roles to all players!")
+      msg.reply("sending roles to all players!")
       var all_users = await user.all_alive()
       var id_list = all_users.map(row=>row.id)
       id_list.forEach(async function(id) {
@@ -140,9 +140,10 @@ exports.send_rolesCmd = async function(msg, client) {
         var u = client.users.get(id)
         if (u === undefined) {
           utils.warningMessage("Couldn't send message to user with ID "+id+"!")
-          msg.reply("Couldn't send message to user with ID "+id+"!")
+          msg.reply(`couldn't send message to user <@${id}> (ID \`id\`)!`)
         } else {
           utils.infoMessage(`sending role to ${u.username}`) // NOTE: The following message still needs the season number.
+          //This next line is still a WIP
           u.send("This message is giving you your role for season *TODO* of the Werewolves game.\n\nYour role is `"+role+"`.\n\n**You are not allowed to share a screenshot of this message!** You can claim whatever you want about your role, but you may under **NO** circumstances show this message in any way to any other participants.\nWe hope you are happy with the role you gained, and we hope you'll enjoy the game as much as we do.\n\nGood luck... :full_moon:\n\n\nDo you not understand your role? Don't worry! Use the command `~rm roleinfo ROLE` for an explanation.\nYou can now use commands in this Direct Message!").catch(e=>{
             if (e.message == 'Cannot send messages to this user') {
               msg.reply(`user <@${id}> has DMs disabled!`)
@@ -162,7 +163,7 @@ exports.beginCmd = async function(msg, client) {
   if (game_state.data().state_num !== 3 ){
     msg.reply("this is the wrong game state for that, buddy.")
   } else {
-    msg.reply("😁 omg, the game actually started, yay!")
+    msg.reply("😁, the game actually started, yay!")
     game_state.set_state_num(4)
   }
 
