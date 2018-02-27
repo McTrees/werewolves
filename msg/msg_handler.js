@@ -62,20 +62,36 @@ module.exports = function(msg, client) {
 
     // now run it
     try {
-      if (firstWord == "h") { require("../help/help.js")(msg, client, rest)}
-      else if (require(FILENAMES[firstWord]).commands[cmdName]) {
-        require(FILENAMES[firstWord]).commands[cmdName](msg, client, rest)
-      } else if (require(FILENAMES[firstWord])[cmdName + "Cmd"]){
-        require(FILENAMES[firstWord])[cmdName + "Cmd"](msg, client, rest)
+
+      // help is special-cased
+      if (firstWord == "h") {
+        require("../help/help.js")(msg, client, rest)
       } else {
-        msg.reply(`\`${msg.content}\` is an unknown command...`);
+        var root = require(FILENAMES[firstWord])
+        if (!root) {
+          fail()
+        } else {
+          if (root.commands && root.commands[cmdName]) {
+            root.commands[cmdName](msg, client, rest)
+          } else if (root[cmdName + "Cmd"]){
+            root[cmdName + "Cmd"](msg, client, rest)
+          } else {
+            fail()
+          }
+        }
       }
     } catch (em_all) {
       msg.reply(`An error occurred...`);
       if ((config.developerOptions.showErrorsToDevs == "true" && msg.member.roles.has("395967396218667008" ) || config.developerOptions.showErrorsToUsers == "true")){
        msg.channel.send("the error was: ```" + em_all + "```\nand occurred at: ```" + em_all.stack + "```");
        utils.errorMessage(`error ${em_all} at ${em_all.stack}`);
-    }
+     }
     }
   }
+}
+
+function fail(msg, client) {
+  // invalid command
+  msg.reply(`\`${msg.content}\` is an unknown command`)
+  // @bentechy66 can add did-you-mean stuff here
 }
