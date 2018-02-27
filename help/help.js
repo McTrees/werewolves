@@ -27,7 +27,6 @@ exports.helpCmd = function(msg, client, args, cmd) {
 
     if (args == [] || args == undefined || args == "") {
       p = "./cmds/"
-      
       msg.channel.send(`
 \`help\` help:
 
