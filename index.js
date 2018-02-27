@@ -25,7 +25,8 @@ if (process.argv.indexOf("--debug") > -1) {
 //WARNING - Use this flag only during the testing phase, or if the server is being reset.
 if(process.argv.indexOf("--reset-data") > -1){
 	reset_data = true;
-	utils.warningMessage("Will reset database.");
+	utils.warningMessage("Will reset WHOLE database, even the global profiles.");
+	utils.warningMessage("Shut down the bot NOW if you want to prevent that.");
 }
 
 if (process.argv.indexOf("--noupdate") > -1) {
@@ -33,8 +34,6 @@ if (process.argv.indexOf("--noupdate") > -1) {
 }
 
 // Check for updates
-
-//Why was this commented out?
 if (update) {
 	try {
 	checkForUpdate();
@@ -71,6 +70,7 @@ if (token == 'insert-token-here') {
 
 // this makes unhandled promise rejections a fatal error, not a supressed warning.
 // this should hopefully make debugging easier
+// hopefully
 process.on('unhandledRejection', ball => { throw ball })
 
 client.on('ready', () => {

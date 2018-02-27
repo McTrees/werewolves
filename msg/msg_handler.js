@@ -76,4 +76,6 @@ module.exports = function(msg, client) {
        msg.channel.send("the error was: ```" + em_all + "```\nand occurred at: ```" + em_all.stack + "```");
        utils.errorMessage(`error ${em_all} at ${em_all.stack}`);
     }
-}}}
+    }
+  }
+}

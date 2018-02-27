@@ -6,6 +6,9 @@
 		"g set_role",
 		"g send_roles",
 		"g day",
-		"g night"
+		"g night",
+		"up set_games",
+		"up set_wins",
+		"up set_record"
 	]
 }

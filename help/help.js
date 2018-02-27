@@ -6,6 +6,7 @@ const discord = require("discord.js")
 const path = require("path")
 var fs = require('fs')
 const glob = require('glob')
+const permissions = require('../msg/permissions')
 
 
 
@@ -18,6 +19,9 @@ function getDirectories(path) {
 
 exports = function(msg, client, args) {
   cmd = args.slice(1)
+  items_removed = false
+  var messageContent = msg.content.split(" ");
+  messageContent[0] = messageContent[0].slice(1); //remove the prefix from the message
   const dirs = getDirectories("./help/cmds/")
   utils.debugMessage("helpCmd called with args: '" + args + "' and cmd '" + cmd + "'")
   if (msg.author == client.user) return; //ignore own messages
@@ -49,6 +53,34 @@ Possible categories: ` + dirs.join(", "))
           if(i != -1) {
             matches.splice(i, 1);
           }
+          matches_2 = Array.from(matches)
+          for (var match in matches) {
+            utils.debugMessage(`Checking ID ${match} (${matches[match]})`)
+            match = matches[match]
+            match = match.replace(/\.md$/, "")
+            cmd = args[0] + " " + match
+            utils.debugMessage("Calculating permissions for user and removing commands which he has no permissions for.")
+            utils.debugMessage(`Checking ${cmd} against permissions.json`)
+            p = permissions.gm_only
+            if(permissions.gm_only.includes(cmd)) {
+              utils.debugMessage(`Command ${cmd} was in permissions.json; Checking roles now.`)
+              if (msg.member.roles.has(config.role_ids.gameMaster)) {
+                utils.debugMessage(`User had permissions; continuing execution.`)
+              }
+              else {
+                utils.debugMessage(`User did not have permissions; removing from list.`)
+                var i = matches_2.indexOf(match + ".md")
+                utils.debugMessage(`Removing ${i} (${matches_2[i]}) from ${matches_2}`)
+                matches_2.splice(i, 1)
+                items_removed = true
+
+              }
+
+            } else {
+              utils.debugMessage("Command not in permissions; assuming all can run")
+            }
+          }
+          matches = matches_2
           for (var match in matches) {
             match = matches[match]
             match = match.replace(/\.md$/, "") /*This general section could be a ton more efficient; I'll do that once it works*/
@@ -64,7 +96,11 @@ Possible categories: ` + dirs.join(", "))
               msg.channel.send(`Sorry, but that category does not exist.`)
             } else {
               utils.debugMessage("Sending help data")
-              msg.channel.send(`${data}${commands.join("")}\n\n*Need more info? Use \`help category command\`. For example: \`!help ${args} ${matches[0].replace(/\.md$/, "")}\``)
+              append = ""
+              if (items_removed) {
+                append = "\n\n*Some items have been removed as you did not have permission to run them.*"
+              }
+              msg.channel.send(`${data}${commands.join("")}\n\n*Need more info? Use \`help category command\`. For example: \`!help ${args} ${matches[0].replace(/\.md$/, "")}\`*${append}`)
             }
           })
 

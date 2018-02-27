@@ -1,7 +1,7 @@
 {
 	"dbnames":{
-		"Info":"personal_desc",
-		"Record":"personal_record"
+		"info":"personal_desc",
+		"record":"personal_record"
 	},
 	
 	"GenderOptions":{
@@ -15,5 +15,5 @@
 		"u":"Unknown"
 	},
 	
-	"AgeCharacterLimit":7
+	"ageCharacterLimit":7
 }
