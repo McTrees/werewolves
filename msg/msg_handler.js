@@ -18,21 +18,34 @@ all other arguments that get send with the alias get added to the send
 alieses need to be one word
 */
 
+const FILENAMES = {
+  // map first word category names to filenames relative to here
+  u: "../user/user.js",
+  up: "../user/userprofile.js",
+  p: "../poll/polls.js",
+  c: "../cc/ccs.js",
+  g: "../game/game.js"
+}
+
 module.exports = function(msg, client) {
   if (msg.author == client.user) {return}; //ignore own messages
   if (msg.content[0] == config.bot_prefix) { //only run if it is a message starting with the bot prefix (if it's a command)
-    var messageContent = msg.content.split(" ");
-    messageContent[0] = messageContent[0].slice(1); //remove the prefix from the message
-    try {
-      messageContent = (aliases[messageContent[0]].split(" ").concat(messageContent.slice(1)));
-    } catch (err) {;} //check aliases
+    var splitMessage = msg.content.split(" ");
 
+    splitMessage[0] = splitMessage[0].slice(1); //remove the prefix from the message
+    var firstWord = splitMessage[0]
+    if (aliases[firstWord]) {
+      splitMessage = (aliases[firstWord].split(" ").concat(splitMessage.slice(1)));
+      var firstWord = splitMessage[0]
+    }
+    var cmdName = splitMessage[1]
+    var rest = splitMessage.slice(2)
     // permissions checks
 
-    cmd = messageContent[0] + " " + messageContent[1]
+    cmd = firstWord + " " + cmdName
     utils.debugMessage(`Checking ${cmd} against permissions.json`)
     p = permissions.gm_only
-    if(permissions.gm_only.includes(cmd)) {
+    if(p.includes(cmd)) {
       utils.debugMessage(`Command ${cmd} was in permissions.json; Checking roles now.`)
       if (msg.member.roles.has(config.role_ids.gameMaster)) {
         utils.debugMessage(`User had permissions; continuing execution.`)
@@ -47,45 +60,20 @@ module.exports = function(msg, client) {
       utils.debugMessage(`Anyone can run this command, it was not in permissions.json`)
     }
 
+    // now run it
     try {
-
-      switch (messageContent[0]) { //swicth the first part of the command, then run the function of the second part of the command, with any args
-        case ("u"):
-          require("../user/user.js")[messageContent[1] + "Cmd"](msg, client, messageContent.slice(2));
-          break;
-        case ("up"):
-          require("../user/userprofile.js")[messageContent[1] + "Cmd"](msg, client, messageContent.slice(2));
-          break;
-	case ("p"):
-          require("../poll/polls.js")[messageContent[1] + "Cmd"](msg, client, messageContent.slice(2));
-	  break;
-        case ("c"):
-          require("../cc/ccs.js")[messageContent[1] + "Cmd"](msg, client, messageContent.slice(2));
-          break;
-        case ("g"):
-          require("../game/game.js")[messageContent[1] + "Cmd"](msg, client, messageContent.slice(2));
-          break;
-        default: //replies if no command found
-          console.log(["helpCmd"](msg, client, messageContent.slice(1), messageContent.slice(2)))
-          msg.reply(`\`${msg.content}\` is an unknown command...`);
-          break;
-      }
-
-    } catch (err) {
-      if (messageContent[0]=="h"){             //help command
-        // console.log("help command")
-        require("../help/help.js")["helpCmd"](msg, client, messageContent.slice(1), messageContent.slice(2));
-      }
-      else if (err instanceof TypeError) {
-        msg.reply(`\`${msg.content}\` is an unknown command...`);
-	      utils.debugMessage(err);
+      if (firstWord == "h") { require("../help/help.js")(msg, client, rest)}
+      else if (require(FILENAMES[firstWord]).commands[cmdName]) {
+        require(FILENAMES[firstWord]).commands[cmdName](msg, client, rest)
+      } else if (require(FILENAMES[firstWord])[cmdName + "Cmd"]){
+        require(FILENAMES[firstWord])[cmdName + "Cmd"](msg, client, rest)
       } else {
-	       msg.reply(`An error occurred...`);
-         if ((config.developerOptions.showErrorsToDevs == "true" && msg.member.roles.has("395967396218667008" ) || config.developerOptions.showErrorsToUsers == "true")){
-          msg.channel.send("the error was: ```" + err + "```\nand occurred at: ```" + err.stack + "```");
-          utils.errorMessage(`error ${err} at ${err.stack}`);
-        }
+        msg.reply(`\`${msg.content}\` is an unknown command...`);
       }
+    } catch (em_all) {
+      msg.reply(`An error occurred...`);
+      if ((config.developerOptions.showErrorsToDevs == "true" && msg.member.roles.has("395967396218667008" ) || config.developerOptions.showErrorsToUsers == "true")){
+       msg.channel.send("the error was: ```" + em_all + "```\nand occurred at: ```" + em_all.stack + "```");
+       utils.errorMessage(`error ${em_all} at ${em_all.stack}`);
     }
-  };
-};
+}}}

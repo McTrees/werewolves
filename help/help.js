@@ -16,7 +16,8 @@ function getDirectories(path) {
 }
 
 
-exports.helpCmd = function(msg, client, args, cmd) {
+exports = function(msg, client, args) {
+  cmd = args.slice(1)
   const dirs = getDirectories("./help/cmds/")
   utils.debugMessage("helpCmd called with args: '" + args + "' and cmd '" + cmd + "'")
   if (msg.author == client.user) return; //ignore own messages
@@ -66,7 +67,7 @@ Possible categories: ` + dirs.join(", "))
               msg.channel.send(`${data}${commands.join("")}\n\n*Need more info? Use \`help category command\`. For example: \`!help ${args} ${matches[0].replace(/\.md$/, "")}\``)
             }
           })
-          
+
         }
         else {
           msg.channel.send("Sorry, but I don't have any commands in that help category. Valid categories are: *[WIP/TODO]*")
