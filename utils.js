@@ -7,7 +7,7 @@ const config = require("./config");
 
 var date = new Date();
 logName = "./logs/" + date.getDate() + "." + date.getMonth() + "." + date.getFullYear() + "_" + date.getHours() + "_" + date.getMinutes() + "_" + date.getSeconds() + ".log"
-log = function (type, msg) {
+function log(type, msg) {
 	if (config.developerOptions.saveLogFiles == "true") {
 		var date = new Date();
 		msg = "[" + type + " @ " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + "]: " + msg
@@ -15,7 +15,7 @@ log = function (type, msg) {
 		    if(err) {
 		        return console.log(err);
 		    }
-		}); 
+		});
 	}
 }
 
