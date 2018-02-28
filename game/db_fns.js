@@ -26,18 +26,18 @@ exports.init = function(reset_data) {
 
 // NB: nothing here actually checks to see if a user exists or if a tag is valid!
 
-exports.add_tag = function(id, tag) {
+exports.tags.add_tag = function(id, tag) {
   // adds a tag to a user
   gamedb.run("insert into player_tags (user_id, tag_name) values ($id, $t);", {$id:id,$t:tag}, function(err) { if (err) throw err})
 }
 
 
-exports.remove_tag = function(id, tag) {
+exports.tags.remove_tag = function(id, tag) {
   // removes tag from user
   gamedb.run("delete from player_tags where user_id = $id and tag_name = $t;", {$id:id,$t:tag}, function(err) {if (err) throw err})
 }
 
-exports.has_tag = function(id, tag) {
+exports.tags.has_tag = function(id, tag) {
   // true or false, whether user `id` has tag `tag`
   return new Promise(function(resolve, reject) {
     gamedb.get("select user_id from player_tags where user_id = $id and tag_name  = $t;", {$id:id,$t:tag}, function(err, row) {
@@ -47,7 +47,7 @@ exports.has_tag = function(id, tag) {
   })
 }
 
-exports.all_tags_of = function(id) {
+exports.tags.all_tags_of = function(id) {
   return new Promise(function(resolve, reject) {
     // promise of list of tags a user has, or [] if none
     gamedb.all("select tag_name from player_tags where user_id = ?;", id, function(err, rows) {
@@ -57,7 +57,7 @@ exports.all_tags_of = function(id) {
   })
 }
 
-exports.all_with_tag = function(tag) {
+exports.tags.all_with_tag = function(tag) {
   return new Promise(function(resolve, reject) {
     // promise of a list of users who have that tag.
     gamedb.all("select user_id from player_tags where tag_name = ?;", tag, function(err, rows){
