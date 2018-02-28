@@ -2,7 +2,7 @@ const path = require("path")
 const fs = require("fs")
 const sqlite3 = require("sqlite3")
 const gamedb = new sqlite3.Database("game/game.db")
-
+const utils = require("../utils")
 exports.init = function(reset_data) {
   // called on bot start
   fs.readFile(path.join(__dirname, 'game.db'), {encoding: "utf-8"}, function(err, data){
@@ -25,14 +25,16 @@ exports.init = function(reset_data) {
 }
 
 // NB: nothing here actually checks to see if a user exists or if a tag is valid!
-
+exports.tags = {}
 exports.tags.add_tag = function(id, tag) {
+  utils.debugMessage(`add tag: giving ${id} tag ${tag}`)
   // adds a tag to a user
   gamedb.run("insert into player_tags (user_id, tag_name) values ($id, $t);", {$id:id,$t:tag}, function(err) { if (err) throw err})
 }
 
 
 exports.tags.remove_tag = function(id, tag) {
+  utils.debugMessage(`remove tag: taking ${id}'s' tag ${tag}`)
   // removes tag from user
   gamedb.run("delete from player_tags where user_id = $id and tag_name = $t;", {$id:id,$t:tag}, function(err) {if (err) throw err})
 }
@@ -48,16 +50,20 @@ exports.tags.has_tag = function(id, tag) {
 }
 
 exports.tags.all_tags_of = function(id) {
+  utils.debugMessage(`getting all tags of ${id}`)
   return new Promise(function(resolve, reject) {
     // promise of list of tags a user has, or [] if none
     gamedb.all("select tag_name from player_tags where user_id = ?;", id, function(err, rows) {
       if (err) { throw err; }
-      resolve(rows.map(row=>row.tag_name))
+      var res = rows.map(row=>row.tag_name)
+      utils.debugMessage(`they were: ${res}`)
+      resolve(res)
     })
   })
 }
 
 exports.tags.all_with_tag = function(tag) {
+  utils.debugMessage(`geting all people with tag ${tag}`)
   return new Promise(function(resolve, reject) {
     // promise of a list of users who have that tag.
     gamedb.all("select user_id from player_tags where tag_name = ?;", tag, function(err, rows){
