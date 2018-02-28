@@ -33,22 +33,23 @@ exports.commands.open_signups = function(msg, client) {
 }
 
 exports.commands.game_info = function(msg, client) {
-  utils.debugMessage("Game info command called")
-  var data = game_state.data()
-  var emb = new discord.RichEmbed()
-  emb.title = "Game info"
-  emb
-    .setColor(0x44009b)
-    .addField("Season name", `${data.season_name} (\`${data.season_code}\`)`)
-    .addField("Game phase", `${game_state.nice_names[data.state_num]} (#${data.state_num})`)
-    .addField("Game time", `${data.night_time ? "Night" : "Day"} #${data.day_num}`)
-  msg.channel.send(emb)
+    utils.debugMessage("Game info command called")
+    var data = game_state.data()
+    var emb = new discord.RichEmbed()
+    emb.title = "Game info"
+    emb
+      .setColor(0x44009b)
+      .addField("Season name", `${data.season_name} (\`${data.season_code}\`)`)
+      .addField("Game phase", `${game_state.nice_names[data.state_num]} (#${data.state_num})`)
+      .addField("Game time", `${data.night_time ? "Night" : "Day"} #${data.day_num}`)
+    msg.channel.send(emb)
 }
 
 exports.commands.set_season_info = function(msg, client, args) {
-  utils.debugMessage("Set season info command called")
-  game_state.set_season_code(args[0])
-  game_state.set_season_name(args.slice(1).join(" "))
+    utils.debugMessage("Set season info command called")
+    game_state.set_season_code(args[0])
+    game_state.set_season_name(args.slice(1).join(" "))
+}
 }
 
 exports.commands.start_season = function (msg, client) {
