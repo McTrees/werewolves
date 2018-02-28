@@ -61,6 +61,7 @@ utils.debugMessage("Loaded modules.");
 utils.debugMessage("Running inits:")
 require("./user/user").init(reset_data)
 require("./game/game_state").init(reset_data)
+require("./game/db_fns").init(reset_data)
 utils.debugMessage("Inits done")
 
 if (token == 'insert-token-here') {
