@@ -22,18 +22,18 @@ exports.is_started = function () {
   return game_state.data().state_num > 1
 };
 
-exports.open_signupsCmd = function(msg, client) {
+exports.commands.open_signups = function(msg, client) {
   // game state 0->1
   if (game_state.data().state_num !== 0){
-    msg.reply("wrong game state!")
+    msg.channel.send("This is the wrong game state, buddy!")
   } else {
     game_state.set_state_num(1)
-    msg.reply("signups opened! yay!")
+    msg.reply("the sign-up has been opened! Yay!")
   }
 }
 
-exports.game_infoCmd = function(msg, client) {
-  utils.debugMessage("game info command called")
+exports.commands.game_info = function(msg, client) {
+  utils.debugMessage("Game info command called")
   var data = game_state.data()
   var emb = new discord.RichEmbed()
   emb.title = "Game info"
@@ -45,13 +45,13 @@ exports.game_infoCmd = function(msg, client) {
   msg.channel.send(emb)
 }
 
-exports.set_season_infoCmd = function(msg, client, args) {
-  utils.debugMessage("set season info command called")
+exports.commands.set_season_info = function(msg, client, args) {
+  utils.debugMessage("Set season info command called")
   game_state.set_season_code(args[0])
   game_state.set_season_name(args.slice(1).join(" "))
 }
 
-exports.start_seasonCmd = function (msg, client) {
+exports.commands.start_season = function (msg, client) {
   // game state 1 -> 2
   // start a new season
   if (game_state.data().state_num !== 1) {
@@ -61,7 +61,7 @@ exports.start_seasonCmd = function (msg, client) {
       if (asu.length == 0) { // 0 players isn't enough!
         msg.reply("there aren't enough players signed up to do that.")
       } else {
-        msg.channel.send("Starting season! Please check <#" + config.channel_ids.gm_confirm + "> and enter player's roles.");
+        msg.channel.send("Starting season! Please check <#" + config.channel_ids.gm_confirm + "> and enter players' roles.");
         startgame(client);
       }
     })
@@ -80,7 +80,7 @@ function startgame(client) {
   })
 }
 
-exports.set_roleCmd = async function (msg, client, args) {
+exports.commands.set_role = async function (msg, client, args) {
   // game state 2 only
   if (args.length !== 2) {
     msg.reply("invalid syntax!")
@@ -90,7 +90,7 @@ exports.set_roleCmd = async function (msg, client, args) {
   let usr = args[0]
   let role = args[1]
   if (game_state.data().state_num !== 2) {
-    msg.reply("signups are currently open or a game is not being set up")
+    msg.reply("the sign-up is currently open, or a game is not being set up.\nI'm sorry for the inconvenience!")
   } else {
     if (!VALID_ROLES.includes(role)) {
       msg.reply("invalid role: `"+role+"`!")
@@ -101,7 +101,7 @@ exports.set_roleCmd = async function (msg, client, args) {
       ids = all.map(row=>row.user_id) // get array of all the user ids
       if (!ids.includes(id)) {
         // that user hasn't signed up!
-        msg.reply(`the user <@${id}> hasn't signed up! You probably don't want to give them a role...`)
+        msg.reply(`user <@${id}> hasn't signed up! Don't to give them a role, silly. 😏`)
       } else {
         msg.reply(`giving <@${id}> role ${role}`)
         user.finalise_user(id, role)
@@ -111,27 +111,27 @@ exports.set_roleCmd = async function (msg, client, args) {
       user.any_left_unfinalised().then(any_left => {
         if (!any_left) {
           // all players have a role assigned
-          msg.reply("all players now have a role assigned.\nTo send everyone their roles, do `!g send_roles`")
+          msg.reply("all players now have a role assigned.\nTo send everyone their roles, please type `!g send_roles`.")
         } else {
           // still some left
-          msg.reply("there are still user(s) with no role")
+          msg.reply("there are still user(s) without a role.")
         }
       })
     }, 1000)
   }
 }
 
-exports.send_rolesCmd = async function(msg, client) {
+exports.commands.send_roles = async function(msg, client) {
   // game state 2->3
   if (game_state.data().state_num !== 2){
-    msg.reply("signups are currently open or a game is not being set up")
+    msg.reply("the sign-up is currently open, or a game is not being set up.\nI'm sorry for the inconvenience!")
   } else {
     var any_left = await user.any_left_unfinalised()
     if (any_left) {
-      msg.reply("how do you expect me to tell everyone their roles when you haven't even given everyone a role yet? ಠ_ಠ")
+      msg.reply("that's not gonna work, pal. How do you expect me to send everyone their roles when you haven't even given everyone a role yet? ಠ_ಠ")
     } else {
       game_state.set_state_num(3)
-      utils.infoMessage("sending roles to players")
+      utils.infoMessage("Sending roles to players...")
       msg.reply("sending roles to all players!")
       var all_users = await user.all_alive()
       var id_list = all_users.map(row=>row.id)
@@ -140,62 +140,64 @@ exports.send_rolesCmd = async function(msg, client) {
         var u = client.users.get(id)
         if (u === undefined) {
           utils.warningMessage("Couldn't send message to user with ID "+id+"!")
-          msg.reply("Couldn't send message to user with ID "+id+"!")
+          msg.reply(`couldn't send message to user <@${id}> (ID \`id\`)!`)
         } else {
-          utils.infoMessage(`sending role to ${u.username}`)
-          u.send("your role is "+role).catch(e=>{
+          utils.infoMessage(`sending role to ${u.username}`) // NOTE: The following message still needs the season number.
+          //This next line is still a WIP
+          u.send("This message is giving you your role for season *TODO* of the Werewolves game.\n\nYour role is `"+role+"`.\n\n**You are not allowed to share a screenshot of this message!** You can claim whatever you want about your role, but you may under **NO** circumstances show this message in any way to any other participants.\nWe hope you are happy with the role you gained, and we hope you'll enjoy the game as much as we do.\n\nGood luck... :full_moon:\n\n\nDo you not understand your role? Don't worry! Use the command `~rm roleinfo ROLE` for an explanation.\nYou can now use commands in this Direct Message!").catch(e=>{
             if (e.message == 'Cannot send messages to this user') {
               msg.reply(`user <@${id}> has DMs disabled!`)
-              utils.warningMessage(`user ${u.username} has DMs disabled!`)
+              utils.warningMessage(`User ${u.username} has DMs disabled!`)
             }
           })
         }
       })
+      msg.channel.send("All DMs sent!")
     }
   }
 }
 
-exports.beginCmd = async function(msg, client) {
+exports.commands.begin = async function(msg, client) {
   // game state 3->4
   // TODO: scripts/start here too
   if (game_state.data().state_num !== 3 ){
-    msg.reply("wrong game state")
+    msg.reply("this is the wrong game state for that, buddy.")
   } else {
-    msg.reply("😁 game started actually yay")
+    msg.reply("😁, the game actually started, yay!")
     game_state.set_state_num(4)
   }
 
 }
 
-exports.dayCmd = async function(msg, client) {
+exports.commands.day = async function(msg, client) {
   if (game_state.data().state_num !== 4) {
-    msg.reply("wrong game state")
+    msg.reply("nope nope nope, wrong game state, mate.")
     return
   }
   var d = game_state.data()
   if (!d.night_time) {
-    msg.reply("it's already day time! specifically day "+d.day_num)
+    msg.reply("it's already day time! In particular, it's currently day "+d.day_num+".")
   } else {
     game_state.next_day_or_night()
-    msg.reply(`👍 now it's day ${d.day_num}`)
+    msg.reply(`[👍] It is now day ${d.day_num}!`)
   }
 }
 
-exports.nightCmd = async function(msg, client) {
+exports.commands.night = async function(msg, client) {
   if (game_state.data().state_num !== 4) {
-    msg.reply("wrong game state")
+    msg.reply("nope nope nope, wrong game state, mate.")
     return
   }
   var d = game_state.data()
   if (d.night_time) {
-    msg.reply("it's already night time! specifically night "+d.day_num)
+    msg.reply("it's already night time! In particular, it's currently night "+d.day_num+".")
   } else {
     game_state.next_day_or_night()
-    msg.reply(`👍 now it's night ${d.day_num}`)
+    msg.reply(`[👍] It is now night ${d.day_num}!`)
   }
 }
 
-exports.killCmd = async function(msg, client, args) {
+exports.commands.kill = async function(msg, client, args) {
   // kills someone
   // args[0] should be who killed them (how they died). currently 'l' for lynch or 'w' for werewolves.
   // args[1] should be who to kill

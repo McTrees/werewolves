@@ -93,7 +93,7 @@ exports.commands.set_record = function(msg, client, args){
 
 
 //Register a user in the global database if they aren't already registered
-exports.registerIfNew = async function(user){	
+exports.registerIfNew = async function(user){
 	try{
 		//Does the player exist?
 		if(!(await checkGlobal(user.id))){//If not

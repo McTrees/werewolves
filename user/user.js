@@ -38,7 +38,7 @@ exports.init = function(reset_data) {
   })
 }
 
-exports.signupCmd = function (msg, client, content) {
+exports.commands.signup = function (msg, client, content) {
   utils.debugMessage(`@${msg.author.username} ran signup command with emoji ${content[0]}`)
   // command for signing yourself up
   if (game_state.data().state_num !== 1) {
@@ -81,7 +81,7 @@ exports.signupCmd = function (msg, client, content) {
   }
 }
 
-exports.signup_allCmd = async function(msg, client, args) {
+exports.commands.signup_all = async function(msg, client, args) {
   //exports.all_signed_up().then(rows=>{
   var rows = await exports.all_signed_up()
     utils.debugMessage(`signup_all command - ${rows.length} rows`)
