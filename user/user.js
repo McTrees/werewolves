@@ -8,7 +8,7 @@ const config = require('../config');
 const admin = require("../admin/admin")
 const discord = require('discord.js')
 const game_state = require("../game/game_state")
-
+exports.commands = {}
 /*
 ███████ ██   ██ ██████   ██████  ██████  ████████ ███████ ██████
 ██       ██ ██  ██   ██ ██    ██ ██   ██    ██    ██      ██   ██

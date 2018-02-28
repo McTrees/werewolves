@@ -8,6 +8,7 @@ const utils = require("../utils")
 const game_state = require("./game_state")
 const role_manager = require("./role_manager")
 const PlayerController = require("./player_controller").PlayerController
+exports.commands = {}
 
 const scripts = {
   every_day: require("./scripts/every_day"),
