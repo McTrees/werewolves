@@ -4,27 +4,42 @@ This file describes all of the parameters in `/config.json`, what they do and ho
 ## default configuration
 ```JSON
 {
-  "bot_prefix": "!",
-  "season": "5",
-  "defaultMessage": "Look, look! Over @here, a new conspiracy channel has been created! The creator, has brought you together! Maybe he has something to say...",
-  "messageTimeout": 3000,
+	"bot_prefix": "!",
+	"season": "5",
+	"messageTimeout": 3000,
+	"guild_id":"395966781589815296",
 
-  "developerOptions": {
-    "showErrorsToDevs": "true",
-    "showErrorsToUsers": "false"
-  },
+	"messages": {
+		"CC": {
+			"createAnonymous": "Look, look! Over @here, a new conspiracy channel has been created! Someone who prefers to remain anonymous has brought you together! Maybe they have something to say..."
+		},
+		"general": {
+			"permission_denied": "I'm sorry, but you don't have permission to run that command!"
+		}
+	},
 
-  "channel_ids": {
-    "gm_confirm": "Insert ID here!",
-    "story_time": "Insert ID here!",
-    "voting_booth": "Insert ID here!",
-    "werewolves": "Insert ID here!",
-    "cult": "Insert ID here!"
-  },
+	"channel_ids": {
+		"gm_confirm": "400350702138032140",
+		"story_time": "401767386400948225",
+		"voting_booth": "402127047478083584",
+		"werewolves": "403457591444766731",
+		"cult": "403457834278453248"
+	},
 
-  "role_ids": {
-    "gameMaster": "Insert ID here!",
-  }
+	"role_ids": {
+		"gameMaster": "414734541614350347",
+		"mayor":"413347795437879297",
+		"dead":"417290230882893845"
+	},
+
+	"developerOptions": {
+		"showErrorsToDevs": "true",
+		"showErrorsToUsers": "false",
+		"logDebugMessages": "false",
+		"logOtherMessages": "true",
+		"saveLogFiles": "true",
+		"remoteErrorReporting": "true"
+	}
 }
 
 ```
@@ -43,6 +58,8 @@ This file describes all of the parameters in `/config.json`, what they do and ho
 |:--------------------|:--------:|:-------------------------------------|
 | `showErrorsToDevs`  | `String` | If bot logs errors to users with dev |
 | `showErrorsToUsers` | `String` | If bot logs errors to all users      |
+| `saveLogFiles`      | `String` | If the bot should save log files (can be large) |
+| `remoteErrorReporting` | `String` | If the bot should remotely report errors |
 
 #### channel_ids
 | Name           |   Type   | description             |
