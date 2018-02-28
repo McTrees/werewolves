@@ -23,3 +23,23 @@ exports.init = function(reset_data) {
     }
   })
 }
+
+exports.add_tag = function(id, tag) {
+  
+}
+
+exports.remove_tag = function(id, tag) {
+
+}
+
+exports.has_tag = function(id, tag) {
+
+}
+
+exports.all_tags_of = function(id) {
+
+}
+
+exports.all_with_tag = function(tag) {
+
+}
