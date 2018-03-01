@@ -198,6 +198,10 @@ exports.resolve_to_id = function(str) {
   // otherwise, reject
   // note: currently if this is a mention, but of someone not in the server, it will still return their id.
   return new Promise(function(resolve, reject) {
+    var plainId = /^(\d+)$/
+    if (plainId.test(str)) {
+      resolve(plainId.exec(str)[1])
+    }
     var discordId = /^<@!?(\d+)>$/
     if (discordId.test(str)) { // str is a valid discord mention
       resolve(discordId.exec(str)[1])
