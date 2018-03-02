@@ -10,7 +10,7 @@ CREATE TABLE player_tags (
 
 CREATE TABLE love (
   lover_id char(21) not null,
-  lovee_id char(21) not null
+  affected_id char(21) not null
 );
 
 CREATE TABLE win_teams (

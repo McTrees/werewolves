@@ -13,7 +13,7 @@ function log(type, msg) {
 		msg = "[" + type + " @ " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + "]: " + msg
 		fs.appendFile(logName, msg + "\n", function(err) {
 		    if(err) {
-		        return console.log(err);
+		        exports.warningMessage(err);
 		    }
 		});
 	}

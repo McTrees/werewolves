@@ -24,7 +24,8 @@ const FILENAMES = {
   up: "../user/userprofile.js",
   p: "../poll/polls.js",
   c: "../cc/ccs.js",
-  g: "../game/game.js"
+  g: "../game/game.js",
+  //s: "../suggest/suggest.js"
 }
 
 module.exports = function(msg, client) {
@@ -65,7 +66,7 @@ module.exports = function(msg, client) {
 
       // help is special-cased
       if (firstWord == "h") {
-        require("../help/help.js")(msg, client, rest)
+        require("../help/help.js")["helpCmd"](msg, client, splitMessage.slice(1), splitMessage.slice(2));
       } else {
         var root = require(FILENAMES[firstWord])
         if (!root) {
@@ -76,7 +77,7 @@ module.exports = function(msg, client) {
           } else if (root[cmdName + "Cmd"]){
             root[cmdName + "Cmd"](msg, client, rest)
           } else {
-            fail()
+            fail(msg, client)
           }
         }
       }
@@ -97,5 +98,5 @@ module.exports = function(msg, client) {
 function fail(msg, client) {
   // invalid command
   msg.reply(`\`${msg.content}\` is an unknown command`)
-  // @bentechy66 can add did-you-mean stuff here
+  // @bentechy66 can add did-you-mean stuff here kk babes just make a funky function to return all commands
 }

@@ -16,7 +16,7 @@ const aliases = require('./aliases.json');
 ██       ██ ██  ██      ██    ██ ██   ██    ██    ██      ██   ██
 ███████ ██   ██ ██       ██████  ██   ██    ██    ███████ ██████
 */
-
+exports.commands = {}
 //Register yourself in global database
 exports.commands.register_global = async function(msg, client, args){
 	var user = msg.author;

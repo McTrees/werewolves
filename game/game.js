@@ -8,6 +8,8 @@ const utils = require("../utils")
 const game_state = require("./game_state")
 const role_manager = require("./role_manager")
 const PlayerController = require("./player_controller").PlayerController
+const db_fns = require("./db_fns")
+exports.commands = {}
 
 const scripts = {
   every_day: require("./scripts/every_day"),
@@ -33,22 +35,75 @@ exports.commands.open_signups = function(msg, client) {
 }
 
 exports.commands.game_info = function(msg, client) {
-  utils.debugMessage("Game info command called")
-  var data = game_state.data()
-  var emb = new discord.RichEmbed()
-  emb.title = "Game info"
-  emb
-    .setColor(0x44009b)
-    .addField("Season name", `${data.season_name} (\`${data.season_code}\`)`)
-    .addField("Game phase", `${game_state.nice_names[data.state_num]} (#${data.state_num})`)
-    .addField("Game time", `${data.night_time ? "Night" : "Day"} #${data.day_num}`)
-  msg.channel.send(emb)
+    utils.debugMessage("Game info command called")
+    var data = game_state.data()
+    var emb = new discord.RichEmbed()
+    emb.title = "Game info"
+    emb
+      .setColor(0x44009b)
+      .addField("Season name", `${data.season_name} (\`${data.season_code}\`)`)
+      .addField("Game phase", `${game_state.nice_names[data.state_num]} (#${data.state_num})`)
+      .addField("Game time", `${data.night_time ? "Night" : "Day"} #${data.day_num}`)
+    msg.channel.send(emb)
 }
 
 exports.commands.set_season_info = function(msg, client, args) {
-  utils.debugMessage("Set season info command called")
-  game_state.set_season_code(args[0])
-  game_state.set_season_name(args.slice(1).join(" "))
+    utils.debugMessage("Set season info command called")
+    game_state.set_season_code(args[0])
+    game_state.set_season_name(args.slice(1).join(" "))
+}
+
+// Tags
+exports.commands.tag = function(msg, client, args) {
+  if (game_state.data().state_num !== 4){
+    msg.reply("a game is not in progress")
+  } else {
+    utils.debugMessage(`tag command: ${msg.content}}`)
+    var subcommand = args[0]
+    switch (subcommand) {
+      case "add":
+        if (args.length !== 3) {
+          msg.reply("wrong syntax!")
+          return
+        }
+        user.resolve_to_id(args[1]).then(id=>{
+          db_fns.tags.add_tag(id, args[2])
+        })
+        break
+      case "remove":
+        if (args.length !== 3) {
+          msg.reply("wrong syntax!")
+          return
+        }
+        user.resolve_to_id(args[1]).then(id=>{
+          db_fns.tags.remove_tag(id, args[2])
+        })
+        break
+      case "all_with":
+        if (args.length !== 2) {
+          msg.reply("wrong syntax!")
+          return
+        }
+        db_fns.tags.all_with_tag(args[1]).then(list=>{
+          msg.channel.send(`All players with tag \`${args[1]}\`:
+${list.map(id=>`- <@${id}>`).join("\n")}`)
+        })
+        break
+      case "all_of":
+        if (args.length !== 2) {
+          msg.reply("wrong syntax!")
+          return
+        }
+        user.resolve_to_id(args[1]).then(id=>{
+          db_fns.tags.all_tags_of(id).then(list=>{
+            msg.channel.send(`All tags of player <@${id}>:
+${list.map(tag=>`- \`${tag}\``).join("\n")}`)
+          })
+        })
+        break
+    }
+
+  }
 }
 
 exports.commands.start_season = function (msg, client) {
