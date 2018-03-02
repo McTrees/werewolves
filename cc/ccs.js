@@ -65,17 +65,27 @@ function createChannel(showCreator, people, client, name, ccconf, msg) { //funct
       })
     )
     people.forEach(function(element) {
-      channel.overwritePermissions(msg.guild.members.get(element.slice(-19, -1)), { //everyone specified can see it
-        VIEW_CHANNEL: true
+      user.resolve_to_id(element).then(function(user) {
+        channel.overwritePermissions(msg.guild.members.get(user), { //everyone specified can see it
+          VIEW_CHANNEL: true
+        })
       })
     })
+    var peoples = []
     if (showCreator == true) {
       channel.send(config.messages.CC.createNotAnonymous) //send the default message to the channel
-      channel.send("<@" + msg.author.id + "> brought you together: " + people.join(", ")) //say whos in the CC
+      message = "<@" + msg.author.id + "> brought you together: "
+      people.forEach(function(element) {
+        user.resolve_to_id(element).then(function(id) {
+          message += "<@" + id + ">";
+        }).then(function() {
+          channel.send(message); //say whos in the CC
+        })
+      })
     } else {
       channel.send(config.messages.CC.createAnonymous) //send the default message to the channel
     }
-  });
+  })
 }
 
 exports.createCmd = function(msg, client, args) { //command for making a cc
@@ -102,9 +112,10 @@ exports.createCmd = function(msg, client, args) { //command for making a cc
   } else if (args[1].toLowerCase() == "false") {
     var showCreator = false
     var people = args.slice(2); //'PEOPLE' NEEDS TO BE AN ARRAY OF MENTIONS (<@ID>)) NEEDS TO BE FIXED
-  } else if (args[1][0] == "<") {
+  } else if (args[1][0] == "<" || args[1][0] == ":" || args[1][0] != "") {
     var people = args.slice(1); //'PEOPLE' NEEDS TO BE AN ARRAY OF MENTIONS (<@ID>)) NEEDS TO BE FIXED
   } else {
+    console.log(args[1][0])
     msg.reply("Incorrect syntax; you must specify a name " + syntax) //alerts user of correct syntax
     return;
   }
@@ -152,7 +163,7 @@ exports.addCmd = function(msg, client, args) { //add someone to the cc
   }
   allPeople = msg.channel.permissionOverwrites.findAll("type", "member") //gets all the members of the cc
   allPeople = allPeople.filter(function(obj) { //removes all members apart from the owner
-    return obj.allow == 66560;
+    return obj.allow != 0 || obj.allow != 1024;
   });
   allRoles = msg.channel.permissionOverwrites.findAll("type", "role") //gets all the roles of the cc
   allRoles = allRoles.filter(function(obj) { //filters for all roles with permission
@@ -193,12 +204,13 @@ exports.removeCmd = function(msg, client, args) { //remove someone from the cc
   }
   allPeople = msg.channel.permissionOverwrites.findAll("type", "member") //gets all the members of the cc
   allPeople = allPeople.filter(function(obj) { //removes all members apart from the owner
-    return obj.allow == 66560;
+    return obj.allow != 0 || obj.allow != 1024;
   });
   allRoles = msg.channel.permissionOverwrites.findAll("type", "role") //gets all the roles of the cc
   allRoles = allRoles.filter(function(obj) { //filters for all roles with permission
     return obj.allow == 66560;
   });
+  console.log(msg.channel.permissionOverwrites)
   if (!allPeople[0].id == msg.author.id || !msg.member.roles.has(allRoles[0].id)) { //checks if they have perms, from the role or they are channel owner
     msg.reply(config.messages.general.permission_denied)
     return;
