@@ -2,6 +2,7 @@ const path = require("path")
 const fs = require("fs")
 const sqlite3 = require("sqlite3")
 const gamedb = new sqlite3.Database("game/game.db")
+exports._db = gamedb // same as user._db
 const utils = require("../utils")
 exports.init = function(reset_data) {
   // called on bot start
