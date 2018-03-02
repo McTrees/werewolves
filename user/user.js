@@ -2,6 +2,11 @@ const fs = require("fs");
 const path = require("path")
 const sqlite3 = require("sqlite3")
 const userdb = new sqlite3.Database("user/user.db")
+
+exports._db = userdb
+//don't use unless there isn't a function for it
+//and even then it's probably best to write a function for it anyway
+
 const userprofile = require("./userprofile")
 const utils = require("../utils.js")
 const config = require('../config');
