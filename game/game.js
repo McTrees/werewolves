@@ -11,6 +11,16 @@ const PlayerController = require("./player_controller").PlayerController
 const db_fns = require("./db_fns")
 exports.commands = {}
 
+class GameController {
+  constructor(client) {
+    this.masters = client.channels.get(config.channel_ids.gm_confirm)
+  }
+  get data(){
+    return game_state.data()
+  }
+
+}
+
 const scripts = {
   every_day: require("./scripts/every_day"),
   every_night: require("./scripts/every_night"),
