@@ -14,11 +14,26 @@ exports.commands = {}
 class GameController {
   constructor(client) {
     this.masters = client.channels.get(config.channel_ids.gm_confirm)
+    this.masters.tell = (from_id, msg, ...rest)=>{
+      this.send(`[ <@${from_id} ]: ${msg}`, ...rest)
+    }
+    this.u = user
+    this.tags = db_fns.tags
+    this._client = client
+    this._gamedb = db_fns._db
+    this._userdb = this.u._db
   }
   get data(){
     return game_state.data()
   }
-
+  player(id) {
+    return new PlayerController(id)
+  }
+  async all_with_tag(tag) {
+    var l = await db_fns.all_with_tag(tag)
+    var r = l.map(i=>this.player(i))
+    return r
+  }
 }
 
 const scripts = {
