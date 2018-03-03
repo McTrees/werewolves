@@ -209,7 +209,24 @@ exports.commands.send_roles = async function(msg, client) {
         } else {
           utils.infoMessage(`sending role to ${u.username}`) // NOTE: The following message still needs the season number.
           //This next line is still a WIP
-          u.send("This message is giving you your role for season *TODO* of the Werewolves game.\n\nYour role is `"+role+"`.\n\n**You are not allowed to share a screenshot of this message!** You can claim whatever you want about your role, but you may under **NO** circumstances show this message in any way to any other participants.\nWe hope you are happy with the role you gained, and we hope you'll enjoy the game as much as we do.\n\nGood luck... :full_moon:\n\n\nDo you not understand your role? Don't worry! Use the command `~rm roleinfo ROLE` for an explanation.\nYou can now use commands in this Direct Message!").catch(e=>{
+          var role_i = role_manager.role(role)
+          var str =
+`This message is giving you your werewolves role, for *"${game_state.data().season_name}"*.
+
+**Your role is ${role_i.name} (\`${role}\`).**
+
+Role information:
+${role_i.documentation}
+
+**You are not allowed to share a screenshot of this message!** You can claim whatever you want about your role, but you may under **NO** circumstances show this message in any way to any other participants.
+We hope you are happy with the role you gained, and we hope you'll enjoy the game as much as we do.
+
+Good luck... :full_moon:
+
+
+Do you not understand your role? Don't worry! Use the command \`~rm roleinfo ROLE\` for an explanation.
+You can (hopfully) use commands in this Direct Message!`
+          u.send(str).catch(e=>{
             if (e.message == 'Cannot send messages to this user') {
               msg.reply(`user <@${id}> has DMs disabled!`)
               utils.warningMessage(`User ${u.username} has DMs disabled!`)
