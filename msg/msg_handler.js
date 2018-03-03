@@ -68,18 +68,20 @@ module.exports = function(msg, client) {
       if (firstWord == "h") {
         require("../help/help.js")["helpCmd"](msg, client, splitMessage.slice(1), splitMessage.slice(2));
       } else {
-        var root = require(FILENAMES[firstWord])
-        if (!root) {
-          fail()
-        } else {
-          if (root.commands && root.commands[cmdName]) {
-            root.commands[cmdName](msg, client, rest)
-          } else if (root[cmdName + "Cmd"]){
-            root[cmdName + "Cmd"](msg, client, rest)
-          } else {
+        if (FILENAMES[firstWord]) {
+          var root = require(FILENAMES[firstWord])
+          if (!root) {
             fail(msg, client)
+          } else {
+            if (root.commands && root.commands[cmdName]) {
+              root.commands[cmdName](msg, client, rest)
+            } else if (root[cmdName + "Cmd"]){
+              root[cmdName + "Cmd"](msg, client, rest)
+            } else {
+              fail(msg, client)
+            }
           }
-        }
+        } else { fail(msg, client) }
       }
     } catch (em_all) {
       msg.reply(`An error occurred...`);
