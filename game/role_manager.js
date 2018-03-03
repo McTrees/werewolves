@@ -20,7 +20,7 @@ exports.all_roles_list = function() {
 exports.role = function(name) {
   var d = require(BASE+name+".role.js")
   d.id = name
-  Object.defineProperty(d, "document", {
+  Object.defineProperty(d, "documentation", {
     get: function() {
       return(
 `**${this.name}** (\`${this.id}\`)
