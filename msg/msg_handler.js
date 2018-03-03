@@ -47,7 +47,6 @@ function getAllCommands() {
   }
   return commands
 }
-console.log(getAllCommands())
 module.exports = function(msg, client) {
   if (msg.author == client.user) {return}; //ignore own messages
   if (msg.content[0] == config.bot_prefix) { //only run if it is a message starting with the bot prefix (if it's a command)

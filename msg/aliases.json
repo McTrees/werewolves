@@ -3,7 +3,7 @@
   "users":"u signup_all",
   "help": "h",
   "signuppoop": "u signup 💩",
-  "register_global":"up registerGlobal",
+  "register_global":"up register_global",
   "profile": "up profile",
   "set_age":"up setAge",
   "set_gender":"up setGender",
