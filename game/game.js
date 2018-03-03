@@ -344,7 +344,7 @@ exports.use_ability = async function(msg, client, split) {
   var ri = role_manager.role(r)
   if (is_allowed_channel(msg.channel.id, ri.id)) {
     if (ri.abilities && ri.abilities[abn] && typeof ri.abilities[abn].run == "function") {
-
+      msg.reply("todo: run ability")
     } else {
       msg.reply("you can't use that ability because your role does not have an ability with that name")
     }
@@ -352,6 +352,3 @@ exports.use_ability = async function(msg, client, split) {
     msg.reply("Role abilities are not usable in this channel.\n*I'm not saying that you are or aren't able to use that command, only that **if** you can, you can't use it here.*")
   }
 }
-
-
-true == false
