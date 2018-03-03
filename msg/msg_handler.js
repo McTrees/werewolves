@@ -27,7 +27,25 @@ const FILENAMES = {
   g: "../game/game.js",
   //s: "../suggest/suggest.js"
 }
-
+function getAllCommands() {
+  for (i in FILENAMES) {
+    start = i
+    var iE = require(FILENAMES[i]);
+    var iA = Object.keys(iE)
+    try {
+      var iB = Object.keys(iE.commands)
+    } catch (err) {}
+    for (j in iA) {
+      if (iA[j].endsWith("Cmd")) {
+        console.log(i + " " + iA[j])
+      }
+    }
+    for (k in iB) {
+      console.log(i + " " + iB[k])
+    }
+  }
+}
+getAllCommands()
 module.exports = function(msg, client) {
   if (msg.author == client.user) {return}; //ignore own messages
   if (msg.content[0] == config.bot_prefix) { //only run if it is a message starting with the bot prefix (if it's a command)
