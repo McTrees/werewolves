@@ -324,3 +324,34 @@ function set_dead(id, client) {
     }
   })
 }
+
+function is_allowed_channel(channel_id, role_name) {
+  // DEBUG always returns true
+  return false
+}
+
+exports.commands.ability = async function(msg, client, args) {
+  // for now it just does this
+  exports.use_ability(msg, client, args)
+}
+
+// role abilities
+exports.use_ability = async function(msg, client, split) {
+  // not an actual command
+  var u = msg.author.id
+  var abn = split[0]
+  var r = await user.get_role(u)
+  var ri = role_manager.role(r)
+  if (is_allowed_channel(msg.channel.id, ri.id)) {
+    if (ri.abilities && ri.abilities[abn] && typeof ri.abilities[abn].run == "function") {
+
+    } else {
+      msg.reply("you can't use that ability because your role does not have an ability with that name")
+    }
+  } else {
+    msg.reply("Role abilities are not usable in this channel.\n*I'm not saying that you are or aren't able to use that command, only that **if** you can, you can't use it here.*")
+  }
+}
+
+
+true == false
