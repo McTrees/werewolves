@@ -22,12 +22,16 @@ exports.helpCmd = function(msg, client, args, cmd) {
   var messageContent = msg.content.split(" ");
   messageContent[0] = messageContent[0].slice(1); //remove the prefix from the message
   const dirs = getDirectories("./help/cmds/")
-  utils.debugMessage("helpCmd called with args: '" + args + "' and cmd '" + cmd + "'")
   if (msg.author == client.user) return; //ignore own messages
   messageContent = msg.content.split(" ");
    if (messageContent[0][0] == config.bot_prefix) { //only run if it is a message starting with the bot prefix (if it's a command)
      messageContent[0] = messageContent[0].slice(1); //remove the prefix from the message
     }
+    try {
+      args = aliases[args[0]].split(" ");
+      cmd[0] = args[1]
+    } catch (err) {} //check aliases
+    utils.debugMessage("helpCmd called with args: '" + args + "' and cmd '" + cmd + "'")
 
     if (args == [] || args == undefined || args == "") {
       p = "./cmds/"
@@ -91,6 +95,7 @@ Possible categories: ` + dirs.join(", "))
             encoding: 'utf-8'
           }, function(err, data) {
             if (err) {
+
               utils.debugMessage("Index.md was not present; assuming category does not exist")
               msg.channel.send(`Sorry, but that category does not exist.`)
             } else {
@@ -115,9 +120,6 @@ Possible categories: ` + dirs.join(", "))
       utils.debugMessage(`Help cmd called w/ ${cmd} & ${args}`)
     }
 
-    try {
-      messageContent = (aliases[messageContent[0]].split(" ").concat(messageContent.slice(1)));
-    } catch (err) {} //check aliases
     utils.debugMessage('Reading file: ' + './help/cmds/' + args[0] + "/" +cmd[0] + '.md')
     try {
     fs.readFile('./help/cmds/' + args[0] + '/' + cmd[0] + '.md', {
