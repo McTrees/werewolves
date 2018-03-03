@@ -168,6 +168,16 @@ exports.set_role = function(id, role) {
   userdb.run("replace into players (user_id, role) values ($id, $role);", {$id:id,$role:role})
 }
 
+exports.all_with_role = function(role) {
+  return new Promise(function(resolve, reject) {
+    utils.debugMessage(`getting all players with role ${role}`)
+    userdb.all("select user_id from players where role = ? and alive <> 0", [role], function(err, rows) {
+      if (err) throw err;
+      resolve(rows.map(i=>i.user_id))
+    })
+  });
+}
+
 exports.finalise_user = function(id, role) {
   // turns a signed up user into a player with a role
   userdb.serialize(function(){
