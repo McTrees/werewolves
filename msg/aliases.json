@@ -1,8 +1,10 @@
 {
+  "help": "h",
+
   "signup": "u signup",
   "users":"u signup_all",
-  "help": "h",
   "signuppoop": "u signup 💩",
+
   "register_global":"up register_global",
   "profile": "up profile",
   "set_age":"up setAge",
@@ -11,6 +13,7 @@
   "set_games":"up setGames",
   "set_wins":"up setWins",
   "set_record":"up setRecord",
+
   "startPoll": "p startPoll",
   "endPoll": "p endPoll",
   "checkPoll": "p checkPoll",
@@ -19,7 +22,6 @@
   "day":"g day",
   "night":"g night",
   "info":"g game_info",
-
   "kill":"g kill",
   "ww_kill":"g kill w",
   "lynch_kill":"g kill l"
