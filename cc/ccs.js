@@ -39,7 +39,7 @@ function createChannel(showCreator, people, client, name, ccconf, msg) { //funct
           ccconf.CC_curent_category_id = channel.id //update current category id
           utils.infoMessage(`had to make a new CC category (${categoryName})`) //log creation of new catagory
           writecc(); //write new channel id and number to cc.json
-          createChannel(name, ccconf, msg) //try to make the channel again
+          createChannel(showCreator, people, client, name, ccconf, msg) //try to make the channel again
         })
       }
     })
