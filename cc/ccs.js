@@ -46,6 +46,7 @@ function createChannel(showCreator, people, client, name, ccconf, msg) { //funct
 
     //set perms
   ).then(function(channel) {
+    utils.debugMessage(channel.name+" was created")
     channel.overwritePermissions(client.user.id, { //the bot can see it
       VIEW_CHANNEL: true
     })
@@ -145,6 +146,7 @@ exports.listCmd = function(msg, client, args) { //list people in the cc
     msg.reply("you can only do that in a CC");
     return;
   }
+  utils.debugMessage("listed all people in "+msg.channel.name)
   allPeople = msg.channel.permissionOverwrites.findAll("type", "member") //gets all the members of the cc
   allPeople = allPeople.filter(function(obj) { //removes the bot from the list
     return obj.id !== client.user.id;
@@ -184,14 +186,18 @@ exports.addCmd = function(msg, client, args) { //add someone to the cc
         msg.channel.overwritePermissions(msg.guild.members.get(user), { //everyone specified can see it
           VIEW_CHANNEL: true
         }).catch(function() {
+          utils.debugMessage("error adding "+element+" from "+msg.channel.name)
           msg.reply("there was an error adding " + element + " to this cc")
         })
+        utils.debugMessage("added "+element+" to "+msg.channel.name)
         msg.channel.send(element + " was added")
       }).catch(function() {
         msg.reply("there was an error adding " + element + " to this cc")
+        utils.debugMessage("error adding "+element+" from "+msg.channel.name)
       })
     } catch (err) {
       msg.reply("there was an error adding " + element + " to this cc")
+      utils.debugMessage("error adding "+element+" from "+msg.channel.name)
     }
   })
 }
@@ -210,7 +216,7 @@ exports.removeCmd = function(msg, client, args) { //remove someone from the cc
   allRoles = allRoles.filter(function(obj) { //filters for all roles with permission
     return obj.allow == 66560;
   });
-  console.log(msg.channel.permissionOverwrites)
+  //console.log(msg.channel.permissionOverwrites)
   if (!allPeople[0].id == msg.author.id || !msg.member.roles.has(allRoles[0].id)) { //checks if they have perms, from the role or they are channel owner
     msg.reply(config.messages.general.permission_denied)
     return;
@@ -222,14 +228,23 @@ exports.removeCmd = function(msg, client, args) { //remove someone from the cc
   people.forEach(function(element) {
     try {
       user.resolve_to_id(element).then(function(user) {
+        if (user == client.user.id){
+          msg.reply("you can't remove the bot from here")
+          utils.debugMessage("didn't remove the bot from "+msg.channel.name)
+          return;
+        }
         msg.channel.permissionOverwrites.get(user).delete().catch(function() {
+          utils.debugMessage("error removing "+element+" from "+msg.channel.name)
           msg.reply("there was an error removing " + element + " from this cc")
         })
+        utils.debugMessage("removed "+element+" from "+msg.channel.name)
         msg.channel.send(element + " was removed")
       }).catch(function() {
+        utils.debugMessage("error removing "+element+" from "+msg.channel.name)
         msg.reply("there was an error removing " + element + " from this cc")
       })
     } catch (err) {
+      utils.debugMessage("error removing "+element+" from "+msg.channel.name)
       msg.reply("there was an error removing " + element + " from this cc")
     }
   })
