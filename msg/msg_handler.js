@@ -89,9 +89,10 @@ module.exports = function(msg, client) {
         require("../help/help.js")["helpCmd"](msg, client, splitMessage.slice(1), splitMessage.slice(2));
       } else {
         var root = require(FILENAMES[firstWord])
-        if (!root) {
-          fail()
+        if (!FILENAMES[firstWord]) {
+          fail(msg, client)
         } else {
+          var root = require(FILENAMES[firstWord])
           if (root.commands && root.commands[cmdName]) {
             root.commands[cmdName](msg, client, rest)
           } else if (root[cmdName + "Cmd"]){
