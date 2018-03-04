@@ -47,6 +47,9 @@ getAllCommands = function() {
       commands.push(i + " " + iB[k])
     }
   }
+  for(var k in aliases) {
+    commands.push(config.bot_prefix + k)
+  }
   return commands
 }
 
