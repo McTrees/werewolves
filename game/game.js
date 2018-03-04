@@ -259,6 +259,7 @@ exports.commands.day = async function(msg, client) {
     msg.reply("it's already day time! In particular, it's currently day "+d.day_num+".")
   } else {
     game_state.next_day_or_night()
+    execute_kill_q(msg, client)
     msg.reply(`[👍] It is now day ${d.day_num}!`)
   }
 }
@@ -273,6 +274,7 @@ exports.commands.night = async function(msg, client) {
     msg.reply("it's already night time! In particular, it's currently night "+d.day_num+".")
   } else {
     game_state.next_day_or_night()
+    execute_kill_q(msg, client)
     msg.reply(`[👍] It is now night ${d.day_num}!`)
   }
 }
@@ -284,9 +286,43 @@ exports.commands.kill = async function(msg, client, args) {
   if (args.length !== 2) {
     msg.reply("wrong syntax!")
   } else {
+    if(game_state.data().night_time) {
+      kill_time = "day"
+    } else {
+      kill_time = "night"
+    }
+    msg.reply(`Adding ${args[0]} to Kill Queue for the next time it switches to ${kill_time}`)
     var dead_person_id = await user.resolve_to_id(args[1])
-    kill(dead_person_id, args[0], client)
+    add_to_kill_q(dead_person_id, args[0], client)
   }
+}
+
+async function add_to_kill_q(who, why, client) {
+  if (typeof kill_q == 'undefined') {
+    kill_q = []
+  }
+  kill_q.push({
+    who: who,
+    why: why
+  })
+  utils.debugMessage("First item in Kill Q is now:" + kill_q[0].who + ":" + kill_q[0].why)
+}
+
+async function execute_kill_q(msg, client) {
+  if (typeof kill_q == 'undefined') {
+    kill_q = []
+  }
+  if (kill_q === []) {
+    msg.reply("Nobody was killed, the Queue was empty.")
+    return //No need to bother executing anything
+  }
+  msg.reply("Starting kill queue...")
+  kill_q.forEach(function(death) {
+    msg.reply(`Running through kill sequence for <@${death.who}>`)
+    kill(death.who, death.why, client)
+  })
+  kill_q = []
+  msg.reply("Finished executing Kill Queue")
 }
 
 async function kill(who, why, client) {
