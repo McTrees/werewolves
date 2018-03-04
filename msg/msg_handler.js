@@ -93,7 +93,7 @@ module.exports = function(msg, client) {
         require("../help/help.js")["helpCmd"](msg, client, splitMessage.slice(1), splitMessage.slice(2));
       } else {
         if (!FILENAMES[firstWord]) {
-          fail(msg, client)
+          fail(msg, client, splitMessage)
         } else {
           var root = require(FILENAMES[firstWord])
           if (root.commands && root.commands[cmdName]) {
@@ -101,7 +101,7 @@ module.exports = function(msg, client) {
           } else if (root[cmdName + "Cmd"]){
             root[cmdName + "Cmd"](msg, client, rest)
           } else {
-            fail(msg, client)
+            fail(msg, client, splitMessage)
           }
         }
       }
@@ -119,13 +119,18 @@ module.exports = function(msg, client) {
   }
 }
 
-function fail(msg, client) {
+function fail(msg, client, splitMessage) {
   // invalid command
+  if (splitMessage[1]) {
+  msg_cmd = config.bot_prefix + splitMessage[0] + " " + splitMessage[1]
+} else {
+  msg_cmd = config.bot_prefix + splitMessage[0]
+}
   const all_commands = getAllCommands()
-  probablecommand = didYouMean(msg.content, all_commands)
+  probablecommand = didYouMean(msg_cmd, all_commands)
   if (probablecommand == null) {
-    msg.reply(`\`${msg.content}\` is an unknown command.`)
+    msg.reply(`\`${msg_cmd}\` is an unknown command.`)
   } else {
-    msg.reply(`\`${msg.content}\` is an unknown command. Did you mean \`${probablecommand}\`?`)
+    msg.reply(`\`${msg_cmd}\` is an unknown command. Did you mean \`${probablecommand}\`?`)
   }
 }
