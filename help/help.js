@@ -35,17 +35,17 @@ exports.helpCmd = function(msg, client, args, cmd) {
 
     if (args == [] || args == undefined || args == "") {
       p = "./cmds/"
-
-
+dirsF = []
+for(i in dirs){dirsF[i] = '`'+dirs[i]+'`'}
       msg.channel.send(`
 \`help\` help:
 
-**Usage:** !help category command
+**Usage:** \`!help category command\`
 
-**Example:** !help u signup
+**Example:** \`!help u signup\`
 
 
-Possible categories: ` + dirs.join(", "))
+Possible categories: ` + dirsF.join(", "))
       return
 }
      else if (cmd == [] || cmd == undefined || cmd == "") {
