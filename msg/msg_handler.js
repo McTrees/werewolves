@@ -40,7 +40,9 @@ getAllCommands = function() {
     } catch (err) {}
     for (j in iA) {
       if (iA[j].endsWith("Cmd")) {
-        commands.push(config.bot_prefix + i + " " + iA[j])
+        ting = config.bot_prefix + i + " " + iA[j]
+        ting = ting.slice(0, -3)
+        commands.push()
       }
     }
     for (k in iB) {
