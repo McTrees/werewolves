@@ -14,6 +14,7 @@ const utils = require("../utils");
 const role_specific = require("./role_specific_handler")
 const permissions = require("./permissions")
 const msg = require("./msg_handler")
+const didYouMean = require("didYouMean")
 /*syntax: "alias" :"defined as",
 all other arguments that get send with the alias get added to the send
 alieses need to be one word
@@ -28,7 +29,7 @@ const FILENAMES = {
   g: "../game/game.js",
   //s: "../suggest/suggest.js"
 }
-exports.getAllCommands = function() {
+getAllCommands = function() {
   commands = []
   for (i in FILENAMES) {
     start = i
@@ -39,7 +40,7 @@ exports.getAllCommands = function() {
     } catch (err) {}
     for (j in iA) {
       if (iA[j].endsWith("Cmd")) {
-        commands.push(i + " " + iA[j])
+        commands.push(config.bot_prefix + i + " " + iA[j])
       }
     }
     for (k in iB) {
@@ -48,6 +49,7 @@ exports.getAllCommands = function() {
   }
   return commands
 }
+
 module.exports = function(msg, client) {
   if (msg.author == client.user) {return}; //ignore own messages
   if (msg.content[0] == config.bot_prefix) { //only run if it is a message starting with the bot prefix (if it's a command)
@@ -116,6 +118,8 @@ module.exports = function(msg, client) {
 
 function fail(msg, client) {
   // invalid command
-  msg.reply(`\`${msg.content}\` is an unknown command`)
+  const all_commands = getAllCommands()
+  probablecommand = didYouMean(msg.content, all_commands)
+  msg.reply(`\`${msg.content}\` is an unknown command. Did you mean \`${probablecommand}\`?`)
   // @bentechy66 can add did-you-mean stuff here kk babes just make a funky function to return all commands
 }
