@@ -13,7 +13,6 @@ exports.abilities.become = {
       game.masters.tell(`Changing the role of <@${me.id} to inno/basic`)
       me.role = "inno/basic"
     } else if(args[0].toUpperCase() == "CURSED CIVILIAN"){
-      inno/basi
       game.masters.tell(`Changing the role of <@${me.id} to inno/cursed`)
       me.role = "inno/cursed"
     }else{
