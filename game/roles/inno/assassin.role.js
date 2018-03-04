@@ -5,7 +5,7 @@ exports.abilities = {} //Because Javascript
 exports.abilities.assasinate = {
   name: "Assasinate",
   desc: "Assasinate one player. Usable once per **TODO**", //TODO: Make timeframe work
-  run(game, me, args, cb) {
+  assasinate(game, me, args, cb) {
     game.masters.tell(`Assasinating <@${args[0]}`)
     game.u.resolve_to_id(args[0]).then(id=>{
       if (game.state.day_num == 1 && game.state.night_time == false){
