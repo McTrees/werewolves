@@ -120,6 +120,9 @@ function fail(msg, client) {
   // invalid command
   const all_commands = getAllCommands()
   probablecommand = didYouMean(msg.content, all_commands)
-  msg.reply(`\`${msg.content}\` is an unknown command. Did you mean \`${probablecommand}\`?`)
-  // @bentechy66 can add did-you-mean stuff here kk babes just make a funky function to return all commands
+  if (probablecommand == null) {
+    msg.reply(`\`${msg.content}\` is an unknown command. Did you mean \`${probablecommand}\`?`)
+  } else {
+    msg.reply(`\`${msg.content}\` is an unknown command.`)
+  }
 }
