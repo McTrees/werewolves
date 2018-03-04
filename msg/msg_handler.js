@@ -127,6 +127,7 @@ function fail(msg, client, splitMessage) {
   msg_cmd = config.bot_prefix + splitMessage[0]
 }
   const all_commands = getAllCommands()
+  didYouMean.threshold = null;
   probablecommand = didYouMean(msg_cmd, all_commands)
   if (probablecommand == null) {
     msg.reply(`\`${msg_cmd}\` is an unknown command.`)
