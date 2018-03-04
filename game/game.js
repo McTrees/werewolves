@@ -344,7 +344,15 @@ exports.use_ability = async function(msg, client, split) {
   var ri = role_manager.role(r)
   if (is_allowed_channel(msg.channel.id, ri.id)) {
     if (ri.abilities && ri.abilities[abn] && typeof ri.abilities[abn].run == "function") {
-      msg.reply("todo: run ability")
+      msg.reply("run ability")
+      utils.debugMessage(`${u} is running ability ${abn}; args ${split}`)
+      ri.abilities[abn].run(new GameController(client), new PlayerController(msg.author.id), split.slice(1), function(w) {
+        if (w) {
+          msg.reply("ability worked")
+        } else {
+          msg.reply("ability did not work")
+        }
+      })
     } else {
       msg.reply("you can't use that ability because your role does not have an ability with that name")
     }
