@@ -3,7 +3,7 @@ const utils = require('../utils'); //include main config
 const game_state = require('../game/game_state');
 const user = require('../user/user.js');
 var fs = require('fs')
-
+exports.commands = {}
 
 
 function writecc() { //function writes ccconf (odbj) to cc.json
@@ -89,8 +89,12 @@ function createChannel(showCreator, people, client, name, ccconf, msg) { //funct
   })
 }
 
-exports.createCmd = function(msg, client, args) { //command for making a cc
-
+exports.commands.create = function(msg, client, args) { //command for making a cc
+  if (game_state.data().state_num != 4){
+    msg.reply("You can only do that when a game is running.")
+    return;
+  }
+  msg.delete();
   var name = args[0]; //set var for cc name
   var showCreator = true; //default for showing the creator
 
@@ -141,7 +145,12 @@ exports.createCmd = function(msg, client, args) { //command for making a cc
   }
 }
 
-exports.listCmd = function(msg, client, args) { //list people in the cc
+exports.commands.list = function(msg, client, args) { //list people in the cc
+  if (game_state.data().state_num != 4){
+    msg.reply("You can only do that when a game is running.")
+    return;
+  }
+
   if (!msg.channel.name.startsWith(game_state.data().season_code.replace(/[^a-z 0-9 -]/g, "a") + "-cc-")) {
     msg.reply("you can only do that in a CC");
     return;
@@ -158,7 +167,12 @@ exports.listCmd = function(msg, client, args) { //list people in the cc
   msg.channel.send(people)
 }
 
-exports.addCmd = function(msg, client, args) { //add someone to the cc
+exports.commands.add = function(msg, client, args) { //add someone to the cc
+  if (game_state.data().state_num != 4){
+    msg.reply("You can only do that when a game is running.")
+    return;
+  }
+
   if (!msg.channel.name.startsWith(game_state.data().season_code.replace(/[^a-z 0-9 -]/g, "a") + "-cc-")) {
     msg.reply("you can only do that in a CC");
     return;
@@ -202,8 +216,12 @@ exports.addCmd = function(msg, client, args) { //add someone to the cc
   })
 }
 
+exports.commands.remove = function(msg, client, args) { //remove someone from the cc
+  if (game_state.data().state_num != 4){
+    msg.reply("You can only do that when a game is running.")
+    return;
+  }
 
-exports.removeCmd = function(msg, client, args) { //remove someone from the cc
   if (!msg.channel.name.startsWith(game_state.data().season_code.replace(/[^a-z 0-9 -]/g, "a") + "-cc-")) {
     msg.reply("you can only do that in a CC");
     return;
