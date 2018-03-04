@@ -52,7 +52,7 @@ module.exports = function(msg, client) {
   if (msg.author == client.user) {return}; //ignore own messages
   if (msg.content[0] == config.bot_prefix) { //only run if it is a message starting with the bot prefix (if it's a command)
     var splitMessage = msg.content.split(" ");
-    utils.debugMessage(msg.author +" sent a command: "+ msg.content)
+    utils.debugMessage("      "+msg.author +" sent a command: "+ msg.content)
     splitMessage[0] = splitMessage[0].slice(1); //remove the prefix from the message
     var firstWord = splitMessage[0]
     if (aliases[firstWord]) {

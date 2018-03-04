@@ -24,6 +24,10 @@
   "info":"g game_info",
   "kill":"g kill",
   "ww_kill":"g kill w",
-  "lynch_kill":"g kill l"
+  "lynch_kill":"g kill l",
 
+  "ccreate":"c create",
+  "cadd":"c add",
+  "cremove":"c remove",
+  "clist" :"c list"
 }
