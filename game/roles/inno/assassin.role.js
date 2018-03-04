@@ -2,7 +2,7 @@ exports.name = "Assasin"
 exports.description = "Can assassinate one player per night, exept the first night"
 
 exports.abilities = {} //Because Javascript
-exports.abilities.powder = {
+exports.abilities.assasinate = {
   name: "Assasinate",
   desc: "Assasinate one player. Usable once per **TODO**", //TODO: Make timeframe work
   run(game, me, args, cb) {
