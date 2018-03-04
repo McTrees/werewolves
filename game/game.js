@@ -15,7 +15,7 @@ class GameController {
   constructor(client) {
     this.masters = client.channels.get(config.channel_ids.gm_confirm)
     this.masters.tell = (from_id, msg, ...rest)=>{
-      this.send(`[ <@${from_id} ]: ${msg}`, ...rest)
+      this.masters.send(`[ <@${from_id}> ]: ${msg}`, ...rest)
     }
     this.u = user
     this.tags = db_fns.tags

@@ -8,7 +8,7 @@ exports.abilities.powder = {
   name: "Powder",
   desc: "Powder one player. Usable once per **TODO**", //TODO: Make timeframe work
   run(game, me, args, cb) {
-    game.masters.tell(`powdering <@${args[0]}`)
+    game.masters.tell(`powdering <@${args[0]}>`)
     game.u.resolve_to_id(args[0]).then(id=>{
       game.tags.add_tag(id, "powdered")
       cb(true)
