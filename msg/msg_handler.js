@@ -44,7 +44,7 @@ getAllCommands = function() {
       }
     }
     for (k in iB) {
-      commands.push(i + " " + iB[k])
+      commands.push(config.bot_prefix + i + " " + iB[k])
     }
   }
   for(var k in aliases) {
