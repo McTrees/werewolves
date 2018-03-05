@@ -5,7 +5,7 @@ exports.abilities = {} //Because Javascript
 exports.abilities.tell = {
   name: "Tell",
   desc: "Can check which role a player is",
-  tell(game, me, args, cb) {
+  run(game, me, args, cb) {
     if (game.night_time == false){
       me.tell("you can only get the role of someone at night")
       cb(false);
