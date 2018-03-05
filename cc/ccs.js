@@ -47,27 +47,27 @@ function createChannel(showCreator, people, client, name, ccconf, msg) { //funct
     //set perms
   ).then(function(channel) {
     channel.overwritePermissions(client.user.id, { //the bot can see it
-      VIEW_CHANNEL: true
+      'VIEW_CHANNEL': true
     })
     channel.overwritePermissions(msg.guild.roles.find("name", "@everyone"), { //@everyone can't see it
-      VIEW_CHANNEL: false,
-      READ_MESSAGE_HISTORY: false //perm for owner of cc, to add/remove people
+      'VIEW_CHANNEL': false,
+      'READ_MESSAGE_HISTORY': false //perm for owner of cc, to add/remove people
     })
     channel.overwritePermissions(msg.guild.roles.get(config.role_ids.gameMaster), { //gamemaster can see it
-      VIEW_CHANNEL: true,
-      READ_MESSAGE_HISTORY: true //perm for owner of cc, to add/remove people
+      'VIEW_CHANNEL': true,
+      'READ_MESSAGE_HISTORY': true //perm for owner of cc, to add/remove people
     })
     channel.overwritePermissions(msg.author, { //author can see it
-      VIEW_CHANNEL: true,
+      'VIEW_CHANNEL': true,
     }).then(channel =>
       channel.overwritePermissions(msg.author, { //author can see it
-        READ_MESSAGE_HISTORY: true //perm for owner of cc, to add/remove people
+        'READ_MESSAGE_HISTORY': true //perm for owner of cc, to add/remove people
       })
     )
     people.forEach(function(element) {
       user.resolve_to_id(element).then(function(user) {
         channel.overwritePermissions(msg.guild.members.get(user), { //everyone specified can see it
-          VIEW_CHANNEL: true
+          'VIEW_CHANNEL': true
         })
       })
     })
@@ -133,7 +133,7 @@ exports.createCmd = function(msg, client, args) { //command for making a cc
     }, function(err, data) { //read cc.json to ccconfig
       if (err) throw err; //throw error
       ccconf = JSON.parse(data); //turns string into JSON object
-      name = game_state.data().season_code.replace(/[^a-z 0-9 -]/g, "a") + "-cc-" + name; //phrase name of channel, escaping special chars
+      name = game_state.data().season_code.replace(/[^a-z 0-9 - _]/g, "a") + "-cc-" + name; //phrase name of channel, escaping special chars
       //actually make a channel
       createChannel(showCreator, people, client, name, ccconf, msg);
     })
@@ -141,7 +141,7 @@ exports.createCmd = function(msg, client, args) { //command for making a cc
 }
 
 exports.listCmd = function(msg, client, args) { //list people in the cc
-  if (!msg.channel.name.startsWith(game_state.data().season_code.replace(/[^a-z 0-9 -]/g, "a") + "-cc-")) {
+  if (!msg.channel.name.startsWith(game_state.data().season_code.replace(/[^a-z 0-9 - _]/g, "a") + "-cc-")) {
     msg.reply("you can only do that in a CC");
     return;
   }
@@ -157,7 +157,7 @@ exports.listCmd = function(msg, client, args) { //list people in the cc
 }
 
 exports.addCmd = function(msg, client, args) { //add someone to the cc
-  if (!msg.channel.name.startsWith(game_state.data().season_code.replace(/[^a-z 0-9 -]/g, "a") + "-cc-")) {
+  if (!msg.channel.name.startsWith(game_state.data().season_code.replace(/[^a-z 0-9 - _]/g, "a") + "-cc-")) {
     msg.reply("you can only do that in a CC");
     return;
   }
@@ -198,7 +198,7 @@ exports.addCmd = function(msg, client, args) { //add someone to the cc
 
 
 exports.removeCmd = function(msg, client, args) { //remove someone from the cc
-  if (!msg.channel.name.startsWith(game_state.data().season_code.replace(/[^a-z 0-9 -]/g, "a") + "-cc-")) {
+  if (!msg.channel.name.startsWith(game_state.data().season_code.replace(/[^a-z 0-9 - _]/g, "a") + "-cc-")) {
     msg.reply("you can only do that in a CC");
     return;
   }
