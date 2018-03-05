@@ -24,6 +24,8 @@
   // exports.nice_names            : nice names for game states
   // exports.init()                : init function, to be called when program starts
   // exports.data()                : contents of state.json
+  // exports.is_day(n)
+  // exports.nice_time(t)
   // exports.set_state_num(v)      : }
   // exports.set_season_code(v)    :  } you can probably guess these 4
   // exports.set_day(n)            :  }
@@ -152,11 +154,15 @@ exports.set_time = function(n) {
 exports.next_day_or_night = function() {
   // next day or night :p
     var data = exports.data()
-    data.day_num += 1
+    data.time += 1
     set_data(data)
 }
 
-exports.is_day(n) {
+exports.is_day = function(n) {
   // true if n is day time, false if n is night time
   return (n % 2) == 0 // even numbers are day time
+}
+
+exports.nice_time = function(t) {
+  return `${exports.is_day(t)?"Day":"Night"} #${Math.floor(t/2)} (Time period \`${t}\`)`
 }

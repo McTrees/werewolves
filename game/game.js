@@ -68,7 +68,7 @@ exports.commands.game_info = function(msg, client) {
       .setColor(0x44009b)
       .addField("Season name", `${data.season_name} (\`${data.season_code}\`)`)
       .addField("Game phase", `${game_state.nice_names[data.state_num]} (#${data.state_num})`)
-      .addField("Game time", `${data.night_time ? "Night" : "Day"} #${data.day_num}`)
+      .addField("Game time", game_state.nice_time(data.time))
     msg.channel.send(emb)
 }
 
@@ -255,12 +255,12 @@ exports.commands.day = async function(msg, client) {
     return
   }
   var d = game_state.data()
-  if (!d.night_time) {
-    msg.reply("it's already day time! In particular, it's currently day "+d.day_num+".")
+  if (game_state.is_day(d.time)) {
+    msg.reply("it's already day time! In particular, it's currently "+game_state.nice_time(d.time)+".")
   } else {
     game_state.next_day_or_night()
     execute_kill_q(msg, client)
-    msg.reply(`[👍] It is now day ${d.day_num}!`)
+    msg.reply(`[👍] It is now ${game_state.nice_time(d.time)}!`)
   }
 }
 
@@ -270,12 +270,12 @@ exports.commands.night = async function(msg, client) {
     return
   }
   var d = game_state.data()
-  if (d.night_time) {
-    msg.reply("it's already night time! In particular, it's currently night "+d.day_num+".")
+  if (d.is_day) {
+    msg.reply("it's already night time! In particular, it's currently "+game_state.nice_time(d.time)+".")
   } else {
     game_state.next_day_or_night()
     execute_kill_q(msg, client)
-    msg.reply(`[👍] It is now night ${d.day_num}!`)
+    msg.reply(`[👍] It is now ${game_state.nice_time(d.time)}!`)
   }
 }
 
