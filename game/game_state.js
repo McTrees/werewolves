@@ -141,7 +141,7 @@ function init_kill(reset) {
 
 function create_kill_with_defaults(reset) {
   utils.warningMessage(reset ? "resetting kill queue" : "kill queue file not found - creating a new one")
-  fs.writeFile("game/kill_queue.json", JSON.stringify({}), function(err) {
+  fs.writeFile("game/kill_queue.json", JSON.stringify([]), function(err) {
     if (err) {
       throw err;
     }
