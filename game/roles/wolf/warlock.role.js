@@ -3,14 +3,11 @@ exports.description = "Can check which role a player is"
 
 exports.abilities = {} //Because Javascript
 exports.abilities.tell = {
+  timings.periods = "2" //Every full day/night cycle
+  timings.allow_day = false //Can't be used in day
   name: "Tell",
   desc: "Can check which role a player is",
   run(game, me, args, cb) {
-    if (game.night_time == false){
-      me.tell("you can only get the role of someone at night")
-      cb(false);
-      return;
-    }
     game.masters.tell(`Checking the Role of <@${args[0]}`)
     game.u.resolve_to_id(args[0]).then(id=>{
       role = user.get_role(id)
