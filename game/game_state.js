@@ -94,12 +94,57 @@ exports.init = function(reset) {
       create_with_defaults(false)
     }
   }
+  init_kill(reset)
 }
 
 function create_with_defaults(reset) {
   utils.warningMessage(reset?"resetting game state":"game state file not found - creating a new one")
   fs.writeFile(filename, JSON.stringify(defaults), function(err) {
     if (err) {throw err;}
+  })
+}
+
+function init_kill(reset) {
+  if (reset) {
+    create_kill_with_defaults(true)
+  } else {
+    if (fs.existsSync("game/kill_queue.json")) {
+      // it exists, so do some checks
+      fs.readFile(filename, {
+        encoding: 'utf-8'
+      }, function(err, data) {
+        try {
+          var pdata = JSON.parse(data)
+          if (0 <= pdata.state_num && pdata.state_num <= max_state) {
+            // good
+          } else {
+            // bad
+            throw "out of range"
+          }
+        } catch (e) {
+          // oh no, the json file isn't valid!
+          // better complain loudly and stop the process
+          utils.errorMessage("Kill Queue file is corrupted or invalid! please fix this, or delete the file to fix automatically")
+          process.exit(1)
+          /*fs.unlink(filename, function(err) {
+            if (err) {throw err; }
+            create_with_defaults(false)
+          })*/
+        }
+      })
+    } else {
+      // need to create one with some sensible defaults.
+      create_kill_with_defaults(false)
+    }
+  }
+}
+
+function create_kill_with_defaults(reset) {
+  utils.warningMessage(reset ? "resetting kill queue" : "kill queue file not found - creating a new one")
+  fs.writeFile("game/kill_queue.json", JSON.stringify({}), function(err) {
+    if (err) {
+      throw err;
+    }
   })
 }
 
