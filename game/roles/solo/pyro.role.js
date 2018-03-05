@@ -22,7 +22,7 @@ exports.abilities.powder = {
 exports.abilities.ignite = {
   name: "Ignite",
   desc: "Ignite (kill) all players who have been powdered",
-  run(game, me, args, cb) {
+  ignite(game, me, args, cb) {
     game.masters.tell(`igniting all powdered players`)
     game.all_with_tag("powdered").then(list=>{
       if (list === []) {

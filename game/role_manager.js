@@ -26,11 +26,14 @@ exports.role = function(name) {
         return(
 `**${this.name}** (\`${this.id}\`)
 
-${this.description?this.description:"[no description]"}`
+${this.description?this.description:"[no description]"}
+
+${this.long_description?this.long_description:""}`
         )
       }
     })
   }
+
   return d
 }
 
