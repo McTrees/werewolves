@@ -5,7 +5,7 @@ exports.abilities = {} //Because Javascript
 exports.abilities.become = {
   name: "become",
   desc: "choose the role they would like to become",
-  become(game, me, args, cb) {
+  run(game, me, args, cb) {
     if(args[0].toUpperCase() == "WEREWOLF"){
       game.masters.tell(`Changing the role of <@${me.id} to wolf/werewolf`)
       me.role = "wolf/werewolf"

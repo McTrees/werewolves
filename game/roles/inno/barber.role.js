@@ -5,7 +5,7 @@ exports.abilities = {} //Because Javascript
 exports.abilities.kill = {
   name: "Kill",
   desc: "kill one player.",
-  kill(game, me, args, cb) {
+  run(game, me, args, cb) {
     game.masters.tell(`Barber-killing <@${args[0]}`)
     game.u.resolve_to_id(args[0]).then(id=>{
       if (game.state.day_num == 1 && game.state.night_time == false){
