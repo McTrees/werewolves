@@ -178,7 +178,6 @@ exports.addCmd = function(msg, client, args) { //add someone to the cc
   }
   people = args
   people.forEach(function(element) {
-
     try {
       user.resolve_to_id(element).then(function(user) {
         msg.channel.overwritePermissions(msg.guild.members.get(user), { //everyone specified can see it
