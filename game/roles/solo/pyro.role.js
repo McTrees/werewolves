@@ -22,6 +22,7 @@ exports.abilities.powder = {
   }
 }
 exports.abilities.ignite = {
+  timings.allow_night = false
   name: "Ignite",
   desc: "Ignite (kill) all players who have been powdered",
   run(game, me, args, cb) {
