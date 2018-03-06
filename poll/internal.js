@@ -1,6 +1,5 @@
 //IMPORTANT NOTE - MAJOR OVERHAUL PROBABLY COMING UP SOON
 
-
 const fs = require("fs");
 const config = require("../config");
 const polls = require("./polls.json");
@@ -168,34 +167,20 @@ exports.calculateResults = function(poll, values, client) {
 	}else{
 		ranked = rankResults(results, values, false, false);
 	}
-	//Build the message to be sent
-	for (var k = 0; k < ranked.length; k++) {
-		var i = ranked[k].id;
-		var users = Array.from(values[i]);
-		txt += "\n" + (ranked[k].num + " votes for " + poll["options"][i]["txt"] + " (" + poll["options"][i]["emoji"] + "):\n");
-		for (var j = 0; j < users.length; j++) {
-			txt += ("\t<@" + users[j][1].id + ((users[j][1].id === mayor_id)?`> (${mayor})\n`:">\n"));
-		}
-	}
-	//And make sure to mention who was disqualified
-	if (disqualified.length !== 0) {
-		txt += "\n";
-		if (disqualified.length === 1) {
-			txt += "<@" + disqualified[0] + "> was disqualified as they cast multiple votes.";
-		} else {
-			disqualified.forEach(function (item, index) {
-				txt += "<@" + item + ">";
-				if (index === disqualified.length - 2)
-					txt += " and ";
-				else if (index !== disqualified.length - 1)
-					txt += ", "
-			});
-			txt += " were disqualified as they cast multiple votes.";
-		}
-	}
+	
 	results.txt = txt;
 	//Return the data
 	return results;
+}
+
+exports.setVoteValue(user_id, val){
+	if(!polls.values){
+		polls.values = {
+			user_id: val
+		};
+	}else{
+		polls.values[user_id] = val;
+	}
 }
 
 exports.cleanUp = function(msgs, id) {
@@ -206,7 +191,7 @@ exports.cleanUp = function(msgs, id) {
 	var fs_error = false;
 	//Delete the poll from storage
 	delete polls["polls"][id];
-	polls.threatened = [];
+	polls.extraVotes = {};
 	fs.writeFile("./poll/polls.json", JSON.stringify(polls, null, 2), (err) => {
 		if (err) {
 			utils.errorMessage(err);
@@ -218,13 +203,18 @@ exports.cleanUp = function(msgs, id) {
 		utils.successMessage("Successfully ended poll!");
 }
 
-exports.threaten = function(id){
-	for(var i = 0; i < polls.threatened.length; i++) {
-		if (polls.threatened[i] === id) {
-			return 0;
+exports.extraVotes = function(id, extra){
+	var found = false;
+	for(var user_id in polls.extraVotes){
+		if(user_id == id){
+			polls.extraVotes[id] += extra;
+			found = true;
+			break;
 		}
 	}
-	polls.threatened.push(id);
+	if(!found){
+		polls.extraVotes[id] = extra;
+	}
 	fs.writeFile("./poll/polls.json", JSON.stringify(polls, null, 2), (err) => {
 		if (err) {
 			utils.errorMessage(err);
@@ -244,28 +234,34 @@ exports.threaten = function(id){
 */
 
 
-function rankResults(results, values, mayor_id, threatened){
+function rankResults(results, values, lynch){
 	//Rank the results of the poll (descending order)
 	var ranked = new Array(0);
 	for (var i = 0; i < values.length; i++) {
-		var n = values[i].size;
-		if(mayor_id && values[i].has(mayor_id)){
-			n++;
-		}
-		if(threatened){
-			for(var j = 0; j < threatened.length; j++){
-				if(results.options[i].txt == `<@${threatened[j]}>`){
-					n+=2;
+		//I really hope I know what I'm doing here
+		var n = 0;
+		if(lynch){
+			var keys = values[i].keyArray();
+			for(var j = 0; j < keys.length; j++){
+				if(polls.values[values[i].get(keys[j])]){
+					n += polls.values[values[i].get(keys[j])];
+				}else{
+					n += 1;
 				}
 			}
+			if(polls.extraVotes[results.options[i].txt]){
+				n += polls.extraVotes[results.options[i].txt];
+			}
+		}else{
+			n = values[i].size;
 		}
 		results.options[i].votes = n; //Also add the vote tally to the results object
-		if (values[i].size === 0)
-			continue;
+		if(n == 0)continue;
 		ranked.push({
 			id: i,
 			num: n
 		});
+		
 	}
 	ranked.sort(function (a, b) {
 		return b.num - a.num;
@@ -311,6 +307,38 @@ function findDisqualified(values, client){
 	return disqualified;
 }
 
-function getMayorRole(client){
+function buildMessage(ranked, values, poll, disqualified, log){
+	//Build the message to be sent
+	if(log){
+		for (var k = 0; k < ranked.length; k++) {
+			var i = ranked[k].id;
+			var users = Array.from(values[i]);
+			txt += "\n" + (ranked[k].num + " votes for " + poll["options"][i]["txt"] + " (" + poll["options"][i]["emoji"] + "). Players who voted for " + poll["options"][i]["txt"] + " :\n");
+			for (var j = 0; j < users.length; j++) {
+				txt += ("\t<@" + users[j][1].id + ">\n"));
+			}
+		}
+	}else{
+		
+	}
+	//And make sure to mention who was disqualified
+	if (disqualified.length !== 0) {
+		txt += "\n";
+		if (disqualified.length === 1) {
+			txt += "<@" + disqualified[0] + "> was disqualified as they cast multiple votes.";
+		} else {
+			disqualified.forEach(function (item, index) {
+				txt += "<@" + item + ">";
+				if (index === disqualified.length - 2)
+					txt += " and ";
+				else if (index !== disqualified.length - 1)
+					txt += ", "
+			});
+			txt += " were disqualified as they cast multiple votes.";
+		}
+	}
+}
+
+function getMayor(client){
 	return client.guilds.get(config.guild_id).roles.get(config.role_ids.mayor);
 }

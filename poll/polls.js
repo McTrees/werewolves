@@ -22,12 +22,10 @@ exports.commands.start_poll = function (msg, client, args){
 	}
 	var id; //Poll ID
 	var ch;
-	var mayor_double = false;
 	switch (type) {
 	case ("l"):
 		//The daily lynch
 		ch = config.channel_ids.voting_booth;
-		mayor_double = true;
 		utils.debugMessage("A lynch poll.");
 		break;
 	case ("w"):
@@ -43,18 +41,16 @@ exports.commands.start_poll = function (msg, client, args){
 	case ("o"):
 		//Any other public polls - namely the mayor, reporter and guardian polls
 		ch = config.channel_ids.voting_booth;
-		mayor_double = true;
 		utils.debugMessage("A general poll.");
 		break;
 	default:
-		msg.reply("I'm sorry, but `" + type + "` is not a valid poll type (Types are -\nl - The Daily Lynch\nw - The Werewolves poll\nc - The Cult poll");
+		msg.reply("I'm sorry, but `" + type + "` is not a valid poll type (Types are -\nl - The Daily Lynch\nw - The Werewolves poll\nc - The Cult poll\no- Other polls");
 		return;
 	}
 	var data = {
 		msg_text: txt,
 		channel_id: ch,
-		raven:(type === "l"),
-		mayor:mayor_double,
+		type: type,
 		options: [{
 			txt: "<@329977469350445069>",
 			emoji: "😃"
@@ -64,8 +60,7 @@ exports.commands.start_poll = function (msg, client, args){
 		}, {
 			txt: "ABCDEFGH",
 			emoji: "💀"
-		}
-		]
+		}]
 	};
 	players.all_alive().then((rows) =>{
 		/*
