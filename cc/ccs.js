@@ -1,8 +1,9 @@
 const config = require('../config'); //include main config
 const utils = require('../utils'); //include main config
 const game_state = require('../game/game_state');
+const user = require('../user/user.js');
 var fs = require('fs')
-
+exports.commands = {}
 
 
 function writecc() { //function writes ccconf (odbj) to cc.json
@@ -15,7 +16,7 @@ function writecc() { //function writes ccconf (odbj) to cc.json
 
 
 
-function createChannel(showCreator,people, client, name, ccconf, msg) { //function to make a channel in a category, and make new category if full
+function createChannel(showCreator, people, client, name, ccconf, msg) { //function to make a channel in a category, and make new category if full
 
   //category stuffs
   ccconf.CC_catagory_number = parseInt(ccconf.CC_catagory_number) + 1 //increment the number of catgories
@@ -38,13 +39,14 @@ function createChannel(showCreator,people, client, name, ccconf, msg) { //functi
           ccconf.CC_curent_category_id = channel.id //update current category id
           utils.infoMessage(`had to make a new CC category (${categoryName})`) //log creation of new catagory
           writecc(); //write new channel id and number to cc.json
-          createChannel(name, ccconf, msg) //try to make the channel again
+          createChannel(showCreator, people, client, name, ccconf, msg) //try to make the channel again
         })
       }
     })
 
     //set perms
   ).then(function(channel) {
+    utils.debugMessage(channel.name+" was created")
     channel.overwritePermissions(client.user.id, { //the bot can see it
       VIEW_CHANNEL: true
     })
@@ -60,81 +62,102 @@ function createChannel(showCreator,people, client, name, ccconf, msg) { //functi
       VIEW_CHANNEL: true,
     }).then(channel =>
       channel.overwritePermissions(msg.author, { //author can see it
-            READ_MESSAGE_HISTORY: true //perm for owner of cc, to add/remove people
-          })
+        READ_MESSAGE_HISTORY: true //perm for owner of cc, to add/remove people
+      })
     )
     people.forEach(function(element) {
-      channel.overwritePermissions(msg.guild.members.get(element.slice(-19, -1)), { //everyone specified can see it
-        VIEW_CHANNEL: true
+      user.resolve_to_id(element).then(function(user) {
+        channel.overwritePermissions(msg.guild.members.get(user), { //everyone specified can see it
+          VIEW_CHANNEL: true
+        })
       })
     })
+    var peoples = []
     if (showCreator == true) {
       channel.send(config.messages.CC.createNotAnonymous) //send the default message to the channel
-      channel.send("<@" + msg.author.id + "> brought you together: " + people.join(", ")) //say whos in the CC
-    }else{
+      message = "<@" + msg.author.id + "> brought you together: "
+      people.forEach(function(element) {
+        user.resolve_to_id(element).then(function(id) {
+          message += "<@" + id + ">";
+        }).then(function() {
+          channel.send(message); //say whos in the CC
+        })
+      })
+    } else {
       channel.send(config.messages.CC.createAnonymous) //send the default message to the channel
     }
-  });
+  })
 }
 
-exports.createCmd = function(msg, client, args) { //command for making a cc
-
-    var name = args[0]; //set var for cc name
-    var showCreator = true; //default for showing the creator
-
-
-    //check what the arguments are, and doing error handling
-    var syntax = "```" + config.bot_prefix + "c create <name> [show creator (True or False [default True])] <person1> [person2]...```"; //define the syntax to be displayed
-
-    //check if valid arguments
-    if (args.length == 0) {
-      msg.reply("Incorrect syntax; "+syntax) //alerts user of correct syntax
-        return;
-      }
-      if (args.length == 1) {
-        msg.reply("Incorrect syntax; Did you forget to invite someone? " + syntax) //alerts user of correct syntax
-          return;
-        }
-        if (args[1].toLowerCase() == "true") {
-          var showCreator = true
-          var people = args.slice(2); //'PEOPLE' NEEDS TO BE AN ARRAY OF MENTIONS (<@ID>)) NEEDS TO BE FIXED
-        } else if (args[1].toLowerCase() == "false") {
-          var showCreator = false
-          var people = args.slice(2); //'PEOPLE' NEEDS TO BE AN ARRAY OF MENTIONS (<@ID>)) NEEDS TO BE FIXED
-        } else if (args[1][0] == "<") {
-          var people = args.slice(1); //'PEOPLE' NEEDS TO BE AN ARRAY OF MENTIONS (<@ID>)) NEEDS TO BE FIXED
-        } else {
-          msg.reply("Incorrect syntax; you must specify a name " + syntax) //alerts user of correct syntax
-            return;
-          }
-
-          //check if valid name
-          if (name == undefined || name == "" || name[0] == "<") { //test to see if there are no arguments or if name should be thingy
-            msg.reply("Incorrect syntax; you must specify a name and it must be a mention or emoji " + syntax).then(message => //alerts user of correct syntax
-              msg.delete(config.messageTimeout)) //deletes bots own message after time out
-          } else if (people.length == 0) {
-            msg.reply("did you forget to invite someone? " + syntax).then(message =>
-              msg.delete(config.messageTimeout))
-          } else {
-            fs.readFile('./cc/cc.json', {
-              encoding: 'utf-8'
-            }, function(err, data) { //read cc.json to ccconfig
-              if (err) throw err; //throw error
-              ccconf = JSON.parse(data); //turns string into JSON object
-              name = game_state.data().season_code.replace(/[^a-z 0-9 -]/g,"") + "-cc-" + name; //phrase name of channel, escaping special chars
-              //actually make a channel
-              createChannel(showCreator,people, client,name, ccconf, msg);
-            })
-          }
-        }
-
-exports.listCmd = function(msg, client, args) { //add someone to the cc
-  if(!msg.channel.name.startsWith(game_state.data().season_code.replace(/[^a-z 0-9 -]/g,"") + "-cc-")){
-    msg.reply("you can only do that in a CC");
-    return; //Return should not return an empty string; it should return nothing -bentechy66
+exports.commands.create = function(msg, client, args) { //command for making a cc
+  if (game_state.data().state_num != 4){
+    msg.reply("You can only do that when a game is running.")
+    return;
   }
-  allPeople = msg.channel.permissionOverwrites.findAll("type", "member")   //gets all the members of the cc
-  allPeople = allPeople.filter(function(obj) {    //removes the bot from the list
+  msg.delete();
+  var name = args[0]; //set var for cc name
+  var showCreator = true; //default for showing the creator
+
+
+  //check what the arguments are, and doing error handling
+  var syntax = "```" + config.bot_prefix + "c create <name> [show creator (True or False [default True])] <person1> [person2]...```"; //define the syntax to be displayed
+
+  //check if valid arguments
+  if (args.length == 0) {
+    msg.reply("Incorrect syntax; " + syntax) //alerts user of correct syntax
+    return;
+  }
+  if (args.length == 1) {
+    msg.reply("Incorrect syntax; Did you forget to invite someone? " + syntax) //alerts user of correct syntax
+    return;
+  }
+  if (args[1].toLowerCase() == "true") {
+    var showCreator = true
+    var people = args.slice(2); //'PEOPLE' NEEDS TO BE AN ARRAY OF MENTIONS (<@ID>)) NEEDS TO BE FIXED
+  } else if (args[1].toLowerCase() == "false") {
+    var showCreator = false
+    var people = args.slice(2); //'PEOPLE' NEEDS TO BE AN ARRAY OF MENTIONS (<@ID>)) NEEDS TO BE FIXED
+  } else if (args[1][0] == "<" || args[1][0] == ":" || args[1][0] != "") {
+    var people = args.slice(1); //'PEOPLE' NEEDS TO BE AN ARRAY OF MENTIONS (<@ID>)) NEEDS TO BE FIXED
+  } else {
+    console.log(args[1][0])
+    msg.reply("Incorrect syntax; you must specify a name " + syntax) //alerts user of correct syntax
+    return;
+  }
+
+  //check if valid name
+  if (name == undefined || name == "" || name[0] == "<") { //test to see if there are no arguments or if name should be thingy
+    msg.reply("Incorrect syntax; you must specify a name and it must be a mention or emoji " + syntax).then(message => //alerts user of correct syntax
+      msg.delete(config.messageTimeout)) //deletes bots own message after time out
+  } else if (people.length == 0) {
+    msg.reply("did you forget to invite someone? " + syntax).then(message =>
+      msg.delete(config.messageTimeout))
+  } else {
+    fs.readFile('./cc/cc.json', {
+      encoding: 'utf-8'
+    }, function(err, data) { //read cc.json to ccconfig
+      if (err) throw err; //throw error
+      ccconf = JSON.parse(data); //turns string into JSON object
+      name = game_state.data().season_code.replace(/[^a-z 0-9 -]/g, "a") + "-cc-" + name; //phrase name of channel, escaping special chars
+      //actually make a channel
+      createChannel(showCreator, people, client, name, ccconf, msg);
+    })
+  }
+}
+
+exports.commands.list = function(msg, client, args) { //list people in the cc
+  if (game_state.data().state_num != 4){
+    msg.reply("You can only do that when a game is running.")
+    return;
+  }
+
+  if (!msg.channel.name.startsWith(game_state.data().season_code.replace(/[^a-z 0-9 -]/g, "a") + "-cc-")) {
+    msg.reply("you can only do that in a CC");
+    return;
+  }
+  utils.debugMessage("listed all people in "+msg.channel.name)
+  allPeople = msg.channel.permissionOverwrites.findAll("type", "member") //gets all the members of the cc
+  allPeople = allPeople.filter(function(obj) { //removes the bot from the list
     return obj.id !== client.user.id;
   });
   var people = config.messages.CC.listPeople; //starts message with text
@@ -142,4 +165,105 @@ exports.listCmd = function(msg, client, args) { //add someone to the cc
     people += "\n - <@" + element.id + "> "
   })
   msg.channel.send(people)
+}
+
+exports.commands.add = function(msg, client, args) { //add someone to the cc
+  if (game_state.data().state_num != 4){
+    msg.reply("You can only do that when a game is running.")
+    return;
+  }
+
+  if (!msg.channel.name.startsWith(game_state.data().season_code.replace(/[^a-z 0-9 -]/g, "a") + "-cc-")) {
+    msg.reply("you can only do that in a CC");
+    return;
+  }
+  allPeople = msg.channel.permissionOverwrites.findAll("type", "member") //gets all the members of the cc
+  allPeople = allPeople.filter(function(obj) { //removes all members apart from the owner
+    return obj.allow != 0 || obj.allow != 1024;
+  });
+  allRoles = msg.channel.permissionOverwrites.findAll("type", "role") //gets all the roles of the cc
+  allRoles = allRoles.filter(function(obj) { //filters for all roles with permission
+    return obj.allow == 66560;
+  });
+  if (!allPeople[0].id == msg.author.id || !msg.member.roles.has(allRoles[0].id)) { //checks if they have perms, from the role or they are channel owner
+    msg.reply(config.messages.general.permission_denied)
+    return;
+  }
+  if (args.length == 0) {
+    msg.reply("you must supply people to add")
+  }
+  people = args
+  people.forEach(function(element) {
+
+    try {
+      user.resolve_to_id(element).then(function(user) {
+        msg.channel.overwritePermissions(msg.guild.members.get(user), { //everyone specified can see it
+          VIEW_CHANNEL: true
+        }).catch(function() {
+          utils.debugMessage("error adding "+element+" from "+msg.channel.name)
+          msg.reply("there was an error adding " + element + " to this cc")
+        })
+        utils.debugMessage("added "+element+" to "+msg.channel.name)
+        msg.channel.send(element + " was added")
+      }).catch(function() {
+        msg.reply("there was an error adding " + element + " to this cc")
+        utils.debugMessage("error adding "+element+" from "+msg.channel.name)
+      })
+    } catch (err) {
+      msg.reply("there was an error adding " + element + " to this cc")
+      utils.debugMessage("error adding "+element+" from "+msg.channel.name)
+    }
+  })
+}
+
+exports.commands.remove = function(msg, client, args) { //remove someone from the cc
+  if (game_state.data().state_num != 4){
+    msg.reply("You can only do that when a game is running.")
+    return;
+  }
+
+  if (!msg.channel.name.startsWith(game_state.data().season_code.replace(/[^a-z 0-9 -]/g, "a") + "-cc-")) {
+    msg.reply("you can only do that in a CC");
+    return;
+  }
+  allPeople = msg.channel.permissionOverwrites.findAll("type", "member") //gets all the members of the cc
+  allPeople = allPeople.filter(function(obj) { //removes all members apart from the owner
+    return obj.allow != 0 || obj.allow != 1024;
+  });
+  allRoles = msg.channel.permissionOverwrites.findAll("type", "role") //gets all the roles of the cc
+  allRoles = allRoles.filter(function(obj) { //filters for all roles with permission
+    return obj.allow == 66560;
+  });
+  //console.log(msg.channel.permissionOverwrites)
+  if (!allPeople[0].id == msg.author.id || !msg.member.roles.has(allRoles[0].id)) { //checks if they have perms, from the role or they are channel owner
+    msg.reply(config.messages.general.permission_denied)
+    return;
+  }
+  if (args.length == 0) { //check if there any arguments
+    msg.reply("you must supply people to remove")
+  }
+  people = args
+  people.forEach(function(element) {
+    try {
+      user.resolve_to_id(element).then(function(user) {
+        if (user == client.user.id){
+          msg.reply("you can't remove the bot from here")
+          utils.debugMessage("didn't remove the bot from "+msg.channel.name)
+          return;
+        }
+        msg.channel.permissionOverwrites.get(user).delete().catch(function() {
+          utils.debugMessage("error removing "+element+" from "+msg.channel.name)
+          msg.reply("there was an error removing " + element + " from this cc")
+        })
+        utils.debugMessage("removed "+element+" from "+msg.channel.name)
+        msg.channel.send(element + " was removed")
+      }).catch(function() {
+        utils.debugMessage("error removing "+element+" from "+msg.channel.name)
+        msg.reply("there was an error removing " + element + " from this cc")
+      })
+    } catch (err) {
+      utils.debugMessage("error removing "+element+" from "+msg.channel.name)
+      msg.reply("there was an error removing " + element + " from this cc")
+    }
+  })
 }

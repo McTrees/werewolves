@@ -13,6 +13,8 @@ const aliases = require('./aliases');
 const utils = require("../utils");
 const role_specific = require("./role_specific_handler")
 const permissions = require("./permissions")
+const msg = require("./msg_handler")
+const didYouMean = require("didYouMean")
 /*syntax: "alias" :"defined as",
 all other arguments that get send with the alias get added to the send
 alieses need to be one word
@@ -27,12 +29,37 @@ const FILENAMES = {
   g: "../game/game.js",
   //s: "../suggest/suggest.js"
 }
+getAllCommands = function() {
+  commands = []
+  for (i in FILENAMES) {
+    start = i
+    var iE = require(FILENAMES[i]);
+    var iA = Object.keys(iE)
+    try {
+      var iB = Object.keys(iE.commands)
+    } catch (err) {}
+    for (j in iA) {
+      if (iA[j].endsWith("Cmd")) {
+        ting = config.bot_prefix + i + " " + iA[j]
+        ting = ting.slice(0, -3)
+        commands.push()
+      }
+    }
+    for (k in iB) {
+      commands.push(config.bot_prefix + i + " " + iB[k])
+    }
+  }
+  for(var k in aliases) {
+    commands.push(config.bot_prefix + k)
+  }
+  return commands
+}
 
 module.exports = function(msg, client) {
   if (msg.author == client.user) {return}; //ignore own messages
   if (msg.content[0] == config.bot_prefix) { //only run if it is a message starting with the bot prefix (if it's a command)
     var splitMessage = msg.content.split(" ");
-
+    utils.debugMessage("      "+msg.author +" sent a command: "+ msg.content)
     splitMessage[0] = splitMessage[0].slice(1); //remove the prefix from the message
     var firstWord = splitMessage[0]
     if (aliases[firstWord]) {
@@ -63,21 +90,20 @@ module.exports = function(msg, client) {
 
     // now run it
     try {
-
       // help is special-cased
       if (firstWord == "h") {
         require("../help/help.js")["helpCmd"](msg, client, splitMessage.slice(1), splitMessage.slice(2));
       } else {
-        var root = require(FILENAMES[firstWord])
-        if (!root) {
-          fail()
+        if (!FILENAMES[firstWord]) {
+          fail(msg, client, splitMessage)
         } else {
+          var root = require(FILENAMES[firstWord])
           if (root.commands && root.commands[cmdName]) {
             root.commands[cmdName](msg, client, rest)
           } else if (root[cmdName + "Cmd"]){
             root[cmdName + "Cmd"](msg, client, rest)
           } else {
-            fail(msg, client)
+            fail(msg, client, splitMessage)
           }
         }
       }
@@ -95,8 +121,19 @@ module.exports = function(msg, client) {
   }
 }
 
-function fail(msg, client) {
+function fail(msg, client, splitMessage) {
   // invalid command
-  msg.reply(`\`${msg.content}\` is an unknown command`)
-  // @bentechy66 can add did-you-mean stuff here kk babes just make a funky function to return all commands
+  if (splitMessage[1]) {
+  msg_cmd = config.bot_prefix + splitMessage[0] + " " + splitMessage[1]
+} else {
+  msg_cmd = config.bot_prefix + splitMessage[0]
+}
+  const all_commands = getAllCommands()
+  didYouMean.threshold = null;
+  probablecommand = didYouMean(msg_cmd, all_commands)
+  if (probablecommand == null) {
+    msg.reply(`\`${msg_cmd}\` is an unknown command.`)
+  } else {
+    msg.reply(`\`${msg_cmd}\` is an unknown command. Did you mean \`${probablecommand}\`?`)
+  }
 }
