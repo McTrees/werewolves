@@ -76,3 +76,11 @@ exports.tags.all_with_tag = function(tag) {
 
 exports.timings = {}
 // functions for managing ability timings
+exports.timings.add_next_time = function(user_id, ability_name, next_time_can_use) {
+  // makes it so u can't use abn till next_cycle time
+  gamedb.run("replace into ability_timings (user_id, ability_name, next_time_can_use) values ($u,$a,$n)", {
+    $u:user_id,
+    $a:ability_name,
+    $n:next_time_can_use
+  }, function(err){if(err)throw err})
+}
