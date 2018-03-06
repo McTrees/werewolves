@@ -13,6 +13,7 @@ const aliases = require('./aliases');
 const utils = require("../utils");
 const role_specific = require("./role_specific_handler")
 const permissions = require("./permissions")
+const stats = require("../analytics/analytics.js")
 /*syntax: "alias" :"defined as",
 all other arguments that get send with the alias get added to the send
 alieses need to be one word
@@ -30,6 +31,10 @@ const FILENAMES = {
 
 module.exports = function(msg, client) {
   if (msg.author == client.user) {return}; //ignore own messages
+  stats.increment("Messages", 1)
+  if (msg.content.indexOf(`<@&${config.role_ids.gameMaster}>`) > -1) {
+    stats.increment("GMPings", 1)
+  }
   if (msg.content[0] == config.bot_prefix) { //only run if it is a message starting with the bot prefix (if it's a command)
     var splitMessage = msg.content.split(" ");
 

@@ -3,6 +3,7 @@ const utils = require('../utils'); //include main config
 const game_state = require('../game/game_state');
 const user = require('../user/user.js');
 var fs = require('fs')
+const stats = require("../analytics/analytics.js")
 
 
 
@@ -17,7 +18,7 @@ function writecc() { //function writes ccconf (odbj) to cc.json
 
 
 function createChannel(showCreator, people, client, name, ccconf, msg) { //function to make a channel in a category, and make new category if full
-
+  stats.increment("CCCreations", 1)
   //category stuffs
   ccconf.CC_catagory_number = parseInt(ccconf.CC_catagory_number) + 1 //increment the number of catgories
   categoryName = game_state.data().season_code + "_CC_" + ccconf.CC_catagory_number; //phrase name of catgories
