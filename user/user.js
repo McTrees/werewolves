@@ -216,7 +216,7 @@ exports.resolve_to_id = function(str) {
     var plainId = /^(\d+)$/
     if (plainId.test(str)) {
       resolve(plainId.exec(str)[1])
-    }
+    } 
     var discordId = /^<@!?(\d+)>$/
     if (discordId.test(str)) { // str is a valid discord mention
       resolve(discordId.exec(str)[1])
