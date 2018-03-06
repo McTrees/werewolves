@@ -5,8 +5,12 @@ exports.description = "Powders a player per night, or can ignite all powdered pl
 
 exports.abilities = {} //Because Javascript
 exports.abilities.powder = {
+  timings = {
+    periods : "2",
+    allow_day = false
+  }
   name: "Powder",
-  desc: "Powder one player. Usable once per **TODO**", //TODO: Make timeframe work
+  desc: "Powder one player. Usable once per night.", //TODO: Make timeframe work
   run(game, me, args, cb) {
     game.masters.tell(`powdering <@${args[0]}>`)
     game.u.resolve_to_id(args[0]).then(id=>{
@@ -20,6 +24,9 @@ exports.abilities.powder = {
   }
 }
 exports.abilities.ignite = {
+  timings = {
+    allow_night = false
+  }
   name: "Ignite",
   desc: "Ignite (kill) all players who have been powdered",
   run(game, me, args, cb) {
