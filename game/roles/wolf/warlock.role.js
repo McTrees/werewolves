@@ -3,8 +3,10 @@ exports.description = "Can check which role a player is"
 
 exports.abilities = {} //Because Javascript
 exports.abilities.tell = {
-  timings.periods = "2" //Every full day/night cycle
-  timings.allow_day = false //Can't be used in day
+  timings = {
+    periods : "2",
+    allow_day = false
+  }
   name: "Tell",
   desc: "Can check which role a player is",
   run(game, me, args, cb) {

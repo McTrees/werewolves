@@ -3,8 +3,12 @@ exports.description = "Can assassinate one player per night, exept the first nig
 
 exports.abilities = {} //Because Javascript
 exports.abilities.assasinate = {
+  timings = {
+    periods : "2",
+    allow_day = false
+  }
   name: "Assasinate",
-  desc: "Assasinate one player. Usable once per **TODO**", //TODO: Make timeframe work
+  desc: "Assasinate one player. Usable once per night", //TODO: Make timeframe work
   run(game, me, args, cb) {
     game.masters.tell(`Assasinating <@${args[0]}`)
     game.u.resolve_to_id(args[0]).then(id=>{
