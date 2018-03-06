@@ -12,7 +12,7 @@ exports.commands.start_poll = function (msg, client, args){
 	utils.debugMessage(`@${msg.author.username} tried to create a poll.`);
 	if(args.length <= 1){
 		utils.errorMessage(`Insufficient arguments provided for start_pollCmd!`);
-		msg.reply("correct syntax: `!start_poll <type(werewolves/lynch/cult)> <heading>`");
+		msg.reply("correct syntax: `!start_poll <type - werewolves/lynch/cult/other> <heading>`");
 		return;
 	}
 	var type = args[0].toLowerCase(); //The type of poll - so far "lynch" (alias 'l'), "werewolves" (alias 'w'), "cult" (alias 'c')
@@ -52,18 +52,21 @@ exports.commands.start_poll = function (msg, client, args){
 		channel_id: ch,
 		type: type,
 		options: [{
-			txt: "<@329977469350445069>",
+			id: "329977469350445069",
 			emoji: "😃"
 		}, {
-			txt: "<@402072907284480000>",
+			id: "402072907284480000",
 			emoji: "😕"
 		}, {
-			txt: "ABCDEFGH",
+			id: "409771209639854081",
 			emoji: "💀"
+		},{
+			id: "334600339208798218",
+			emoji: "🍆"
 		}]
 	};
 	players.all_alive().then((rows) =>{
-		/*
+		/*meh
 		if(!rows || rows.length === 0)throw new Error("The database returned nothing! The game has probably not started!");
 		rows.forEach((row) => {
 			utils.debugMessage("Row: " + row);

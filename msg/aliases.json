@@ -14,9 +14,9 @@
   "set_wins":"up set_wins",
   "set_record":"up set_record",
 
-  "startPoll": "p startPoll",
-  "endPoll": "p endPoll",
-  "checkPoll": "p checkPoll",
+  "start_poll": "p start_poll",
+  "end_poll": "p end_poll",
+  "check_poll": "p check_poll",
   "threaten":"p threaten",
 
   "day":"g day",

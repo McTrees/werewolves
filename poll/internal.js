@@ -57,7 +57,7 @@ exports.startPoll = function(client, data) {
 		if (i === 0)
 			txt[0] = msg_text + "-\n";
 		for (var j = 0; j < 20; j++) {
-			txt[i] += options[i * 20 + j].emoji + " - " + options[i * 20 + j].txt;
+		txt[i] += `${options[i * 20 + j].emoji}  -  <@${options[i * 20 + j].id}>`;
 			if (i * 20 + j >= options.length - 1)
 				break;
 			txt[i] += "\n";
@@ -85,8 +85,8 @@ exports.startPoll = function(client, data) {
 				await values[i].react(options[i * 20 + j].emoji).catch (err => {
 					utils.errorMessage(err);
 					utils.errorMessage("The bot failed to add an emoji to the message. If you know how I can set this right, please tell me.");
-					utils.infoMessage("For now, use !checkPoll <id> to set the poll right.");
-					ch.send("The bot failed to add an emoji to the message. To set it right, use !checkPoll <id>");
+					utils.infoMessage("For now, use !check_poll <id> to set the poll right.");
+					ch.send("The bot failed to add an emoji to the message. To set it right, use !check_poll <id>");
 				});
 				opts.push(options[i * 20 + j]);
 			}
