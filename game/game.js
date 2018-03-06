@@ -382,7 +382,8 @@ exports.use_ability = async function(msg, client, split) {
     if (ri.abilities && ri.abilities[abn] && typeof ri.abilities[abn].run == "function") {
       msg.reply("run ability")
       utils.debugMessage(`${u} is running ability ${abn}; args ${split}`)
-      ri.abilities[abn].run(new GameController(client), new PlayerController(msg.author.id), split.slice(1), function(w) {
+      var abl = ri.abilities[abn]
+      abl.run(new GameController(client), new PlayerController(msg.author.id), split.slice(1), function(w) {
         if (w) {
           msg.reply("ability worked")
         } else {
