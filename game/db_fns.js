@@ -84,3 +84,21 @@ exports.timings.add_next_time = function(user_id, ability_name, next_time_can_us
     $n:next_time_can_use
   }, function(err){if(err)throw err})
 }
+
+exports.timings.can_use = function(user_id, ability_name, current_cycle) {
+  return new Promise(function(resolve, reject) {
+    userdb.get("select next_time_can_use from ability_timings where user_id = $u and ability_name = $a", {
+      $u:user_id,
+      $a:ability_name
+    }, function(err, row) {
+      if (err) throw err
+      if (!row) {
+        // user doesn't exist or doesn't have that ability or something
+        reject() // might change this but idk
+      } else {
+        var can = row.next_time_can_use <= current_cycle
+        resolve(can) // can
+      }
+    })
+  })
+}
