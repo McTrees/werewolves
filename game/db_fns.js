@@ -73,3 +73,6 @@ exports.tags.all_with_tag = function(tag) {
     })
   })
 }
+
+exports.timings = {}
+// functions for managing ability timings
