@@ -115,7 +115,6 @@ exports.createCmd = function(msg, client, args) { //command for making a cc
   } else if (args[1][0] == "<" || args[1][0] == ":" || args[1][0] != "") {
     var people = args.slice(1); //'PEOPLE' NEEDS TO BE AN ARRAY OF MENTIONS (<@ID>)) NEEDS TO BE FIXED
   } else {
-    console.log(args[1][0])
     msg.reply("Incorrect syntax; you must specify a name " + syntax) //alerts user of correct syntax
     return;
   }
@@ -209,7 +208,7 @@ exports.removeCmd = function(msg, client, args) { //remove someone from the cc
   allRoles = allRoles.filter(function(obj) { //filters for all roles with permission
     return obj.allow == 66560;
   });
-  console.log(msg.channel.permissionOverwrites)
+  utils.debugMessage(msg.channel.permissionOverwrites)
   if (!allPeople[0].id == msg.author.id || !msg.member.roles.has(allRoles[0].id)) { //checks if they have perms, from the role or they are channel owner
     msg.reply(config.messages.general.permission_denied)
     return;
