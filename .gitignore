@@ -2,6 +2,8 @@ node_modules/
 *.db
 token.json
 poll/polls.json
+poll/polls_old.js
+poll/internal_old.js
 game.dat
 cc/cc.json
 game/state.json
