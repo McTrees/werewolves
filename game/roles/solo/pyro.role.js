@@ -6,7 +6,7 @@ exports.description = "Powders a player per night, or can ignite all powdered pl
 exports.abilities = {} //Because Javascript
 exports.abilities.powder = {
   timings : {
-    periods : "2",
+    periods : 2,
     allow_day : false
   },
   name: "Powder",
@@ -15,8 +15,8 @@ exports.abilities.powder = {
     game.masters.tell(`powdering <@${args[0]}>`)
     game.u.resolve_to_id(args[0]).then(id=>{
       game.tags.add_tag(id, "powdered")
-      cb(true)
       me.tell(`successfully powdered <@${args[0]}>`)
+      cb(true)
     }).catch(e=>{
       me.tell("couldn't powder that person")
       cb(false)
