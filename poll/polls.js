@@ -8,6 +8,8 @@ const players = require("../user/user");
 const internal = require("./internal");
 //The above is self-explanatory, I think
 
+exports.commands = {};//because JS
+
 exports.commands.start_poll = function (msg, client, args){
 	utils.debugMessage(`@${msg.author.username} tried to create a poll.`);
 	if(args.length <= 1){
@@ -71,7 +73,7 @@ exports.commands.start_poll = function (msg, client, args){
 		rows.forEach((row) => {
 			utils.debugMessage("Row: " + row);
 			options.push({
-				txt: `<@${row.user_id}>`,
+				id: row.user_id,
 				emoji: row.emoji
 			});
 		});
@@ -89,14 +91,14 @@ exports.commands.start_poll = function (msg, client, args){
 }
 
 /**
-Function - threatenCmd
-Function for the Raven to threaten a player
+Function - addVotes
+Function to add votes to a particular player in the daily lynch
 Arguments:
 msg - The message that triggered the function
 client - The Discord Client that the bot uses
 id - The ID of the poll to check
  */
-exports.commands.threaten = async function (msg, client, args) {
+exports.commands.addVotes = async function (msg, client, args) {
 	var user;
 	if(args.length === 1){
 		var id = "";

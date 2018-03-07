@@ -21,21 +21,21 @@ client - The Discord Client the bot uses
 data - An object containing three properties - msg_text, channel_id, options:
 	msg_text - A String, the text that is displayed at the start of the poll.
 	channel_id - The ID of the channel in which to have the poll
-	options - An array, the list of choices in the poll, along with thier emojis. Each element has two properties - txt, emoji:
-		txt - The text corresponding to the option
-		emoji - The emoji corresponding to the option (It's just a character BTW, just like all emojis in discord)
+	options - An array, the list of choices in the poll, along with thier emojis. Each element has two properties - id, emoji:
+		id - The player id corresponding to the option
+		emoji - The emoji corresponding to the option (It's just a character BTW, just like all basic emojis in discord)
 
 Example for data:{
 	msg_text: "Vote for your favourite!",
 	channel_id: "4034578342784532XX",
 	options: [{
-			txt: "<@32997746935044XXXX>",
+			id: "32997746935044XXXX",
 			emoji: "😃"
 		}, {
-			txt: "<@40207290728448XXXX>",
+			id: "40207290728448XXXX",
 			emoji: "😕"
 		}, {
-			txt: "A",
+			id: "13457982471294XXXX",
 			emoji: "💀"
 		}
 	]
@@ -76,39 +76,38 @@ exports.startPoll = function(client, data) {
 		for (var i = 0; i < values.length; i++) {
 			msgs[i] = {
 				id: values[i].id,
-				options: "If you're seeing this, then the bot isn't working correctly."
+				option_ids: "If you're seeing this, then the bot isn't working correctly."
 			};
 			var opts = new Array(0);
 			for (var j = 0; j < 20; j++) {
 				if (i * 20 + j >= options.length)
 					break;
+				//make sure to add next emoji only after this one is added
 				await values[i].react(options[i * 20 + j].emoji).catch (err => {
 					utils.errorMessage(err);
 					utils.errorMessage("The bot failed to add an emoji to the message. If you know how I can set this right, please tell me.");
 					utils.infoMessage("For now, use !check_poll <id> to set the poll right.");
 					ch.send("The bot failed to add an emoji to the message. To set it right, use !check_poll <id>");
 				});
-				opts.push(options[i * 20 + j]);
+				opts.push(i * 20 + j);//adds the ids of all the options
 			}
 			msgs[i]["options"] = opts;
 		}
 		utils.debugMessage("Added emojis.");
 		//Now save the poll so that a restart of the bot doesn't delete all the data
 		var num = ++polls["num"];
-		//Here I'm saving some stuff twice. It makes my work easier, but it's not storage efficient.
-		//Though again, an extra kilobyte or two isn't much
 		polls["polls"][num] = {
 			channel: ch.id,
-			mayor:data.mayor,
-			raven:data.raven,
+			type: data.type,
 			messages: msgs,
 			options: options
 		};
-		utils.debugMessage("Saving....");
+		//if the bot crashes at this point for some reason, you might as well abandon the newly created poll
+		utils.debugMessage("Saving polls....");
 		fs.writeFile("./poll/polls.json", JSON.stringify(polls, null, 2), (err) => {
 			if (err) {
 				utils.errorMessage(err);
-				client.channels.get(config.channel_ids.gm_confirm).send("Error occurred when saving file.");
+				client.channels.get(config.channel_ids.gm_confirm).send("Error occurred when saving file. This could cause problems.");
 			} else {
 				utils.successMessage("The poll was created successfully!");
 			}
@@ -143,7 +142,8 @@ exports.fetchMessages = function(msg, client, id){
 	};
 }
 
-
+//at this point I had forgotten what changes I had made
+//so forgive me if something here doesn't quite work as expected
 exports.calculateResults = function(poll, values, client) {
 	//The text message the bot will send
 	var txt = "Results of the polls:\n";
@@ -340,5 +340,10 @@ function buildMessage(ranked, values, poll, disqualified, log){
 }
 
 function getMayor(client){
-	return client.guilds.get(config.guild_id).roles.get(config.role_ids.mayor);
+	var members = client.guilds.get(config.guild_id).roles.get(config.role_ids.mayor).members;
+	if(members.size > 0){
+		return members.first().id;
+	}else{
+		return "0000000000";//because no one can have _that_ as their ID, and I don't care about 'efficiency' when using JS
+	}
 }
