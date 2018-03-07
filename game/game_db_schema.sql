@@ -23,5 +23,5 @@ CREATE TABLE ability_timings (
   user_id char(21) not null,
   ability_name char(21) not null,
   next_time_can_use integer not null
-)
+);
 COMMIT;
