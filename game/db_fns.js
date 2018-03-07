@@ -87,7 +87,7 @@ exports.timings.add_next_time = function(user_id, ability_name, next_time_can_us
 
 exports.timings.can_use = function(user_id, ability_name, current_cycle) {
   return new Promise(function(resolve, reject) {
-    userdb.get("select next_time_can_use from ability_timings where user_id = $u and ability_name = $a", {
+    gamedb.get("select next_time_can_use from ability_timings where user_id = $u and ability_name = $a", {
       $u:user_id,
       $a:ability_name
     }, function(err, row) {
