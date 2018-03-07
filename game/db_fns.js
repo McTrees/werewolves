@@ -93,8 +93,7 @@ exports.timings.can_use = function(user_id, ability_name, current_cycle) {
     }, function(err, row) {
       if (err) throw err
       if (!row) {
-        // user doesn't exist or doesn't have that ability or something
-        reject() // might change this but idk
+        resolve(true) // no data, so can use
       } else {
         var can = row.next_time_can_use <= current_cycle
         resolve(can) // can
