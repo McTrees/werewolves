@@ -387,7 +387,7 @@ exports.use_ability = async function(msg, client, split) {
       var abl = ri.abilities[abn]
       abl.run(new GameController(client), new PlayerController(msg.author.id), split.slice(1), function(w) {
         if (w) {
-          db_fns.timings.add_next_time(u, abn, game_state.data().time + game_state.data().time)
+          db_fns.timings.add_next_time(u, abn, game_state.data().time + abl.timings.periods)
           msg.reply("ability worked")
         } else {
           msg.reply("ability did not work")
