@@ -8,5 +8,3 @@ game/state.json
 *.log
 analytics/stats.json
 channel/channels.json
-=======
->>>>>>> development

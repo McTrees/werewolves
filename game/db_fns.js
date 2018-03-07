@@ -2,6 +2,7 @@ const path = require("path")
 const fs = require("fs")
 const sqlite3 = require("sqlite3")
 const gamedb = new sqlite3.Database("game/game.db")
+exports._db = gamedb // same as user._db
 const utils = require("../utils")
 exports.init = function(reset_data) {
   // called on bot start
@@ -69,6 +70,44 @@ exports.tags.all_with_tag = function(tag) {
     gamedb.all("select user_id from player_tags where tag_name = ?;", tag, function(err, rows){
       if (err) { throw err; }
       resolve(rows.map(row=>row.user_id))
+    })
+  })
+}
+
+exports.timings = {}
+// functions for managing ability timings
+exports.timings.add_next_time = function(user_id, ability_name, next_time_can_use) {
+  utils.debugMessage(`add_next_time: user ${user_id}, abn ${ability_name}, next time ${next_time_can_use}`)
+  // makes it so u can't use abn till next_cycle time
+  gamedb.serialize(function() {
+    gamedb.run("delete from ability_timings where user_id = $u and ability_name = $a", {
+      $u:user_id,$a:ability_name
+    })
+    gamedb.run("replace into ability_timings (user_id, ability_name, next_time_can_use) values ($u,$a,$n)", {
+      $u:user_id,
+      $a:ability_name,
+      $n:next_time_can_use
+    }, function(err){
+      utils.debugMessage("=== in the add_next_time === err is "+err+" ===")
+    })
+  })
+
+}
+
+exports.timings.can_use = function(user_id, ability_name, current_cycle) {
+  utils.debugMessage(`can_use: user ${user_id}, abn ${ability_name}, current cycle ${current_cycle}`)
+  return new Promise(function(resolve, reject) {
+    gamedb.get("select next_time_can_use from ability_timings where user_id = $u and ability_name = $a", {
+      $u:user_id,
+      $a:ability_name
+    }, function(err, row) {
+      if (err) throw err
+      if (!row) {
+        resolve(true) // no data, so can use
+      } else {
+        var can = row.next_time_can_use <= current_cycle
+        resolve(can) // can
+      }
     })
   })
 }
