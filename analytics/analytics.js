@@ -20,7 +20,7 @@ try {
 exports.increment = function(thing, amount) {
 
   stats[thing] = stats[thing] + amount
-  utils.debugMessage("Incrementing " + thing + ": Got " + stats[thing])
+  //utils.debugMessage("Incrementing " + thing + ": Got " + stats[thing])
   fs.writeFileSync( path.resolve( __dirname, "./stats.json" ) , JSON.stringify(stats), 'utf8'); // write it back
 }
 
