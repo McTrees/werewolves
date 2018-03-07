@@ -30,7 +30,7 @@ class GameController {
     return new PlayerController(id)
   }
   async all_with_tag(tag) {
-    var l = await db_fns.all_with_tag(tag)
+    var l = await db_fns.tags.all_with_tag(tag)
     var r = l.map(i=>this.player(i))
     return r
   }
@@ -335,7 +335,7 @@ async function kill(who, why, client) {
 
   // TODO: more info available to functions
   var kill_desc = { by: why }
-  var game = { masters: client.channels.get(config.channel_ids.gm_confirm)}
+  var game = new GameController(client)
   var me = new PlayerController(who)
   var did_they_die
   if (typeof their_role_i.on_death === "function") {
@@ -380,23 +380,25 @@ exports.use_ability = async function(msg, client, split) {
   var abn = split[0]
   var r = await user.get_role(u)
   var ri = role_manager.role(r)
-  if (is_allowed_channel(msg.channel.id, ri.id) && db_fns.timings.can_use(u, abn, game_state.data().time)) {
+  if (!is_allowed_channel(msg.channel.id, ri.id)){
+    msg.reply("you can't use that ability because your role does not have an ability with that name")
+  } else if (!await db_fns.timings.can_use(u, abn, game_state.data().time)) {
+    msg.reply("you currently can't use that ability: you'll have to wait till later.\n*If you want to undo an ability or you think there is an error, please ping a game master.*")
+  } else {
     if (ri.abilities && ri.abilities[abn] && typeof ri.abilities[abn].run == "function") {
-      msg.reply("run ability")
+      msg.reply("running ability!")
       utils.debugMessage(`${u} is running ability ${abn}; args ${split}`)
       var abl = ri.abilities[abn]
-      abl.run(new GameController(client), new PlayerController(msg.author.id), split.slice(1), function(w) {
-        if (w) {
+      abl.run(new GameController(client), new PlayerController(msg.author.id), split.slice(1), function(worked, message) {
+        if (worked) {
           db_fns.timings.add_next_time(u, abn, game_state.data().time + abl.timings.periods)
-          msg.reply("ability worked")
+          msg.reply(message?message:"your ability was successful! :)")
         } else {
-          msg.reply("ability did not work")
+          msg.reply(message?message:"your ability failed. :(")
         }
       })
     } else {
-      msg.reply("you can't use that ability because your role does not have an ability with that name")
+      msg.reply("you don't have an abiltiy with that name!")
     }
-  } else {
-    msg.reply("Role abilities are not usable in this channel.\n*I'm not saying that you are or aren't able to use that command, only that **if** you can, you can't use it here.*")
   }
 }
