@@ -14,11 +14,26 @@ exports.commands = {}
 class GameController {
   constructor(client) {
     this.masters = client.channels.get(config.channel_ids.gm_confirm)
+    this.masters.tell = (from_id, msg, ...rest)=>{
+      this.masters.send(`[ <@${from_id}> ]: ${msg}`, ...rest)
+    }
+    this.u = user
+    this.tags = db_fns.tags
+    this._client = client
+    this._gamedb = db_fns._db
+    this._userdb = this.u._db
   }
   get data(){
     return game_state.data()
   }
-
+  player(id) {
+    return new PlayerController(id)
+  }
+  async all_with_tag(tag) {
+    var l = await db_fns.tags.all_with_tag(tag)
+    var r = l.map(i=>this.player(i))
+    return r
+  }
 }
 
 const scripts = {
@@ -53,7 +68,7 @@ exports.commands.game_info = function(msg, client) {
       .setColor(0x44009b)
       .addField("Season name", `${data.season_name} (\`${data.season_code}\`)`)
       .addField("Game phase", `${game_state.nice_names[data.state_num]} (#${data.state_num})`)
-      .addField("Game time", `${data.night_time ? "Night" : "Day"} #${data.day_num}`)
+      .addField("Game time", game_state.nice_time(data.time))
     msg.channel.send(emb)
 }
 
@@ -257,11 +272,14 @@ exports.commands.day = async function(msg, client) {
     return
   }
   var d = game_state.data()
-  if (!d.night_time) {
-    msg.reply("it's already day time! In particular, it's currently day "+d.day_num+".")
+  if (game_state.is_day(d.time)) {
+    msg.reply("it's already day time! In particular, it's currently "+game_state.nice_time(d.time)+".")
   } else {
     game_state.next_day_or_night()
-    msg.reply(`[👍] It is now day ${d.day_num}!`)
+    execute_kill_q(msg, client)
+    msg.reply(`[👍] It is now ${game_state.nice_time(d.time)}!`)
+    stats = require("../analytics/analytics.js").get_stats()
+    msg.reply(`**Today's Stats:**\n - ${stats.Messages} messages were sent!\n - The Game Masters were pinged ${stats.GMPings} times!\n - ${stats.CCCreations} Conspiracy Channels were created!`)
   }
 }
 
@@ -271,11 +289,12 @@ exports.commands.night = async function(msg, client) {
     return
   }
   var d = game_state.data()
-  if (d.night_time) {
-    msg.reply("it's already night time! In particular, it's currently night "+d.day_num+".")
+  if (d.is_day) {
+    msg.reply("it's already night time! In particular, it's currently "+game_state.nice_time(d.time)+".")
   } else {
     game_state.next_day_or_night()
-    msg.reply(`[👍] It is now night ${d.day_num}!`)
+    execute_kill_q(msg, client)
+    msg.reply(`[👍] It is now ${game_state.nice_time(d.time)}!`)
   }
 }
 
@@ -286,9 +305,43 @@ exports.commands.kill = async function(msg, client, args) {
   if (args.length !== 2) {
     msg.reply("wrong syntax!")
   } else {
+    if(game_state.data().night_time) {
+      kill_time = "day"
+    } else {
+      kill_time = "night"
+    }
+    msg.reply(`Adding ${args[0]} to Kill Queue for the next time it switches to ${kill_time}`)
     var dead_person_id = await user.resolve_to_id(args[1])
-    kill(dead_person_id, args[0], client)
+    add_to_kill_q(dead_person_id, args[0], client)
   }
+}
+
+async function add_to_kill_q(who, why, client) {
+  if (typeof kill_q == 'undefined') {
+    kill_q = []
+  }
+  kill_q.push({
+    who: who,
+    why: why
+  })
+  utils.debugMessage("First item in Kill Q is now:" + kill_q[0].who + ":" + kill_q[0].why)
+}
+
+async function execute_kill_q(msg, client) {
+  if (typeof kill_q == 'undefined') {
+    kill_q = []
+  }
+  if (kill_q === []) {
+    msg.reply("Nobody was killed, the Queue was empty.")
+    return //No need to bother executing anything
+  }
+  msg.reply("Starting kill queue...")
+  kill_q.forEach(function(death) {
+    msg.reply(`Running through kill sequence for <@${death.who}>`)
+    kill(death.who, death.why, client)
+  })
+  kill_q = []
+  msg.reply("Finished executing Kill Queue")
 }
 
 async function kill(who, why, client) {
@@ -299,7 +352,7 @@ async function kill(who, why, client) {
 
   // TODO: more info available to functions
   var kill_desc = { by: why }
-  var game = { masters: client.channels.get(config.channel_ids.gm_confirm)}
+  var game = new GameController(client)
   var me = new PlayerController(who)
   var did_they_die
   if (typeof their_role_i.on_death === "function") {
@@ -325,4 +378,44 @@ function set_dead(id, client) {
       //TODO remove living role
     }
   })
+}
+
+function is_allowed_channel(channel_id, role_name) {
+  // DEBUG always returns true
+  return true
+}
+
+exports.commands.ability = async function(msg, client, args) {
+  // for now it just does this
+  exports.use_ability(msg, client, args)
+}
+
+// role abilities
+exports.use_ability = async function(msg, client, split) {
+  // not an actual command
+  var u = msg.author.id
+  var abn = split[0]
+  var r = await user.get_role(u)
+  var ri = role_manager.role(r)
+  if (!is_allowed_channel(msg.channel.id, ri.id)){
+    msg.reply("you can't use that ability because your role does not have an ability with that name")
+  } else if (!await db_fns.timings.can_use(u, abn, game_state.data().time)) {
+    msg.reply("you currently can't use that ability: you'll have to wait till later.\n*If you want to undo an ability or you think there is an error, please ping a game master.*")
+  } else {
+    if (ri.abilities && ri.abilities[abn] && typeof ri.abilities[abn].run == "function") {
+      msg.reply("running ability!")
+      utils.debugMessage(`${u} is running ability ${abn}; args ${split}`)
+      var abl = ri.abilities[abn]
+      abl.run(new GameController(client), new PlayerController(msg.author.id), split.slice(1), function(worked, message) {
+        if (worked) {
+          db_fns.timings.add_next_time(u, abn, game_state.data().time + abl.timings.periods)
+          msg.reply(message?message:"your ability was successful! :)")
+        } else {
+          msg.reply(message?message:"your ability failed. :(")
+        }
+      })
+    } else {
+      msg.reply("you don't have an abiltiy with that name!")
+    }
+  }
 }
