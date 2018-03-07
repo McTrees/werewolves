@@ -6,3 +6,4 @@ game.dat
 cc/cc.json
 game/state.json
 *.log
+analytics/stats.json
