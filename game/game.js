@@ -27,7 +27,7 @@ class GameController {
     return game_state.data()
   }
   player(id) {
-    return new PlayerController(id)
+    return new PlayerController(id, this._client)
   }
   async all_with_tag(tag) {
     var l = await db_fns.tags.all_with_tag(tag)
@@ -353,7 +353,7 @@ async function kill(who, why, client) {
   // TODO: more info available to functions
   var kill_desc = { by: why }
   var game = new GameController(client)
-  var me = new PlayerController(who)
+  var me = new PlayerController(who, client)
   var did_they_die
   if (typeof their_role_i.on_death === "function") {
     // there is a custom death function
@@ -406,7 +406,7 @@ exports.use_ability = async function(msg, client, split) {
       msg.reply("running ability!")
       utils.debugMessage(`${u} is running ability ${abn}; args ${split}`)
       var abl = ri.abilities[abn]
-      abl.run(new GameController(client), new PlayerController(msg.author.id), split.slice(1), function(worked, message) {
+      abl.run(new GameController(client), new PlayerController(msg.author.id, client), split.slice(1), function(worked, message) {
         if (worked) {
           db_fns.timings.add_next_time(u, abn, game_state.data().time + abl.timings.periods)
           msg.reply(message?message:"your ability was successful! :)")
