@@ -15,12 +15,10 @@ exports.abilities.curse = {
       p = game.player(t)
       if(p.role == "inno/basic") {
         p.role = "inno/cursed" //99% sure this won't work
-        p.tell("You've been cursed! Now when you die, you shall become a werewolf!")
-        cb(true)
-      }
-    }else{
-      me.tell("Sorry, but that user is unable to be cursed!")
-      cb(false)
+        cb(true, "You've been cursed! Now when you die, you shall become a werewolf!")
+      } else {
+      me.tell()
+      cb(false, "They aren't an innocent!")
     }
   }
 }
