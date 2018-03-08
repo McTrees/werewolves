@@ -10,7 +10,6 @@ if (config.developerOptions.remoteErrorReporting == "true") {
 }
 
 const fs = require('fs');
-
 const utils = require('./utils');
 update = true
 reset_data = false;
@@ -47,7 +46,7 @@ if (update) {
 
 utils.debugMessage("Debug messages enabled.");
 const token = require('./token').token;
-utils.debugMessage("Config loaded!");
+utils.debugMessage("Config and token loaded!");
 
 utils.debugMessage("Loading external modules...");
 const discord = require('discord.js');
@@ -62,7 +61,8 @@ utils.debugMessage("Running inits:")
 require("./user/user").init(reset_data)
 require("./game/game_state").init(reset_data)
 require("./game/db_fns").init(reset_data)
-utils.debugMessage("Inits done")
+require("./poll/polls.js");//In order to make sure that polls.json is initialised if it doesn't exist.
+utils.debugMessage("Inits done.")
 
 if (token == 'insert-token-here') {
 	utils.errorMessage("Incorrect login credentials passed! Please edit token.json with your bot's token.", true)

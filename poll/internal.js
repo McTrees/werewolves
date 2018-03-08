@@ -1,9 +1,15 @@
 //IMPORTANT NOTE - MAJOR OVERHAUL PROBABLY COMING UP SOON
 
 const fs = require("fs");
+const utils = require("../utils");
+//create polls.json file if it doesn't exist
+//and inform the user
+if(!fs.existsSync("./polls.json")){
+	utils.warningMessage("Record of polls not found. Creating new record (poll/polls.json).");
+	fs.writeFileSync("./polls.json", '{\n\t"num":0,\n\t"polls":{}\n}');
+}
 const config = require("../config");
 const polls = require("./polls.json");
-const utils = require("../utils");
 //The above is self-explanatory, I think
 
 /*
@@ -250,7 +256,7 @@ function rankResults(results, values, poll){
 				}
 			}
 			if(polls.extraVotes[results.options[i].id]){
-				n += polls.extraVotes[results.options[i].id];
+				n += poll.extraVotes[results.options[i].id];
 			}
 		}else{
 			n = values[i].size;
@@ -371,22 +377,21 @@ function buildMessage(ranked, values, poll, disqualified, log){
 		if(poll.extraVotes){
 			txt += "Modifiers:\n";
 			var found = false;
-			for(var i = 0;  i < poll.extraVotes.length; i++){
-				var e = extraVotes[i];//convinience
+			var e = poll.extraVotes;//convenience
+			for(var id in e){
 				//-9000 is arbritrary really, just needs to be low enough,
 				//but slightly more than the negative votes used for a person who cannot be voted for
-				if(e.extra < -9000){ 
+				if(e[id] < -9000){ 
 					found = true;//I'm a bit sleepy, so my code isn't exactly that sensible
-					txt += `\t<@${e.id}> is immune in this poll!\n`;
-				}else if(e.extra < 0){
+					txt += `\t<@${id}> is immune in this poll!\n`;
+				}else if(e[id] < 0){
 					found = true;
-					txt += `\t<@${e.id}> gets ${-e.extra} fewer votes!\n`;
-				}else if(e.extra > 0){
+					txt += `\t<@${id}> gets ${-e[id]} fewer votes!\n`;
+				}else if(e[id] > 0){
 					//if it is 0, ignore
 					found = true;
-					txt += `\t<@${e.id}> gets ${e.extra} extra votes!\n`;
+					txt += `\t<@${id}> gets ${e[id]} extra votes!\n`;
 				}
-				
 			}
 			if(!found){
 				txt += "\tNothing actually, sorry to get you excited!\n";
