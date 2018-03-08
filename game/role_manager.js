@@ -24,16 +24,17 @@ exports.role = function(name) {
     Object.defineProperty(d, "documentation", {
       get: function() {
         return(
-  `**${this.name}** (\`${this.id}\`)
 
-  ${this.description?this.description:"[no description]"}
+`**${this.name}** (\`${this.id}\`)
 
-  ${this.long_description?this.long_description:""}
-  `
+${this.description?this.description:"[no description]"}
+
+${this.long_description?this.long_description:""}`
         )
       }
     })
   }
+
   return d
 }
 

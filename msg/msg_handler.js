@@ -15,6 +15,7 @@ const role_specific = require("./role_specific_handler")
 const permissions = require("./permissions")
 const msg = require("./msg_handler")
 const didYouMean = require("didYouMean")
+const stats = require("../analytics/analytics.js")
 /*syntax: "alias" :"defined as",
 all other arguments that get send with the alias get added to the send
 alieses need to be one word
@@ -57,6 +58,10 @@ getAllCommands = function() {
 
 module.exports = function(msg, client) {
   if (msg.author == client.user) {return}; //ignore own messages
+  stats.increment("Messages", 1)
+  if (msg.content.indexOf(`<@&${config.role_ids.gameMaster}>`) > -1) {
+    stats.increment("GMPings", 1)
+  }
   if (msg.content[0] == config.bot_prefix) { //only run if it is a message starting with the bot prefix (if it's a command)
     var splitMessage = msg.content.split(" ");
     utils.debugMessage("      "+msg.author +" sent a command: "+ msg.content)
@@ -105,7 +110,7 @@ module.exports = function(msg, client) {
           } else {
             fail(msg, client, splitMessage)
           }
-        }
+        } else { fail(msg, client) }
       }
     } catch (em_all) {
       msg.reply(`An error occurred...`);
