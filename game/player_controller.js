@@ -26,6 +26,9 @@ class PlayerController {
     // todo: actually tell them. for now it just prints it to the console.
     this._client.users.get(this.id).send(msg)
   }
+
+  toString() {
+    return `<@${this.id}>`
   }
 }
 
