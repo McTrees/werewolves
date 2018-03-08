@@ -13,12 +13,15 @@ exports.abilities.curse = {
       game.masters.tell(`<@${me.id}> is attempting to curse ${args[0]}`)
       t = await game.u.resolve_to_id(args[0])
       p = game.player(t)
+      if(p.role == "inno/cursed") {
+        cb(true, "Your curse result is **neutral**. You haven't cursed <@${t}>, because they already were a **Cursed Civilian**!")
       if(p.role == "inno/basic") {
         p.role = "inno/cursed" //99% sure this won't work
-        cb(true, "You've been cursed! Now when you die, you shall become a werewolf!")
+        p.tell("**You have been cursed!** The curse caster has chosen you, an innocent, to get cursed!\nThis means that if the werewolves attack you, you will now become a werewolf yourself!")
+        cb(true, "Your curse result is **positive**. You have cursed <@${t}> successfully, and they are now a **Cursed Civilian**!")
       } else {
       me.tell()
-      cb(false, "They aren't an innocent!")
+      cb(false, "Your curse result is **negative**. <@${t}> wasn't an innocent, so they haven't been cursed!")
     }
   }
 }
