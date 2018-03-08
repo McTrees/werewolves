@@ -76,7 +76,7 @@ exports.startPoll = function(client, data) {
 		for (var i = 0; i < values.length; i++) {
 			msgs[i] = {
 				id: values[i].id,
-				option_ids: "If you're seeing this, then the bot isn't working correctly."
+				options: "If you're seeing this, then the bot isn't working correctly."
 			};
 			var opts = new Array(0);
 			for (var j = 0; j < 20; j++) {
@@ -107,7 +107,7 @@ exports.startPoll = function(client, data) {
 		fs.writeFile("./poll/polls.json", JSON.stringify(polls, null, 2), (err) => {
 			if (err) {
 				utils.errorMessage(err);
-				client.channels.get(config.channel_ids.gm_confirm).send("Error occurred when saving file. This could cause problems.");
+				client.channels.get(config.channel_ids.gm_confirm).send("Error occurred when saving file. This could cause problems - the new poll might be useless.");
 			} else {
 				utils.successMessage("The poll was created successfully!");
 			}
@@ -234,29 +234,29 @@ exports.extraVotes = function(id, extra){
 */
 
 
-function rankResults(results, values, lynch){
+function rankResults(results, values, poll){
 	//Rank the results of the poll (descending order)
 	var ranked = new Array(0);
 	for (var i = 0; i < values.length; i++) {
 		//I really hope I know what I'm doing here
 		var n = 0;
-		if(lynch){
+		if(poll.extraVotes || poll.voteValues){
 			var keys = values[i].keyArray();
 			for(var j = 0; j < keys.length; j++){
-				if(polls.values[values[i].get(keys[j])]){
-					n += polls.values[values[i].get(keys[j])];
+				if(poll.voteValues[values[i].get(keys[j])]){
+					n += poll.voteValues[values[i].get(keys[j])];
 				}else{
 					n += 1;
 				}
 			}
-			if(polls.extraVotes[results.options[i].txt]){
-				n += polls.extraVotes[results.options[i].txt];
+			if(polls.extraVotes[results.options[i].id]){
+				n += polls.extraVotes[results.options[i].id];
 			}
 		}else{
 			n = values[i].size;
 		}
 		results.options[i].votes = n; //Also add the vote tally to the results object
-		if(n == 0)continue;
+		if(n <= 0)continue;
 		ranked.push({
 			id: i,
 			num: n
@@ -267,6 +267,30 @@ function rankResults(results, values, lynch){
 		return b.num - a.num;
 	});
 	return ranked;
+}
+
+function findNonParticipants(values, disqualified, client){
+	//Remove all non-participants
+	var non_participants = new Array(0);
+	var participants = client.guilds.get(config.guild_id).roles.get(config.role_ids.participant).members;
+	for (var i = 0; i < values.length; i++) {
+		var users = Array.from(values[i]);
+		users.forEach(function(user){
+			if(!participants.has(user[0])){
+				non_participants.push(user[0]);
+				values[i].delete(user[0]);//I hope this works
+			}
+		});
+	}
+	//Even check among the disqualified persons
+	for(var i = 0; i < disqualified.length; i++){
+		if(!participants.has(disqualified[i])){
+			non_participants.push(disqualified[i]);
+			disqualified.splice(i, 1);
+		}
+	}
+	//return a list of them
+	return non_participants;
 }
 
 function findDisqualified(values, client){
@@ -309,17 +333,65 @@ function findDisqualified(values, client){
 
 function buildMessage(ranked, values, poll, disqualified, log){
 	//Build the message to be sent
+	var txt = "Results of the polls (ID:" + id + ") :\n\n";
+	var winner = false;//I suppose I should use null or undefined, but does it matter?
+	var cmd = false;
+	if(ranked.length >= 2 && ranked[0].num == ranked[1].num){
+		txt += log?"It's a tie!\n":"No result.\n";
+	}else if(ranked.length == 0){
+		txt += "No result.\n";
+	}else{
+		winner = poll.options[ranked[0].id].id;
+		txt += `<@${winner}> won!\n`;
+	}
 	if(log){
 		for (var k = 0; k < ranked.length; k++) {
 			var i = ranked[k].id;
 			var users = Array.from(values[i]);
-			txt += "\n" + (ranked[k].num + " votes for " + poll["options"][i]["txt"] + " (" + poll["options"][i]["emoji"] + "). Players who voted for " + poll["options"][i]["txt"] + " :\n");
+			txt += ("\n" + (ranked[k].num + " votes for " + poll["options"][i]["id"] + " (" + poll["options"][i]["emoji"] + "). Players who voted for " + poll["options"][i]["id"] + " :\n"));
 			for (var j = 0; j < users.length; j++) {
-				txt += ("\t<@" + users[j][1].id + ">\n"));
+				txt += ("\t<@" + users[j][1].id + ">");
+				if(poll.voteValues[users[j][1].id]){
+					txt += ` (worth ${poll.voteValues[users[j][1].id]} ordinary votes)`;
+				}
 			}
+			txt += '\n';
 		}
 	}else{
-		
+		for(var i = 0; i < values.length; i++){
+			var users = Array.from(values[i]);//TODO this needs to be changed
+			if(users.length == 0)continue;
+			txt += `\n People who voted for ${poll.options[i].txt} (${poll.options[i].emoji}) :\n"`;
+			for (var j = 0; j < users.length; j++) {
+				txt += ("\t<@" + users[j][1].id + ">\n");
+			}
+		}
+	}
+	if(log){
+		if(poll.extraVotes){
+			txt += "Modifiers:\n";
+			var found = false;
+			for(var i = 0;  i < poll.extraVotes.length; i++){
+				var e = extraVotes[i];//convinience
+				//-9000 is arbritrary really, just needs to be low enough,
+				//but slightly more than the negative votes used for a person who cannot be voted for
+				if(e.extra < -9000){ 
+					found = true;//I'm a bit sleepy, so my code isn't exactly that sensible
+					txt += `\t<@${e.id}> is immune in this poll!\n`;
+				}else if(e.extra < 0){
+					found = true;
+					txt += `\t<@${e.id}> gets ${-e.extra} fewer votes!\n`;
+				}else if(e.extra > 0){
+					//if it is 0, ignore
+					found = true;
+					txt += `\t<@${e.id}> gets ${e.extra} extra votes!\n`;
+				}
+				
+			}
+			if(!found){
+				txt += "\tNothing actually, sorry to get you excited!\n";
+			}
+		}
 	}
 	//And make sure to mention who was disqualified
 	if (disqualified.length !== 0) {
@@ -336,6 +408,31 @@ function buildMessage(ranked, values, poll, disqualified, log){
 			});
 			txt += " were disqualified as they cast multiple votes.";
 		}
+	}
+	if(log && winner){
+		switch(poll.type){
+			case ("l"):
+				txt += "\nType the following to kill the person who the people voted for (takes care of role specific stuff):\n";
+				cmd = "`!lynch_kill <@" + winner + ">`";
+				break;
+			case ("w"):
+				txt += "\nType the following to kill the person who the werewolves voted for (takes care of role specific stuff):\n";
+				cmd = "`!ww_kill <@" + winner + ">`";
+				break;
+			case ("c"):
+				txt += "\nType the following to kill the person who the cult voted for (takes care of role specific stuff):\n";
+				cmd = "`!cult_kill <@" + winner + ">`";
+				break;
+			case ("o"):
+				txt += "\nTake whatever action you must take, this is some other type of poll.\n";
+				break;
+			default:
+				throw `You managed to make a poll of invalid type (${poll.type}), this is a major error!`;
+		}
+	}
+	return {
+		txt: txt,
+		cmd: cmd
 	}
 }
 

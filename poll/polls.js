@@ -14,7 +14,7 @@ exports.commands.start_poll = function (msg, client, args){
 	utils.debugMessage(`@${msg.author.username} tried to create a poll.`);
 	if(args.length <= 1){
 		utils.errorMessage(`Insufficient arguments provided for start_pollCmd!`);
-		msg.reply("correct syntax: `!start_poll <type - werewolves/lynch/cult/other> <heading>`");
+		msg.reply("correct syntax: `!start_poll <type (werewolves/lynch/cult/other)> <heading>`");
 		return;
 	}
 	var type = args[0].toLowerCase(); //The type of poll - so far "lynch" (alias 'l'), "werewolves" (alias 'w'), "cult" (alias 'c')
