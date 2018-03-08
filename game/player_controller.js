@@ -24,7 +24,8 @@ class PlayerController {
 
   tell(msg) {
     // todo: actually tell them. for now it just prints it to the console.
-    utils.infoMessage(`${this.id} says ${msg}`, true)
+    this._client.users.get(this.id).send(msg)
+  }
   }
 }
 
