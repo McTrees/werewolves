@@ -3,7 +3,7 @@ fs = require("fs")
 path = require("path")
 
 try {
-  var stats = require("./stats.json" )
+  var stats = require("./stats" )
 } catch(err) {
   utils.warningMessage("Resetting today's stats because erors are fun")
   json = `
