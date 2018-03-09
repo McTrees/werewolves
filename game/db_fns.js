@@ -70,6 +70,18 @@ exports.tags.all_with_tag = function(tag) {
   })
 }
 
+exports.win_teams = {}
+exports.win_teams.add_win_team = function(id, team) {
+  utils.debugMessage(`add win team: giving ${id} team ${team}`)
+  // adds a team to a user
+  gamedb.run("insert into win_teams (user_id, team) values ($id, $t);", {$id:id,$t:team}, function(err) { if (err) throw err})
+}
+exports.win_teams.remove_win_team = function(id, team) {
+  utils.debugMessage(`remove win_team: taking ${id}'s team ${team}`)
+  // removes team from user
+  gamedb.run("delete from win_teams where user_id = $id and team = $t;", {$id:id,$t:team}, function(err) {if (err) throw err})
+}
+
 exports.timings = {}
 // functions for managing ability timings
 exports.timings.add_next_time = function(user_id, ability_name, next_time_can_use) {
