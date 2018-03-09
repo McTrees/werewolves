@@ -110,7 +110,7 @@ module.exports = function(msg, client) {
           } else {
             fail(msg, client, splitMessage)
           }
-        } else { fail(msg, client) }
+        }
       }
     } catch (em_all) {
       msg.reply(`An error occurred...`);
