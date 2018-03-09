@@ -86,7 +86,7 @@ exports.commands.signup = function (msg, client, content) {
   }
 }
 
-exports.commands.signup_all = async function(msg, client, args) {
+exports.commands.signupall = async function(msg, client, args) {
   //exports.all_signed_up().then(rows=>{
   var rows = await exports.all_signed_up()
     utils.debugMessage(`signup_all command - ${rows.length} rows`)
@@ -216,7 +216,7 @@ exports.resolve_to_id = function(str) {
     var plainId = /^(\d+)$/
     if (plainId.test(str)) {
       resolve(plainId.exec(str)[1])
-    } 
+    }
     var discordId = /^<@!?(\d+)>$/
     if (discordId.test(str)) { // str is a valid discord mention
       resolve(discordId.exec(str)[1])
