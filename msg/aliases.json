@@ -6,16 +6,16 @@
 
   "signup": "u signup",
   "users":"u signup_all",
-  
-  "register_global":"up register_global",
+
+  "registerglobal":"up register_global",
   "profile": "up profile",
 
-  "set_age":"up set_age",
-  "set_gender":"up set_gender",
-  "set_info":"up set_info",
-  "set_games":"up set_games",
-  "set_wins":"up set_wins",
-  "set_record":"up set_record",
+  "setage":"up set_age",
+  "setgender":"up set_gender",
+  "setinfo":"up set_info",
+  "setgames":"up set_games",
+  "setwins":"up set_wins",
+  "setrecord":"up set_record",
 
   "startPoll": "p startPoll",
   "endPoll": "p endPoll",
@@ -26,8 +26,8 @@
   "night":"g night",
   "info":"g game_info",
   "kill":"g kill",
-  "ww_kill":"g kill w",
-  "lynch_kill":"g kill l",
+  "wwkill":"g kill w",
+  "lynchkill":"g kill l",
 
   "ccreate":"c create",
   "cadd":"c add",
