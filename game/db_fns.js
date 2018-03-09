@@ -81,6 +81,24 @@ exports.win_teams.remove_win_team = function(id, team) {
   // removes team from user
   gamedb.run("delete from win_teams where user_id = $id and team = $t;", {$id:id,$t:team}, function(err) {if (err) throw err})
 }
+exports.win_teams.has_win_team = function(id, team) {
+  // true or false, whether user `id` has team `yeam`
+  return new Promise(function(resolve, reject) {
+    gamedb.get("select user_id from win_teams where user_id = $id and team = $t;", {$id:id,$t:tag}, function(err, row) {
+      if (err) { throw err; }
+      resolve(!!row)
+    })
+  })
+}
+exports.win_teams.all_have_win_team = function(num_alive, team) {
+  // true or false, depending on whether all players have team
+  return new Promise(function(resolve, reject) {
+    gamedb.all("select user_id from win_teams where team = $t;", {$t:team}, function(err, rows) {
+      if (err) throw err
+      resolve(rows.length === num_alive)
+    })
+  })
+}
 
 exports.timings = {}
 // functions for managing ability timings
