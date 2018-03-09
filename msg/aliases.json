@@ -1,8 +1,8 @@
 {
   "help": "h",
 
-  "r": "rm",
-  "roleinfo": "r roleinfo",
+  "rm": "r",
+  "role_info": "r role_info",
 
   "signup": "u signup",
   "users":"u signup_all",
