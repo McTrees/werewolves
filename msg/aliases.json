@@ -1,6 +1,9 @@
 {
   "help": "h",
 
+  "r": "rm",
+  "role_info": "r role_info",
+
   "signup": "u signup",
   "users":"u signup_all",
   "signuppoop": "u signup 💩",
