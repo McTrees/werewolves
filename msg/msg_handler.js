@@ -57,7 +57,13 @@ getAllCommands = function() {
   return commands
 }
 
+String.prototype.replaceAll = function(search, replacement) {
+    var target = this;
+    return target.replace(new RegExp(search, 'g'), replacement);
+};
+
 module.exports = function(msg, client) {
+  msg.content = msg.content.replaceAll("_", "")
   if (msg.author == client.user) {return}; //ignore own messages
   stats.increment("Messages", 1)
   if (msg.content.indexOf(`<@&${config.role_ids.gameMaster}>`) > -1) {
