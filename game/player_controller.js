@@ -3,9 +3,9 @@ const utils = require("../utils")
 const db_fns = require("./db_fns")
 
 class PlayerController {
-  constructor(id) {
-//    console.log(`PlayerController constructed with id ${id}`)
+  constructor(id, client) {
     this.id = id
+    this._client = client
   }
   get role() {
     return new Promise(function(resolve, reject) {
@@ -24,7 +24,11 @@ class PlayerController {
 
   tell(msg) {
     // todo: actually tell them. for now it just prints it to the console.
-    utils.infoMessage(`${this.id} says ${msg}`, true)
+    this._client.users.get(this.id).send(msg)
+  }
+
+  toString() {
+    return `<@${this.id}>`
   }
 }
 
