@@ -1,7 +1,7 @@
 const role_manager = require("../game/role_manager")
 
 exports.commands = {}
-exports.commands.role_info = function(msg, client, rn) {
+exports.commands.roleinfo = function(msg, client, rn) {
   // sends the user info about a role
   // expects a role name, such as inno/basic
   try {
