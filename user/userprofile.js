@@ -14,7 +14,7 @@ const aliases = require('./aliases.json');
 */
 exports.commands = {}
 //Register yourself in global database
-exports.commands.register_global = async function(msg, client, args){
+exports.commands.registerglobal = async function(msg, client, args){
 	var user = msg.author;
 	if(args.length === 0){
 		utils.debugMessage(`@${user.username} wants to register in global database`);
@@ -48,12 +48,12 @@ exports.commands.register_global = async function(msg, client, args){
 }
 
 //Set the age of a user
-exports.commands.set_age = function(msg, client, args){
+exports.commands.setage = function(msg, client, args){
 	setProperty(msg, client, "age", args);
 }
 
 //Set the gender of a user
-exports.commands.set_gender = function(msg, client, args){
+exports.commands.setgender = function(msg, client, args){
 	setProperty(msg, client, "gender", args);
 }
 
@@ -68,22 +68,22 @@ exports.commands.setDPLink = function(msg, client, args){
 
 
 //Set the personal description of a user
-exports.commands.set_info = function(msg, client, args){
+exports.commands.setinfo = function(msg, client, args){
 	setPropertyWithSpaces(msg, client, "info", args);
 }
 
 //Set the number of games of a user
-exports.commands.set_games = function(msg, client, args){
+exports.commands.setgames = function(msg, client, args){
 	setProperty(msg, client, "games", args);
 }
 
 //Set the number of wins of a user
-exports.commands.set_wins = function(msg, client, args){
+exports.commands.setwins = function(msg, client, args){
 	setProperty(msg, client, "wins", args);
 }
 
 //Set the personal record of a user
-exports.commands.set_record = function(msg, client, args){
+exports.commands.setrecord = function(msg, client, args){
 	setPropertyWithSpaces(msg, client, "record", args);
 }
 

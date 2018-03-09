@@ -49,7 +49,7 @@ exports.is_started = function () {
   return game_state.data().state_num > 1
 };
 
-exports.commands.open_signups = function(msg, client) {
+exports.commands.opensignups = function(msg, client) {
   // game state 0->1
   if (game_state.data().state_num !== 0){
     msg.channel.send("This is the wrong game state, buddy!")
@@ -59,7 +59,7 @@ exports.commands.open_signups = function(msg, client) {
   }
 }
 
-exports.commands.game_info = function(msg, client) {
+exports.commands.gameinfo = function(msg, client) {
     utils.debugMessage("Game info command called")
     var data = game_state.data()
     var emb = new discord.RichEmbed()
@@ -72,7 +72,7 @@ exports.commands.game_info = function(msg, client) {
     msg.channel.send(emb)
 }
 
-exports.commands.set_season_info = function(msg, client, args) {
+exports.commands.setseasoninfo = function(msg, client, args) {
     utils.debugMessage("Set season info command called")
     game_state.set_season_code(args[0])
     game_state.set_season_name(args.slice(1).join(" "))
@@ -131,7 +131,7 @@ ${list.map(tag=>`- \`${tag}\``).join("\n")}`)
   }
 }
 
-exports.commands.start_season = function (msg, client) {
+exports.commands.startseason = function (msg, client) {
   // game state 1 -> 2
   // start a new season
   if (game_state.data().state_num !== 1) {
@@ -160,7 +160,7 @@ function startgame(client) {
   })
 }
 
-exports.commands.set_role = async function (msg, client, args) {
+exports.commands.setrole = async function (msg, client, args) {
   // game state 2 only
   if (args.length !== 2) {
     msg.reply("invalid syntax!")
@@ -201,7 +201,7 @@ exports.commands.set_role = async function (msg, client, args) {
   }
 }
 
-exports.commands.send_roles = async function(msg, client) {
+exports.commands.sendroles = async function(msg, client) {
   // game state 2->3
   if (game_state.data().state_num !== 2){
     msg.reply("the sign-up is currently open, or a game is not being set up.\nI'm sorry for the inconvenience!")
