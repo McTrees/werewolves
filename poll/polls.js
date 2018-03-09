@@ -10,6 +10,8 @@ const internal = require("./internal");
 
 exports.commands = {};//because JS
 
+exports.init = internal.init;//Initialize
+
 exports.commands.start_poll = function (msg, client, args){
 	utils.debugMessage(`@${msg.author.username} tried to create a poll.`);
 	if(args.length <= 1){
@@ -91,14 +93,15 @@ exports.commands.start_poll = function (msg, client, args){
 }
 
 /**
-Function - threaten
+Function - threatenDay
 Function to threaten to a particular player in the daily lynch
+You shouldn't be using this
 Arguments:
 msg - The message that triggered the function
 client - The Discord Client that the bot uses
 id - The ID of the poll to check
  */
-exports.commands.threaten = async function (msg, client, args) {
+exports.commands.threatenDay = async function (msg, client, args) {
 	var user;
 	if(args.length === 1){
 		var id = "";
@@ -207,9 +210,10 @@ exports.commands.end_poll = function (msg, client, id) {
 		//Get the message reactions
 		var promises = new Array(poll["options"].length);
 		var s = 0;
-		for (var i = 0; i < poll["messages"].length; i++) {
-			for (var j = 0; j < poll["messages"][i]["options"].length; j++) {
-				var r = msgs[i].reactions.find(val => val.emoji.name === poll["messages"][i]["options"][j]["emoji"]);
+		utils.debugMessage("Got messages, get reactions");
+		for (var i = 0; i < poll.messages.length; i++) {
+			for (var j = 0; j < poll.messages[i].options.length; j++) {
+				var r = msgs[i].reactions.find(val => val.emoji.name === poll.options[poll.messages[i].options[j]].emoji);
 				promises[s] = r.fetchUsers();
 				s++;
 			}
@@ -221,12 +225,16 @@ exports.commands.end_poll = function (msg, client, id) {
 			};
 		});
 	}).then((dat) => {
-		var results = internal.calculateResults(poll, dat.values, client);
+		var results = internal.calculateResults(poll, id, dat.values, client);
 		ch.send(results.txt);
+		var gms = client.channels.get(config.channel_ids.gm_confirm);
+		gms.send(results.log_txt);
+		if(results.cmd)gms.send(results.cmd);
 		internal.cleanUp(dat.msgs, id);
 		return "Success";
 	}).catch (err => {
 		utils.errorMessage(err);
+		utils.errorMessage(err.stack);
 		ch.send("Error occurred.");
 	});
 }

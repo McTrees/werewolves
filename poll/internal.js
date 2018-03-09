@@ -1,15 +1,8 @@
 //IMPORTANT NOTE - MAJOR OVERHAUL PROBABLY COMING UP SOON
-
 const fs = require("fs");
 const utils = require("../utils");
-//create polls.json file if it doesn't exist
-//and inform the user
-if(!fs.existsSync("./polls.json")){
-	utils.warningMessage("Record of polls not found. Creating new record (poll/polls.json).");
-	fs.writeFileSync("./polls.json", '{\n\t"num":0,\n\t"polls":{}\n}');
-}
 const config = require("../config");
-const polls = require("./polls.json");
+var polls;//So that I can load it later
 //The above is self-explanatory, I think
 
 /*
@@ -19,6 +12,30 @@ const polls = require("./polls.json");
 ██       ██ ██  ██      ██    ██ ██   ██    ██    ██      ██   ██
 ███████ ██   ██ ██       ██████  ██   ██    ██    ███████ ██████
 */
+/**
+Function init
+Initialize the polls data
+Arguments:
+	reset_data - Forcse reset all polls data
+*/
+exports.init = function(reset_data){
+	if(reset_data){
+		utils.warningMessage("Resetting polls (because you asked for it).");
+		fs.writeFileSync("./poll/polls.json", '{\n\t"num":0,\n\t"polls":{}\n}');
+		utils.warningMessage("Reset polls.");
+	}else{
+		//create polls.json file if it doesn't exist
+		//and inform the user
+		if(!fs.existsSync("./poll/polls.json")){
+			utils.warningMessage("Record of polls not found. Creating new record (poll/polls.json).");
+			fs.writeFileSync("./poll/polls.json", '{\n\t"num":0,\n\t"polls":{}\n}');//"./poll/polls.json" because JS is funny
+			utils.successMessage("Created polls.json.");
+		}
+	}
+	polls = require("./polls.json");
+}
+
+
 /**
 Function startPoll
 Start a poll.
@@ -165,44 +182,51 @@ exports.calculateResults = function(poll, poll_id, values, client) {
 	var results = {
 		options: poll["options"]
 	};
-	
+	utils.debugMessage("Calculating results of polls");
 	var disqualified = findDisqualified(values, client);
 	var non_participants = findNonParticipants(values, disqualified, client);
+	utils.debugMessage("Checked disqualified and non-participants.")
+	var err = 0;
 	if(poll.type == "l" || poll.type == "o"){
-		setVoteValue(getMayor(client), poll_id, 2);
+		err = exports.setVoteValue(getMayor(client), poll_id, 2);
+	}
+	if(err != 1 && err != -3){
+		throw ("Some error occurred: " + (err==-4?"File writing error":"Unknown error"));
 	}
 	//TODO - Implement the code for frozen people
 	
 	//LATER!
 	
 	//Like really, GET THAT DONE!
+	utils.debugMessage("Checked Mayor.");
 	ranked = rankResults(results, values, poll);
+	utils.debugMessage("Ranked results.");
 	//What am I even doing??
 	//I really really hope this works
-	results.txt = buildMessage(ranked, values, poll, disqualified, non_participants, false).txt;
-	var msg = buildMessage(ranked, values, poll, disqualified, non_participants, true);
+	results.txt = buildMessage(ranked, values, poll, poll_id, disqualified, non_participants, false).txt;
+	var msg = buildMessage(ranked, values, poll, poll_id, disqualified, non_participants, true);
+	utils.debugMessage("Built messages")
 	//What is this supposed to do?
 	results.log_txt = msg.txt;
-	results.cmd = msg.txt;
+	results.cmd = msg.cmd;
 	//I'm lost in my own code now
 	//Return the data
 	return results;
 }
 
-exports.setVoteValue(user_id, poll_id, val){
+exports.setVoteValue = function(user_id, poll_id, val){
 	if(poll_id === "l"){
 		if(polls.currentLynch)poll_id = polls.currentLynch;
 		else return -1;
 	}
-	if (!polls["polls"][id]) {
-		utils.errorMessage("The poll with id " + id + " doesn't exist, sadly.");
+	if (!polls["polls"][poll_id]) {
+		utils.errorMessage("The poll with id " + poll_id + " doesn't exist, sadly.");
 		return -2;
 	}
 	var poll = polls.polls[poll_id];
 	if(!poll.voteValues){
-		poll.voteValues = {
-			user_id: val
-		};
+		poll.voteValues = {};
+		poll.voteValues[user_id] = val;
 	}else{
 		if(poll.voteValues[user_id]){
 			return -3;
@@ -219,28 +243,27 @@ exports.setVoteValue(user_id, poll_id, val){
 		return -4;
 		
 	};
-	utils.successMesssage(`Value of a player's (ID:${id}) vote in poll ${poll_id} set to $[val}.`);
+	utils.successMessage(`Value of a player's (ID:${user_id}) vote in poll ${poll_id} set to $[val}.`);
 	return 1;
 }
 
 exports.cleanUp = function(msgs, id) {
 	//Delete the messages
 	for (var i = 0; i < msgs.length; i++) {
-		msgs[i].delete ();
+		msgs[i].delete();
 	}
-	var fs_error = false;
 	if(polls["polls"][id].type == "l")delete polls.currentLynch;
 	//Delete the poll from storage
 	delete polls["polls"][id];
 	fs.writeFile("./poll/polls.json", JSON.stringify(polls, null, 2), (err) => {
 		if (err) {
 			utils.errorMessage(err);
-			fs_error = true;
 			client.channels.get(config.channel_ids.gm_confirm).send("Error occurred when trying to edit the polls.json file.");
+		}else{
+			utils.successMessage("Successfully ended poll!");
 		}
 	});
-	if (!fs_error)
-		utils.successMessage("Successfully ended poll!");
+		
 }
 
 exports.extraVotes = function(id, poll_id, extra){
@@ -292,7 +315,8 @@ function rankResults(results, values, poll){
 	for (var i = 0; i < values.length; i++) {
 		//I really hope I know what I'm doing here
 		var n = 0;
-		if(poll.extraVotes || poll.voteValues){
+		if(poll.voteValues){
+			utils.debugMessage("...");
 			var keys = values[i].keyArray();
 			for(var j = 0; j < keys.length; j++){
 				if(poll.voteValues[values[i].get(keys[j])]){
@@ -301,11 +325,13 @@ function rankResults(results, values, poll){
 					n += 1;
 				}
 			}
-			if(polls.extraVotes[results.options[i].id]){
-				n += poll.extraVotes[results.options[i].id];
-			}
 		}else{
 			n = values[i].size;
+		}
+		if(poll.extraVotes){
+			if(poll.extraVotes[results.options[i].id]){
+				n += poll.extraVotes[results.options[i].id];
+			}
 		}
 		results.options[i].votes = n; //Also add the vote tally to the results object
 		if(n <= 0)continue;
@@ -324,7 +350,7 @@ function rankResults(results, values, poll){
 function findNonParticipants(values, disqualified, client){
 	//Remove all non-participants
 	var non_participants = new Array(0);
-	var participants = client.guilds.get(config.guild_id).roles.get(config.role_ids.participant).members;
+	var participants = client.guilds.get(config.guild_id).roles.get(config.role_ids.participant).members;//Some error occurs here :(
 	for (var i = 0; i < values.length; i++) {
 		var users = Array.from(values[i]);
 		users.forEach(function(user){
@@ -383,9 +409,9 @@ function findDisqualified(values, client){
 	return disqualified;
 }
 
-function buildMessage(ranked, values, poll, disqualified, non_participants, log){
+function buildMessage(ranked, values, poll, poll_id, disqualified, non_participants, log){
 	//Build the message to be sent
-	var txt = "Results of the polls (ID:" + id + ") :\n\n";
+	var txt = "Results of the polls (ID:" + poll_id + ") :\n\n";
 	var winner = false;//I suppose I should use null or undefined, but does it matter?
 	var cmd = false;
 	if(ranked.length >= 2 && ranked[0].num == ranked[1].num){

@@ -61,7 +61,8 @@ utils.debugMessage("Running inits:")
 require("./user/user").init(reset_data)
 require("./game/game_state").init(reset_data)
 require("./game/db_fns").init(reset_data)
-require("./poll/polls.js");//In order to make sure that polls.json is initialised if it doesn't exist.
+require("./poll/polls.js").init(reset_data);//In order to make sure that polls.json is initialised if it doesn't exist.
+//Actually some of the stuff above is async, so the following message gets printed _before_ inits are actually done
 utils.debugMessage("Inits done.")
 
 if (token == 'insert-token-here') {
