@@ -24,7 +24,6 @@ exports.role = function(name) {
     Object.defineProperty(d, "documentation", {
       get: function() {
         return(
-
 `**${this.name}** (\`${this.id}\`)
 
 ${this.description?this.description:"[no description]"}

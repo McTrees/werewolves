@@ -11,5 +11,6 @@
 		"up setgames",
 		"up setwins",
 		"up setrecord"
+		"g begin",
 	]
 }

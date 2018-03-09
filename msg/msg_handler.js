@@ -136,12 +136,11 @@ module.exports = function(msg, client) {
 function fail(msg, client, splitMessage) {
   // invalid command
   if (splitMessage[1]) {
-  msg_cmd = config.bot_prefix + splitMessage[0] + " " + splitMessage[1]
-} else {
-  msg_cmd = config.bot_prefix + splitMessage[0]
-}
+    msg_cmd = config.bot_prefix + splitMessage[0] + " " + splitMessage[1]
+  } else {
+    msg_cmd = config.bot_prefix + splitMessage[0]
+  }
   const all_commands = getAllCommands()
-  didYouMean.threshold = null;
   probablecommand = didYouMean(msg_cmd, all_commands)
   if (probablecommand == null) {
     msg.reply(`\`${msg_cmd}\` is an unknown command.`)
