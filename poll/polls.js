@@ -80,7 +80,7 @@ exports.commands.start_poll = function (msg, client, args){
 		*/
 		id = internal.startPoll(client, data);
 		//Send message informing GMs of new poll
-		client.channels.get(config.channel_ids.gm_confirm).send("A new Poll, `" + txt + "` (id: " + id + ") was created.");
+		if(id != -1)client.channels.get(config.channel_ids.gm_confirm).send("A new Poll, `" + txt + "` (id: " + id + ") was created.");
 	}).catch(err => {
 		utils.errorMessage(err);
 		msg.reply("an error occurred.");
@@ -91,14 +91,14 @@ exports.commands.start_poll = function (msg, client, args){
 }
 
 /**
-Function - addVotes
-Function to add votes to a particular player in the daily lynch
+Function - threaten
+Function to threaten to a particular player in the daily lynch
 Arguments:
 msg - The message that triggered the function
 client - The Discord Client that the bot uses
 id - The ID of the poll to check
  */
-exports.commands.addVotes = async function (msg, client, args) {
+exports.commands.threaten = async function (msg, client, args) {
 	var user;
 	if(args.length === 1){
 		var id = "";
@@ -121,16 +121,25 @@ exports.commands.addVotes = async function (msg, client, args) {
 		msg.reply("correct syntax is: `!profile <user>` (`<user>` must either be a mention or the emoji of the player).");
 		return;
 	}
-	var val = internal.threaten(user.id);
+	var val = internal.extraVotes(user.id, "l", 2);//I just hope this is correct
 	if(val === 1){
 		utils.successMessage(`Successfully threatened @${user.username}!`);
 		msg.reply(`${user} has successfully been threatened`);
 	}else if(val === 0){
-		utils.warningMessage(`@${user.username} has already been threatened!`);
-		msg.reply(`${user} has already been threatened`);
+		utils.warningMessage(`@${user.username} already had some extra votes. Maybe they've already been threatened.`);
+		msg.reply(`${user} may already have been threatened, they already had extra votes`);
 	}else{
-		utils.errorMessage(`Could not threaten @${user.username}!`);
-		msg.reply(`${user} could not be threatened`);
+		switch(val){
+			case (-4):
+				utils.errorMessage(`Could not threaten @${user.username}!`);
+				msg.reply(`${user} could not be threatened`);
+				break;
+			case (-1):
+				utils.errorMessage(`No lynch poll underway!!`);
+				msg.reply(`${user} could not be threatened as no lynch poll is going on.`);
+				msg.reply(`Since you're a GM you should first open the lynch poll and then threaten the player.`);
+				break;
+		}
 	}
 }
 

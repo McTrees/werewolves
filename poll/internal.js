@@ -50,7 +50,17 @@ As in example, the "txt" field of the options can be a mention or just some plai
  */
 exports.startPoll = function(client, data) {
 	utils.debugMessage(`Function startPoll was called.`);
-
+	
+	if(data.type == "l"){
+		if(polls.currentLynch){
+			utils.errorMessage("A lynch poll is already underway!");
+			client.channels.get(config.channel_ids.gm_confirm).send("A lynch poll is already underway!");
+			return -1;
+		}else{
+			polls.currentLynch = polls.num+1;
+		}
+	}
+	
 	var options = data.options;
 	var msg_text = data.msg_text;
 
@@ -150,43 +160,67 @@ exports.fetchMessages = function(msg, client, id){
 
 //at this point I had forgotten what changes I had made
 //so forgive me if something here doesn't quite work as expected
-exports.calculateResults = function(poll, values, client) {
-	//The text message the bot will send
-	var txt = "Results of the polls:\n";
+exports.calculateResults = function(poll, poll_id, values, client) {
 	//The object the function will return
 	var results = {
 		options: poll["options"]
 	};
 	
 	var disqualified = findDisqualified(values, client);
-	
-	var ranked;
-	var mayor_id = "000";
-	if(poll.mayor){
-		var mayor = getMayorRole(client);
-		if(mayor.members.size > 0)mayor_id = mayor.members.first().id;
-		if(!poll.raven){
-			ranked = rankResults(results, values, mayor_id, false);
-		}else{
-			ranked = rankResults(results, values, mayor_id, polls.threatened);
-		}
-	}else{
-		ranked = rankResults(results, values, false, false);
+	var non_participants = findNonParticipants(values, disqualified, client);
+	if(poll.type == "l" || poll.type == "o"){
+		setVoteValue(getMayor(client), poll_id, 2);
 	}
+	//TODO - Implement the code for frozen people
 	
-	results.txt = txt;
+	//LATER!
+	
+	//Like really, GET THAT DONE!
+	ranked = rankResults(results, values, poll);
+	//What am I even doing??
+	//I really really hope this works
+	results.txt = buildMessage(ranked, values, poll, disqualified, non_participants, false).txt;
+	var msg = buildMessage(ranked, values, poll, disqualified, non_participants, true);
+	//What is this supposed to do?
+	results.log_txt = msg.txt;
+	results.cmd = msg.txt;
+	//I'm lost in my own code now
 	//Return the data
 	return results;
 }
 
-exports.setVoteValue(user_id, val){
-	if(!polls.values){
-		polls.values = {
+exports.setVoteValue(user_id, poll_id, val){
+	if(poll_id === "l"){
+		if(polls.currentLynch)poll_id = polls.currentLynch;
+		else return -1;
+	}
+	if (!polls["polls"][id]) {
+		utils.errorMessage("The poll with id " + id + " doesn't exist, sadly.");
+		return -2;
+	}
+	var poll = polls.polls[poll_id];
+	if(!poll.voteValues){
+		poll.voteValues = {
 			user_id: val
 		};
 	}else{
-		polls.values[user_id] = val;
+		if(poll.voteValues[user_id]){
+			return -3;
+		}else{
+			poll.voteValues[user_id] = val;
+		}
 	}
+	
+	try{
+		fs.writeFile("./poll/polls.json", JSON.stringify(polls, null, 2)); 
+	}catch(err){
+		utils.errorMessage(err);
+		client.channels.get(config.channel_ids.gm_confirm).send("Error occurred when trying to edit the polls.json file.");
+		return -4;
+		
+	};
+	utils.successMesssage(`Value of a player's (ID:${id}) vote in poll ${poll_id} set to $[val}.`);
+	return 1;
 }
 
 exports.cleanUp = function(msgs, id) {
@@ -195,9 +229,9 @@ exports.cleanUp = function(msgs, id) {
 		msgs[i].delete ();
 	}
 	var fs_error = false;
+	if(polls["polls"][id].type == "l")delete polls.currentLynch;
 	//Delete the poll from storage
 	delete polls["polls"][id];
-	polls.extraVotes = {};
 	fs.writeFile("./poll/polls.json", JSON.stringify(polls, null, 2), (err) => {
 		if (err) {
 			utils.errorMessage(err);
@@ -209,9 +243,19 @@ exports.cleanUp = function(msgs, id) {
 		utils.successMessage("Successfully ended poll!");
 }
 
-exports.extraVotes = function(id, extra){
+exports.extraVotes = function(id, poll_id, extra){
+	if(poll_id === "l"){
+		if(polls.currentLynch)poll_id = polls.currentLynch;
+		else return -1;
+	}
+	if (!polls["polls"][id]) {
+		utils.errorMessage("The poll with id " + id + " doesn't exist, sadly.");
+		return -2;
+	}
+	var poll = polls.polls[poll_id];
 	var found = false;
-	for(var user_id in polls.extraVotes){
+	if(!poll.extraVotes)poll.extraVotes = {};
+	for(var user_id in poll.extraVotes){
 		if(user_id == id){
 			polls.extraVotes[id] += extra;
 			found = true;
@@ -219,16 +263,18 @@ exports.extraVotes = function(id, extra){
 		}
 	}
 	if(!found){
-		polls.extraVotes[id] = extra;
+		poll.extraVotes[id] = extra;
 	}
-	fs.writeFile("./poll/polls.json", JSON.stringify(polls, null, 2), (err) => {
-		if (err) {
-			utils.errorMessage(err);
-			client.channels.get(config.channel_ids.gm_confirm).send("Error occurred when trying to edit the polls.json file.");
-			return -1;
-		}
-	});
-	return 1;
+	try{
+		fs.writeFile("./poll/polls.json", JSON.stringify(polls, null, 2)); 
+	}catch(err){
+		utils.errorMessage(err);
+		client.channels.get(config.channel_ids.gm_confirm).send("Error occurred when trying to edit the polls.json file.");
+		return -4;
+		
+	};
+	utils.successMesssage(`${extra} votes added to a player (ID:${id}) in poll ${poll_id}.`);
+	return found?0:1;
 }
 
 /*
@@ -337,7 +383,7 @@ function findDisqualified(values, client){
 	return disqualified;
 }
 
-function buildMessage(ranked, values, poll, disqualified, log){
+function buildMessage(ranked, values, poll, disqualified, non_participants, log){
 	//Build the message to be sent
 	var txt = "Results of the polls (ID:" + id + ") :\n\n";
 	var winner = false;//I suppose I should use null or undefined, but does it matter?
@@ -354,11 +400,14 @@ function buildMessage(ranked, values, poll, disqualified, log){
 		for (var k = 0; k < ranked.length; k++) {
 			var i = ranked[k].id;
 			var users = Array.from(values[i]);
-			txt += ("\n" + (ranked[k].num + " votes for " + poll["options"][i]["id"] + " (" + poll["options"][i]["emoji"] + "). Players who voted for " + poll["options"][i]["id"] + " :\n"));
+			if(users.length == 0)continue;
+			var n = ranked[k].num;
+			if(n < 0)n = 0;
+			txt += ("\n" + n + " effective votes for " + poll["options"][i]["id"] + " (" + poll["options"][i]["emoji"] + "). Players who voted for " + poll["options"][i]["id"] + " :\n");
 			for (var j = 0; j < users.length; j++) {
 				txt += ("\t<@" + users[j][1].id + ">");
 				if(poll.voteValues[users[j][1].id]){
-					txt += ` (worth ${poll.voteValues[users[j][1].id]} ordinary votes)`;
+					txt += ` (worth ${poll.voteValues[users[j][1].id]})`;
 				}
 			}
 			txt += '\n';
@@ -414,6 +463,24 @@ function buildMessage(ranked, values, poll, disqualified, log){
 			txt += " were disqualified as they cast multiple votes.";
 		}
 	}
+	//And the non-participants
+	if (non_participants.length !== 0) {
+		txt += "\n";
+		if (non_participants.length === 1) {
+			txt += "<@" + non_participants[0] + "> you are not allowed to vote, only participants can vote.";
+		} else {
+			non_participants.forEach(function (item, index) {
+				txt += "<@" + item + ">";
+				if (index === non_participants.length - 2)
+					txt += " and ";
+				else if (index !== non_participants.length - 1)
+					txt += ", "
+			});
+			txt += " you are not allowed to vote, only participants can vote.";
+		}
+	}
+	
+	//And if this is for the GM channel, give the used command too
 	if(log && winner){
 		switch(poll.type){
 			case ("l"):
