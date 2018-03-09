@@ -11,6 +11,13 @@ module.exports = function(game, id_list) {
       ri.win_teams.starts_on.forEach(tm=>{
         db_fns.win_teams.add_win_team(pl.id, tm)
       })
+    } else {
+      var rif = role_manager.fallback(pl.role)
+      if (rif.win_teams && Array.isArray(rif.win_teams.starts_on)) {
+        rif.win_teams.starts_on.forEach(tm=>{
+          db_fns.win_teams.add_win_team(pl.id, tm)
+        })
+      }
     }
   })
   // create secret channels
