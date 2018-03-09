@@ -260,6 +260,7 @@ exports.commands.begin = async function(msg, client) {
   if (game_state.data().state_num !== 3 ){
     msg.reply("this is the wrong game state for that, buddy.")
   } else {
+    scripts.start(new GameController(client), (await user.all_alive()).map(r=>r.id)) // why is this id and not user_id 
     msg.reply("😁, the game actually started, yay!")
     game_state.set_state_num(4)
   }
