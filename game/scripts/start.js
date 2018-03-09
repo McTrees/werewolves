@@ -21,7 +21,6 @@ module.exports = function(game, id_list) {
     }
   })
   // create secret channels
-  
   // do game_start for all roles that have one
   // give participant role <-- LAST
 }
