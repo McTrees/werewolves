@@ -8,6 +8,7 @@
 		"g day",
 		"g night",
 		"g tag",
+		"g begin",
 		"up set_games",
 		"up set_wins",
 		"up set_record"

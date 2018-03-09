@@ -32,14 +32,11 @@ exports.tags.add_tag = function(id, tag) {
   // adds a tag to a user
   gamedb.run("insert into player_tags (user_id, tag_name) values ($id, $t);", {$id:id,$t:tag}, function(err) { if (err) throw err})
 }
-
-
 exports.tags.remove_tag = function(id, tag) {
   utils.debugMessage(`remove tag: taking ${id}'s' tag ${tag}`)
   // removes tag from user
   gamedb.run("delete from player_tags where user_id = $id and tag_name = $t;", {$id:id,$t:tag}, function(err) {if (err) throw err})
 }
-
 exports.tags.has_tag = function(id, tag) {
   // true or false, whether user `id` has tag `tag`
   return new Promise(function(resolve, reject) {
@@ -49,7 +46,6 @@ exports.tags.has_tag = function(id, tag) {
     })
   })
 }
-
 exports.tags.all_tags_of = function(id) {
   utils.debugMessage(`getting all tags of ${id}`)
   return new Promise(function(resolve, reject) {
