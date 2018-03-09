@@ -1,15 +1,15 @@
 {
 	"gm_only": [
-		"g open_signups",
-		"g set_season_info",
-		"g start_season",
-		"g set_role",
-		"g send_roles",
+		"g opensignups",
+		"g setseasoninfo",
+		"g startseason",
+		"g setrole",
+		"g sendroles",
 		"g day",
 		"g night",
 		"g tag",
-		"up set_games",
-		"up set_wins",
-		"up set_record"
+		"up setgames",
+		"up setwins",
+		"up setrecord"
 	]
 }
