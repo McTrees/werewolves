@@ -303,6 +303,16 @@ exports.commands.night = async function(msg, client) {
 }
 
 async function day_and_night(msg, client) {
+  // check wins:
+  var all = await user.all_alive()
+  var number_left = all.length
+  all.forEach(user => {
+    var player = new PlayerController(user)
+    var role = role_manager.role(user.role)
+    if (db_fns.win_teams.all_have_win_team(number_left, role.win_teams.wins_with)) {
+      msg.reply(`${player} has won!!!`)
+    }
+  })
 }
 
 exports.commands.kill = async function(msg, client, args) {
