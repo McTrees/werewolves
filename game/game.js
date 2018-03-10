@@ -279,6 +279,7 @@ exports.commands.day = async function(msg, client) {
   } else {
     game_state.next_day_or_night()
     execute_kill_q(msg, client)
+    day_and_night(msg, client)
     msg.reply(`[👍] It is now ${game_state.nice_time(d.time)}!`)
     stats = require("../analytics/analytics.js").get_stats()
     msg.reply(`**Today's Stats:**\n - ${stats.Messages} messages were sent!\n - The Game Masters were pinged ${stats.GMPings} times!\n - ${stats.CCCreations} Conspiracy Channels were created!`)
@@ -296,8 +297,12 @@ exports.commands.night = async function(msg, client) {
   } else {
     game_state.next_day_or_night()
     execute_kill_q(msg, client)
+    day_and_night(msg, client)
     msg.reply(`[👍] It is now ${game_state.nice_time(d.time)}!`)
   }
+}
+
+async function day_and_night(msg, client) {
 }
 
 exports.commands.kill = async function(msg, client, args) {
