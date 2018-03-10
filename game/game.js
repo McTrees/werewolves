@@ -84,7 +84,7 @@ exports.commands.tag = function(msg, client, args) {
   if (game_state.data().state_num !== 4){
     msg.reply("a game is not in progress")
   } else {
-    utils.debugMessage(`tag command: ${msg.content}}`)
+    utils.debugMessage(`tag command: ${msg.content}`)
     var subcommand = args[0]
     switch (subcommand) {
       case "add":
