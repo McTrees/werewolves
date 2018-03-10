@@ -1,6 +1,7 @@
 const db_fns = require("../db_fns")
 const role_manager = require("../role_manager")
 const utils = require("../../utils")
+const PlayerController = require("../player_controller").PlayerController
 
 module.exports = function(game, id_list) {
   // win teams
@@ -21,6 +22,7 @@ module.exports = function(game, id_list) {
     }
   })
   // create secret channels
+
   // do game_start for all roles that have one
   // give participant role <-- LAST
 }
