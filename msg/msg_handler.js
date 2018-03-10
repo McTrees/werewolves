@@ -65,6 +65,7 @@ String.prototype.replaceAll = function(search, replacement) {
 module.exports = function(msg, client) {
   msg.content = msg.content.replaceAll("_", "")
   if (msg.author == client.user) {return}; //ignore own messages
+  if (msg.channel.type == "text" && msg.guild.id !== config.guild_id) {return}
   stats.increment("Messages", 1)
   if (msg.content.indexOf(`<@&${config.role_ids.gameMaster}>`) > -1) {
     stats.increment("GMPings", 1)

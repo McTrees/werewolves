@@ -10,7 +10,7 @@
 		"g tag",
 		"up setgames",
 		"up setwins",
-		"up setrecord"
-		"g begin",
+		"up setrecord",
+		"g begin"
 	]
 }

@@ -19,6 +19,7 @@ class GameController {
     }
     this.u = user
     this.tags = db_fns.tags
+    this.win_teams = db_fns.win_teams
     this._client = client
     this._gamedb = db_fns._db
     this._userdb = this.u._db
@@ -83,7 +84,7 @@ exports.commands.tag = function(msg, client, args) {
   if (game_state.data().state_num !== 4){
     msg.reply("a game is not in progress")
   } else {
-    utils.debugMessage(`tag command: ${msg.content}}`)
+    utils.debugMessage(`tag command: ${msg.content}`)
     var subcommand = args[0]
     switch (subcommand) {
       case "add":
@@ -104,7 +105,7 @@ exports.commands.tag = function(msg, client, args) {
           db_fns.tags.remove_tag(id, args[2])
         })
         break
-      case "all_with":
+      case "allwith":
         if (args.length !== 2) {
           msg.reply("wrong syntax!")
           return
@@ -114,7 +115,7 @@ exports.commands.tag = function(msg, client, args) {
 ${list.map(id=>`- <@${id}>`).join("\n")}`)
         })
         break
-      case "all_of":
+      case "allof":
         if (args.length !== 2) {
           msg.reply("wrong syntax!")
           return
@@ -260,7 +261,7 @@ exports.commands.begin = async function(msg, client) {
   if (game_state.data().state_num !== 3 ){
     msg.reply("this is the wrong game state for that, buddy.")
   } else {
-    scripts.start(new GameController(client), (await user.all_alive()).map(r=>r.id)) // why is this id and not user_id 
+    scripts.start(new GameController(client), (await user.all_alive()).map(r=>r.id)) // why is this id and not user_id
     msg.reply("😁, the game actually started, yay!")
     game_state.set_state_num(4)
   }
@@ -278,6 +279,7 @@ exports.commands.day = async function(msg, client) {
   } else {
     game_state.next_day_or_night()
     execute_kill_q(msg, client)
+    day_and_night(msg, client)
     msg.reply(`[👍] It is now ${game_state.nice_time(d.time)}!`)
     stats = require("../analytics/analytics.js").get_stats()
     msg.reply(`**Today's Stats:**\n - ${stats.Messages} messages were sent!\n - The Game Masters were pinged ${stats.GMPings} times!\n - ${stats.CCCreations} Conspiracy Channels were created!`)
@@ -295,8 +297,22 @@ exports.commands.night = async function(msg, client) {
   } else {
     game_state.next_day_or_night()
     execute_kill_q(msg, client)
+    day_and_night(msg, client)
     msg.reply(`[👍] It is now ${game_state.nice_time(d.time)}!`)
   }
+}
+
+async function day_and_night(msg, client) {
+  // check wins:
+  var all = await user.all_alive()
+  var number_left = all.length
+  all.forEach(user => {
+    var player = new PlayerController(user)
+    var role = role_manager.role(user.role)
+    if (db_fns.win_teams.all_have_win_team(number_left, role.win_teams.wins_with)) {
+      msg.reply(`${player} has won!!!`)
+    }
+  })
 }
 
 exports.commands.kill = async function(msg, client, args) {

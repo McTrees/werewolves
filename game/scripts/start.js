@@ -1,6 +1,7 @@
 const db_fns = require("../db_fns")
 const role_manager = require("../role_manager")
 const utils = require("../../utils")
+const PlayerController = require("../player_controller").PlayerController
 
 module.exports = function(game, id_list) {
   // win teams
@@ -21,6 +22,12 @@ module.exports = function(game, id_list) {
     }
   })
   // create secret channels
+
   // do game_start for all roles that have one
+  id_list.map(game.player).forEach(pl=>{
+    if (typeof role_manager.role(pl.role).game_start == "function") {
+      role_manager.role(pl.role).game_start(game, pl)
+    }
+  })
   // give participant role <-- LAST
 }
