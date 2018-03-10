@@ -240,7 +240,7 @@ We hope you are happy with the role you gained, and we hope you'll enjoy the gam
 Good luck... :full_moon:
 
 
-Do you not understand your role? Don't worry! Use the command \`~rm roleinfo ROLE\` for an explanation.
+Do you not understand your role? Don't worry! Use the command \`!r info ROLE\` for an explanation. *(For example: \`!r info inno/basic\`)*
 You can (hopfully) use commands in this Direct Message!`
           u.send(str).catch(e=>{
             if (e.message == 'Cannot send messages to this user') {
