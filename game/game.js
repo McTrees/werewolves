@@ -105,7 +105,7 @@ exports.commands.tag = function(msg, client, args) {
           db_fns.tags.remove_tag(id, args[2])
         })
         break
-      case "all_with":
+      case "allwith":
         if (args.length !== 2) {
           msg.reply("wrong syntax!")
           return
@@ -115,7 +115,7 @@ exports.commands.tag = function(msg, client, args) {
 ${list.map(id=>`- <@${id}>`).join("\n")}`)
         })
         break
-      case "all_of":
+      case "allof":
         if (args.length !== 2) {
           msg.reply("wrong syntax!")
           return
