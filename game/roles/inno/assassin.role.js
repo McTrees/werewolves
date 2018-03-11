@@ -3,7 +3,7 @@ exports.description = "Can assassinate one player per night, exept the first nig
 
 exports.abilities = {} //Because Javascript
 exports.abilities.assasinate = {
-  timings = {
+  timings : {
     periods : "2",
     allow_day : false
   },

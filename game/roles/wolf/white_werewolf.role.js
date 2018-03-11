@@ -9,7 +9,7 @@ exports.abilities = {}
 exports.abilities.kill = {
   name: "kill",
   desc: "Kill anyone (Can be werewolf; doesn't have to be)",
-  timings = {
+  timings : {
     periods : 4,
     allow_day : false
   }
