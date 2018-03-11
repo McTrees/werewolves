@@ -14,10 +14,10 @@ module.exports = async function(game, id_list) {
         db_fns.win_teams.add_win_team(pl.id, tm)
       })
     } else {
-      var rif = role_manager.fallback(pl.role)
-      if (rif.win_teams && Array.isArray(rif.win_teams.starts_on)) {
-        rif.win_teams.starts_on.forEach(tm=>{
-          db_fns.win_teams.add_win_team(pl.id, tm)
+      var fb_role = role_manager.fallback(player.role)
+      if (fb_role.win_teams && Array.isArray(fb_role.win_teams.starts_on)) {
+        fb_role.win_teams.starts_on.forEach(team=>{
+          db_fns.win_teams.add_win_team(player.id, team)
         })
       }
     }
