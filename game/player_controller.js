@@ -12,7 +12,7 @@ class PlayerController {
       user.get_role(this.id).then(role=>{
         resolve(role)
       })
-    });
+    }.bind(this));
   }
   set role(v) {
     user.set_role(this.id, v)
