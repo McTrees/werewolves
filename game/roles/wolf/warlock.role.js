@@ -4,7 +4,7 @@ exports.description = "Can check which role a player is"
 exports.abilities = {} //Because Javascript
 exports.abilities.tell = {
   timings : {
-    periods : "2",
+    periods : 2,
     allow_day : false
   }
   name: "Tell",
