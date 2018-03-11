@@ -6,7 +6,7 @@ exports.abilities.assasinate = {
   timings = {
     periods : "2",
     allow_day : false
-  }
+  },
   name: "Assasinate",
   desc: "Assasinate one player. Usable once per night", //TODO: Make timeframe work
   run(game, me, args, cb) {
