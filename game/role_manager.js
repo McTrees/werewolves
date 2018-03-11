@@ -27,8 +27,7 @@ exports.role = function(name) {
 `**${this.name}** (\`${this.id}\`)
 
 ${this.description?this.description:"[no description]"}
-
-${this.long_description?this.long_description:""}`
+${this.long_description?"\n"+this.long_description:""}`
         )
       }
     })
