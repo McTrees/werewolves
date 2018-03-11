@@ -38,6 +38,9 @@ ${this.long_description?this.long_description:""}`
 }
 
 exports.fallback = function(name) {
+  if (typeof name !== "string") {
+    throw new Error("fallback arg needs to be the name of the role!")
+  }
   let res = name.replace(/\w+$/, "defaults.js")
   let data = require(BASE+res)
   return data
