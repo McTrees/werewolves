@@ -6,7 +6,7 @@ const PlayerController = require("../player_controller").PlayerController
 module.exports = function(game, id_list) {
   // win teams
   utils.debugMessage("Assigning win teams...")
-  id_list.map(game.player).forEach(pl=>{
+  id_list.map(game.player.bind(game)).forEach(pl=>{
     var ri = role_manager.role(pl.role)
     if (ri.win_teams && Array.isArray(ri.win_teams.starts_on)) {
       ri.win_teams.starts_on.forEach(tm=>{
