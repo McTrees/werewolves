@@ -7,7 +7,7 @@ exports.abilities.curse = {
   desc: "Turn an innocent into a cursed one. (Usage: [curse <@person>])",
   timings = {
     periods : "2",
-    allow_day = false
+    allow_day : false
   }
   run(game, me, args, cb) {
       game.masters.tell(`<@${me.id}> is attempting to curse ${args[0]}`)
