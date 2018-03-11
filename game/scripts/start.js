@@ -3,7 +3,7 @@ const role_manager = require("../role_manager")
 const utils = require("../../utils")
 const PlayerController = require("../player_controller").PlayerController
 
-module.exports = function(game, id_list) {
+module.exports = async function(game, id_list) {
   // win teams
   utils.debugMessage("Assigning win teams...")
   id_list.forEach(async function(id) {
