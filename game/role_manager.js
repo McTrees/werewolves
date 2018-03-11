@@ -32,7 +32,6 @@ ${this.long_description?"\n"+this.long_description:""}`
       }
     })
   }
-
   return d
 }
 
