@@ -1,4 +1,4 @@
-const config = require('../config'); //include main config
+const config = require('../../../config'); //include main config
 
 exports.name = "Alcoholic"
 exports.description = "Can only talk in the tavern."
