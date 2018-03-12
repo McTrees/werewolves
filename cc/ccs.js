@@ -46,13 +46,13 @@ function createChannel(showCreator, people, client, name, ccconf, msg) { //funct
 
     //set perms
   ).then(function(channel) {
+	utils.debugMessage("before bot")
     channel.overwritePermissions(client.user.id, { //the bot can see it
       'VIEW_CHANNEL': true
     })
     utils.debugMessage("added bot")
     channel.overwritePermissions(msg.guild.roles.find("name", "@everyone"), { //@everyone can't see it
       'VIEW_CHANNEL': false,
-      'READ_MESSAGE_HISTORY': false //perm for owner of cc, to add/remove people
     })
     utils.debugMessage("removed everyone")
     channel.overwritePermissions(msg.guild.roles.get(config.role_ids.gameMaster), { //gamemaster can see it
@@ -64,7 +64,7 @@ function createChannel(showCreator, people, client, name, ccconf, msg) { //funct
       'VIEW_CHANNEL': true,
       'SEND_MESSAGES': true,
       'READ_MESSAGE_HISTORY': true //perm for owner of cc, to add/remove people
-    )
+    })
     utils.debugMessage("added author")
     people.forEach(function(element) {
       user.resolve_to_id(element).then(function(user) {
@@ -93,7 +93,7 @@ function createChannel(showCreator, people, client, name, ccconf, msg) { //funct
 }
 
 exports.createCmd = function(msg, client, args) { //command for making a cc
-
+  utils.debugMessage("start of create")
   var name = args[0]; //set var for cc name
   var showCreator = true; //default for showing the creator
 
