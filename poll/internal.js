@@ -228,7 +228,8 @@ exports.setVoteValue = function(user_id, poll_id, val){
 		poll.voteValues = {};
 		poll.voteValues[user_id] = val;
 	}else{
-		if(poll.voteValues[user_id]){
+		if(user_id in poll.voteValues){
+			utils.warningMessage(`Player's vote already has value of ${poll.voteValues[user_id]} (ID: {user_id}).`);
 			return -3;
 		}else{
 			poll.voteValues[user_id] = val;
@@ -236,14 +237,14 @@ exports.setVoteValue = function(user_id, poll_id, val){
 	}
 	
 	try{
-		fs.writeFile("./poll/polls.json", JSON.stringify(polls, null, 2)); 
+		fs.writeFileSync("./poll/polls.json", JSON.stringify(polls, null, 2)); 
 	}catch(err){
 		utils.errorMessage(err);
 		client.channels.get(config.channel_ids.gm_confirm).send("Error occurred when trying to edit the polls.json file.");
 		return -4;
 		
 	};
-	utils.successMessage(`Value of a player's (ID:${user_id}) vote in poll ${poll_id} set to $[val}.`);
+	utils.successMessage(`Value of a player's (ID:${user_id}) vote in poll ${poll_id} set to ${val}.`);
 	return 1;
 }
 
@@ -255,6 +256,7 @@ exports.cleanUp = function(msgs, id) {
 	if(polls["polls"][id].type == "l")delete polls.currentLynch;
 	//Delete the poll from storage
 	delete polls["polls"][id];
+	
 	fs.writeFile("./poll/polls.json", JSON.stringify(polls, null, 2), (err) => {
 		if (err) {
 			utils.errorMessage(err);
@@ -271,8 +273,8 @@ exports.extraVotes = function(id, poll_id, extra){
 		if(polls.currentLynch)poll_id = polls.currentLynch;
 		else return -1;
 	}
-	if (!polls["polls"][id]) {
-		utils.errorMessage("The poll with id " + id + " doesn't exist, sadly.");
+	if (!polls["polls"][poll_id]) {
+		utils.errorMessage("The poll with id " + poll_id + " doesn't exist, sadly.");
 		return -2;
 	}
 	var poll = polls.polls[poll_id];
@@ -289,14 +291,14 @@ exports.extraVotes = function(id, poll_id, extra){
 		poll.extraVotes[id] = extra;
 	}
 	try{
-		fs.writeFile("./poll/polls.json", JSON.stringify(polls, null, 2)); 
+		fs.writeFileSync("./poll/polls.json", JSON.stringify(polls, null, 2)); 
 	}catch(err){
 		utils.errorMessage(err);
 		client.channels.get(config.channel_ids.gm_confirm).send("Error occurred when trying to edit the polls.json file.");
 		return -4;
 		
 	};
-	utils.successMesssage(`${extra} votes added to a player (ID:${id}) in poll ${poll_id}.`);
+	utils.successMessage(`${extra} votes added to a player (ID:${id}) in poll ${poll_id}.`);
 	return found?0:1;
 }
 
@@ -316,11 +318,10 @@ function rankResults(results, values, poll){
 		//I really hope I know what I'm doing here
 		var n = 0;
 		if(poll.voteValues){
-			utils.debugMessage("...");
 			var keys = values[i].keyArray();
 			for(var j = 0; j < keys.length; j++){
-				if(poll.voteValues[values[i].get(keys[j])]){
-					n += poll.voteValues[values[i].get(keys[j])];
+				if(keys[j] in poll.voteValues){
+					n += poll.voteValues[keys[j]];
 				}else{
 					n += 1;
 				}
@@ -329,12 +330,12 @@ function rankResults(results, values, poll){
 			n = values[i].size;
 		}
 		if(poll.extraVotes){
-			if(poll.extraVotes[results.options[i].id]){
+			if(results.options[i].id in poll.extraVotes){
 				n += poll.extraVotes[results.options[i].id];
 			}
 		}
 		results.options[i].votes = n; //Also add the vote tally to the results object
-		if(n <= 0)continue;
+		if(values[i].size <= 0)continue;
 		ranked.push({
 			id: i,
 			num: n
@@ -429,11 +430,13 @@ function buildMessage(ranked, values, poll, poll_id, disqualified, non_participa
 			if(users.length == 0)continue;
 			var n = ranked[k].num;
 			if(n < 0)n = 0;
-			txt += ("\n" + n + " effective votes for " + poll["options"][i]["id"] + " (" + poll["options"][i]["emoji"] + "). Players who voted for " + poll["options"][i]["id"] + " :\n");
+			txt += ("\n" + n + " effective votes for <@" + poll["options"][i]["id"] + "> (" + poll["options"][i]["emoji"] + "). Players who voted for <@" + poll["options"][i]["id"] + "> :\n");
 			for (var j = 0; j < users.length; j++) {
 				txt += ("\t<@" + users[j][1].id + ">");
-				if(poll.voteValues[users[j][1].id]){
-					txt += ` (worth ${poll.voteValues[users[j][1].id]})`;
+				if(users[j][1].id in poll.voteValues){
+					txt += ` (worth ${poll.voteValues[users[j][1].id]})\n`;
+				}else{
+					txt += "\n";
 				}
 			}
 			txt += '\n';
@@ -442,7 +445,7 @@ function buildMessage(ranked, values, poll, poll_id, disqualified, non_participa
 		for(var i = 0; i < values.length; i++){
 			var users = Array.from(values[i]);//TODO this needs to be changed
 			if(users.length == 0)continue;
-			txt += `\n People who voted for ${poll.options[i].txt} (${poll.options[i].emoji}) :\n"`;
+			txt += `\n People who voted for <@${poll.options[i].id}> (${poll.options[i].emoji}) :\n`;
 			for (var j = 0; j < users.length; j++) {
 				txt += ("\t<@" + users[j][1].id + ">\n");
 			}

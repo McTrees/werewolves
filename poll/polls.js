@@ -93,54 +93,114 @@ exports.commands.start_poll = function (msg, client, args){
 }
 
 /**
-Function - threatenDay
-Function to threaten to a particular player in the daily lynch
-You shouldn't be using this
+Function - setvotevalue
+Function to set vote value of a particular player in the daily lynch
+For now use this
+Final bot will have better system
 Arguments:
 msg - The message that triggered the function
 client - The Discord Client that the bot uses
 id - The ID of the poll to check
  */
-exports.commands.threatenDay = async function (msg, client, args) {
-	var user;
-	if(args.length === 1){
-		var id = "";
-		try{
-			id = await players.resolve_to_id(args[0])
-		}catch(err){
-			if(err){
-				utils.errorMessage(err);
-				msg.reply("an error occurred.");
-				return;
-			}
-			utils.errorMessage(`Incorrect syntax for threatenCmd`);
-			msg.reply("correct syntax is: `!profile <user>` (`<user>` must either be a mention or the emoji of the player).");
-			return;
-		}
-		user = client.users.get(id);
-		utils.debugMessage(`Trying to threaten @${user.username}`);
-	}else{
-		utils.errorMessage(`Incorrect syntax used for threatenCmd.`);
-		msg.reply("correct syntax is: `!profile <user>` (`<user>` must either be a mention or the emoji of the player).");
+exports.commands.setvotevalue = async function (msg, client, args) {
+	var data = await resolve(msg, client, args);
+	if(data === -2){
+		utils.errorMessage(`Incorrect syntax used for addvotes.`);
+		msg.reply("correct syntax is: `!setvotevalue <user> <val>` (`<user>` must either be a mention or the emoji of the player), `<val>` must be an integer.");
+		return;
+	}else if(data == -1){
+		msg.reply("error occurred, please chech console.");
 		return;
 	}
-	var val = internal.extraVotes(user.id, "l", 2);//I just hope this is correct
-	if(val === 1){
-		utils.successMessage(`Successfully threatened @${user.username}!`);
-		msg.reply(`${user} has successfully been threatened`);
-	}else if(val === 0){
-		utils.warningMessage(`@${user.username} already had some extra votes. Maybe they've already been threatened.`);
-		msg.reply(`${user} may already have been threatened, they already had extra votes`);
+	var user = data.user;
+	var val = data.val;
+	var result = internal.setVoteValue(user.id, "l", val);
+	
+	//See below, this is what happens when you try to code while feeling very sleepy
+	if(result === 1){
+		msg.reply(`${user}'s vote's value successfully set to ${val}`);
 	}else{
-		switch(val){
+		switch(result){//SEE!! I was acting incredibly stupid
 			case (-4):
-				utils.errorMessage(`Could not threaten @${user.username}!`);
-				msg.reply(`${user} could not be threatened`);
+				msg.reply(`error occurred, check console.`);
+				break;
+			case (-3):
+				msg.reply(`${user}'s vote already has a different value!.`);
 				break;
 			case (-1):
 				utils.errorMessage(`No lynch poll underway!!`);
-				msg.reply(`${user} could not be threatened as no lynch poll is going on.`);
-				msg.reply(`Since you're a GM you should first open the lynch poll and then threaten the player.`);
+				msg.reply(`no lynch poll is going on.`);
+				msg.reply(`Since you're a GM you should first open the lynch poll and then try to add votes to the player.\nThough this is not what should appen, I do not have the time now to set it. Will be set before the main game is started, managed with this for the tests.\nSorry for the inconvenience.`);
+				break;
+		}
+	}
+}
+
+
+/**
+Function - threaten
+Function to threaten to a particular player in the daily lynch
+For now use this
+Final bot will have better system
+Arguments:
+msg - The message that triggered the function
+client - The Discord Client that the bot uses
+args - args
+ */
+exports.commands.threaten = async function (msg, client, args) {
+	args.push("2");
+	if((await exports.commands.addvotes(msg, client, args, true)) == -2){
+		msg.reply("correct syntax is: `!threaten <user>` (`<user>` must either be a mention or the emoji of the player).");
+	}
+}
+
+/**
+Function - guard
+Function to guard to a particular player in the daily lynch
+For now use this
+Final bot will have better system
+Arguments:
+msg - The message that triggered the function
+client - The Discord Client that the bot uses
+args - args
+ */
+exports.commands.guard = async function (msg, client, args) {
+	args.push("-10000");
+	if((await exports.commands.addvotes(msg, client, args, true)) == -2){
+		msg.reply("correct syntax is: `!guard <user>` (`<user>` must either be a mention or the emoji of the player).");
+	}
+}
+
+//Add extra votes for a player
+exports.commands.addvotes = async function(msg, client, args, internally){
+	var data = await resolve(msg, client, args);
+	if(data === -2){
+		utils.errorMessage(`Incorrect syntax used for addvotes.`);
+		if(internally)return -2;
+		msg.reply("correct syntax is: `!addvotes <user> <val>` (`<user>` must either be a mention or the emoji of the player), `<val>` must be an integer.");
+		return;
+	}else if(data == -1){
+		msg.reply("error occurred, please chech console.");
+		return;
+	}
+	var user = data.user;
+	var val = data.val;
+	var result = internal.extraVotes(user.id, "l", val);
+	
+	//See below, this is what happens when you try to code while feeling very sleepy
+	if(result === 1){
+		msg.reply(`${user} has successfully been given ${val} extra votes`);
+	}else if(result === 0){
+		msg.reply(`${user} already had extra votes, but still added ${val} more votes to them.`);//English isn't proper
+	}else{
+		switch(result){//SEE!! I was acting incredibly stupid
+			case (-4):
+				msg.reply(`error occurred.`);
+				break;
+			case (-1):
+				utils.errorMessage(`No lynch poll underway!!`);
+				msg.reply(`no lynch poll is going on.`);
+				msg.reply(`Since you're a GM you should first open the lynch poll and then try to add votes to the player.\nThough this is not what should appen, I do not have the time now to set it. Will be set before the main game is started, managed with this for the tests.\nSorry for the inconvenience.`);
 				break;
 		}
 	}
@@ -230,7 +290,7 @@ exports.commands.end_poll = function (msg, client, id) {
 		var gms = client.channels.get(config.channel_ids.gm_confirm);
 		gms.send(results.log_txt);
 		if(results.cmd)gms.send(results.cmd);
-		internal.cleanUp(dat.msgs, id);
+		//internal.cleanUp(dat.msgs, id);
 		return "Success";
 	}).catch (err => {
 		utils.errorMessage(err);
@@ -238,4 +298,52 @@ exports.commands.end_poll = function (msg, client, id) {
 		ch.send("Error occurred.");
 	});
 }
-
+/*
+██ ███    ██ ████████ ███████ ██████  ███    ██  █████  ██
+██ ████   ██    ██    ██      ██   ██ ████   ██ ██   ██ ██
+██ ██ ██  ██    ██    █████   ██████  ██ ██  ██ ███████ ██
+██ ██  ██ ██    ██    ██      ██   ██ ██  ██ ██ ██   ██ ██
+██ ██   ████    ██    ███████ ██   ██ ██   ████ ██   ██ ███████
+*/
+/**
+Resolve a message into a user and a value
+!command <@mention> <val>
+gives back 
+{
+	user: user,
+	val: val
+}
+val must be an integer
+Error codes:
+	-1 - Unknown error, check console
+	-2 - Syntax error - command was used improperly
+	
+*/
+async function resolve(msg, client, args){
+	if(args.length === 2){
+		if(!/^-?\d+$/.test(args[1])){
+			utils.debugMessage("Not an integer (in polls.resolve) - " + value);
+			return -2;
+		}
+		var value = new Number(args[1]);
+		var id;
+		try{
+			id = await players.resolve_to_id(args[0])
+		}catch(err){
+			if(err){
+				utils.errorMessage(err);
+				return -1;
+			}
+			utils.debugMessage("Not a mention/player emoji (in polls.resolve)");
+			return -2;
+		}
+		var discord_user = client.users.get(id);
+		utils.debugMessage(`Resolved to user - @${discord_user.username} and value - ${value}`);
+		return{
+			user: discord_user,
+			val: value
+		}
+	}else{
+		return -2;
+	}
+}
