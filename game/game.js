@@ -156,7 +156,7 @@ function startgame(client) {
       gm_confirm = client.channels.get(config.channel_ids.gm_confirm)
       gm_confirm.send(`Signed up users: ${asu.map(id=>`\n- <@${id.user_id}>`)}`)
       gm_confirm.send(`Valid roles: ${VALID_ROLES.map(n=>`\n- \`${n}\` (${role_manager.role(n).name})`)}`)
-      gm_confirm.send("For every user, please say `!g set_role @mention ROLE`, where ROLE is any of " + VALID_ROLES)
+      gm_confirm.send("For every user, please say `!g set_role @mention ROLE`")
     })
   })
 }
@@ -304,13 +304,24 @@ exports.commands.night = async function(msg, client) {
 
 async function day_and_night(msg, client) {
   // check wins:
-  var all = await user.all_alive()
+  var all_o = await user.all_alive()
+  var all = all_o.map(row=>row.id)
   var number_left = all.length
-  all.forEach(user => {
+  utils.debugMessage(`day_and_night users ${all} num ${number_left}`)
+  all.forEach(async function(user) {
     var player = new PlayerController(user)
-    var role = role_manager.role(user.role)
-    if (db_fns.win_teams.all_have_win_team(number_left, role.win_teams.wins_with)) {
-      msg.reply(`${player} has won!!!`)
+    var role = role_manager.role(await player.role)
+    if (role.win_teams && role.win_teams.wins_with) {
+      if (await db_fns.win_teams.all_have_win_team(number_left, role.win_teams.wins_with)) {
+        msg.reply(`${player} has won!!!`)
+      }
+    } else {
+      var fb = role_manager.fallback(await player.role)
+      if (fb.win_teams && fb.win_teams.wins_with) {
+        if (await db_fns.win_teams.all_have_win_team(number_left, fb.win_teams.wins_with)) {
+          msg.reply(`${player} has won!!!`)
+        }
+      }
     }
   })
 }
