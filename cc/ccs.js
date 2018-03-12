@@ -59,11 +59,8 @@ function createChannel(showCreator, people, client, name, ccconf, msg) { //funct
     })
     channel.overwritePermissions(msg.author, { //author can see it
       'VIEW_CHANNEL': true,
-    }).then(channel =>
-      channel.overwritePermissions(msg.author, { //author can see it
-        'READ_MESSAGE_HISTORY': true //perm for owner of cc, to add/remove people
-      })
-    )
+      'READ_MESSAGE_HISTORY': true
+    })
     people.forEach(function(element) {
       user.resolve_to_id(element).then(function(user) {
         channel.overwritePermissions(msg.guild.members.get(user), { //everyone specified can see it
