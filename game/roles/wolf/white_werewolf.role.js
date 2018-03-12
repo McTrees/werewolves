@@ -12,11 +12,12 @@ exports.abilities.kill = {
   timings : {
     periods : 4,
     allow_day : false
-  }
+  },
   run(game, me, args, cb) {
     game.masters.tell(`<@${me.id}> is attempting to white wolf kill ${args[0]}`)
-    t = await game.u.resolve_to_id(args[0])
-    p = game.player(t)
-    game.add_to_kill_q(args[0], "ww", client)
+    game.u.resolve_to_id(args[0]).then(t=> {
+      p = game.player(t)
+      game.add_to_kill_q(args[0], "ww", client)
+    })
   }
 }

@@ -6,7 +6,7 @@ exports.abilities.tell = {
   timings : {
     periods : 2,
     allow_day : false
-  }
+  },
   name: "Tell",
   desc: "Can check which role a player is",
   run(game, me, args, cb) {

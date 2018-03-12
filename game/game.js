@@ -156,7 +156,7 @@ function startgame(client) {
       gm_confirm = client.channels.get(config.channel_ids.gm_confirm)
       gm_confirm.send(`Signed up users: ${asu.map(id=>`\n- <@${id.user_id}>`)}`)
       gm_confirm.send(`Valid roles: ${VALID_ROLES.map(n=>`\n- \`${n}\` (${role_manager.role(n).name})`)}`)
-      gm_confirm.send("For every user, please say `!g set_role @mention ROLE`, where ROLE is any of " + VALID_ROLES)
+      gm_confirm.send("For every user, please say `!g set_role @mention ROLE`")
     })
   })
 }
