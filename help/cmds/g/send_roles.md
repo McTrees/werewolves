@@ -1,8 +1,8 @@
-**g begin**
-Description: Used to start the game properly! This will start the game immediately, meaning CCs are open for creation, secret channels are created, etc. 
+**g send_roles**
+Description: Sends everyone their roles after they have been assigned.
 
-Usage: `!g begin`. This command takes no arguments.
-Example: `!g begin`
+Usage: `!g send_roles`. This command takes no arguments.
+Example: `!g send_roles`
 
 **Notes:**
  - Game master only.

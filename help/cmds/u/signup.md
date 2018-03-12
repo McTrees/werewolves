@@ -6,3 +6,4 @@ Example: `!u signup 💩`
 
 **Notes:**
  - Cannot be used whilst a game is in progress.
+ - You won't be able to sign up with an emoji someone else is using!
