@@ -47,27 +47,26 @@ function createChannel(showCreator, people, client, name, ccconf, msg) { //funct
     //set perms
   ).then(function(channel) {
     channel.overwritePermissions(client.user.id, { //the bot can see it
-      'VIEW_CHANNEL': true
+      VIEW_CHANNEL: true
     })
     channel.overwritePermissions(msg.guild.roles.find("name", "@everyone"), { //@everyone can't see it
-      'VIEW_CHANNEL': false,
-      'READ_MESSAGE_HISTORY': false //perm for owner of cc, to add/remove people
+      VIEW_CHANNEL: false,
+      READ_MESSAGE_HISTORY: false //perm for owner of cc, to add/remove people
     })
     channel.overwritePermissions(msg.guild.roles.get(config.role_ids.gameMaster), { //gamemaster can see it
-      'VIEW_CHANNEL': true,
-      'READ_MESSAGE_HISTORY': true //perm for owner of cc, to add/remove people
+      VIEW_CHANNEL: true,
+      READ_MESSAGE_HISTORY: true //perm for owner of cc, to add/remove people
     })
     channel.overwritePermissions(msg.author, { //author can see it
-      'VIEW_CHANNEL': true,
-    }).then(channel =>
-      channel.overwritePermissions(msg.author, { //author can see it
-        'READ_MESSAGE_HISTORY': true //perm for owner of cc, to add/remove people
-      })
+      VIEW_CHANNEL: true,
+      SEND_MESSAGES: true,
+      READ_MESSAGE_HISTORY: true //perm for owner of cc, to add/remove people
     )
     people.forEach(function(element) {
       user.resolve_to_id(element).then(function(user) {
         channel.overwritePermissions(msg.guild.members.get(user), { //everyone specified can see it
-          'VIEW_CHANNEL': true
+          VIEW_CHANNEL: true,
+          SEND_MESSAGES: true
         })
       })
     })
@@ -169,7 +168,9 @@ exports.addCmd = function(msg, client, args) { //add someone to the cc
   allRoles = allRoles.filter(function(obj) { //filters for all roles with permission
     return obj.allow == 66560;
   });
-  if (!allPeople[0].id == msg.author.id || !msg.member.roles.has(allRoles[0].id)) { //checks if they have perms, from the role or they are channel owner
+  console.log(allPeople[0].id)
+  console.log(msg.author.id)
+  if (!allPeople[0].id == msg.author.id && !msg.member.roles.has(allRoles[0].id)) { //checks if they have perms, from the role or they are channel owner
     msg.reply(config.messages.general.permission_denied)
     return;
   }
@@ -181,8 +182,10 @@ exports.addCmd = function(msg, client, args) { //add someone to the cc
 
     try {
       user.resolve_to_id(element).then(function(user) {
+        console.log(user)
         msg.channel.overwritePermissions(msg.guild.members.get(user), { //everyone specified can see it
-          VIEW_CHANNEL: true
+          VIEW_CHANNEL: true,
+          SEND_MESSAGES: true
         }).catch(function() {
           msg.reply("there was an error adding " + element + " to this cc")
         })
@@ -210,7 +213,8 @@ exports.removeCmd = function(msg, client, args) { //remove someone from the cc
   allRoles = allRoles.filter(function(obj) { //filters for all roles with permission
     return obj.allow == 66560;
   });
-
+  console.log(allPeople[0].id)
+  console.log(msg.author.id)
   if (!allPeople[0].id == msg.author.id || !msg.member.roles.has(allRoles[0].id)) { //checks if they have perms, from the role or they are channel owner
     msg.reply(config.messages.general.permission_denied)
     return;
