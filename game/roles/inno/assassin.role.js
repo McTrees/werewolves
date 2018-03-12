@@ -3,10 +3,10 @@ exports.description = "Can assassinate one player per night, exept the first nig
 
 exports.abilities = {} //Because Javascript
 exports.abilities.assasinate = {
-  timings = {
+  timings : {
     periods : "2",
-    allow_day = false
-  }
+    allow_day : false
+  },
   name: "Assasinate",
   desc: "Assasinate one player. Usable once per night", //TODO: Make timeframe work
   run(game, me, args, cb) {

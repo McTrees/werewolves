@@ -6,9 +6,9 @@ exports.abilities.tell = {
   name: "Tell",
   desc: "Can check which role a player is",
   run(game, me, args, cb) {
-    timings = {
-      periods : "2",
-      allow_day = false
+    timings : {
+      periods : 2,
+      allow_day : false
     }
     game.masters.tell(`Checking the Role of <@${args[0]}`)
     game.u.resolve_to_id(args[0]).then(id=>{
