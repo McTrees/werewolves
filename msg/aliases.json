@@ -1,10 +1,10 @@
 {
   "help": "h",
 
-  "role_info": "r role_info",
+  "role_info": "r roleinfo",
 
   "signup": "u signup",
-  "users":"u signup_all",
+  "users":"u signupall",
 
   "registerglobal":"up registerglobal",
   "profile": "up profile",
