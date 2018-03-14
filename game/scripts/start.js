@@ -2,6 +2,7 @@ const db_fns = require("../db_fns")
 const role_manager = require("../role_manager")
 const utils = require("../../utils")
 const PlayerController = require("../player_controller").PlayerController
+const config = require("../../config")
 
 module.exports = async function(game, id_list) {
   // win teams
@@ -33,4 +34,11 @@ module.exports = async function(game, id_list) {
     }
   })
   // give participant role <-- LAST
+  id_list.forEach(async function(id) {
+    game._client.guilds.get(config.guild_id).fetchMember(id).then(member=>{
+      member.addRole(config.role_ids.participant).then(member=>{
+        member.removeRole(config.role_ids.signed_up)
+      })
+    })
+  })
 }
