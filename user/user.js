@@ -186,7 +186,11 @@ exports.finalise_user = function(client, id, role) {
     userdb.run("update signed_up_users set finalised = 1 where user_id = $id;", {$id:id})
     userdb.run("commit;")
   })
-  
+  client.guilds.get(config.guild_id).fetchMember(id).then(member=>{
+    member.removeRole(config.role_ids.signed_up).then(m=>
+      m.addRole(config.role_ids.participant)
+    )
+  })
 }
 
 exports.any_left_unfinalised = function() {
