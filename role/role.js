@@ -14,6 +14,9 @@ exports.commands.info = function(msg, client, rn) {
 
 exports.commands.list = function(msg, client, rest) {
   role_manager.all_roles_list().then(function(roles) {
-    msg.reply(roles.join("\n"))
+    //msg.reply(roles.join("\n"))
+
+    msg.reply(`**Role List**${roles.map(n=>`\n- \`${n}\` (${role_manager.role(n).name})`)}
+*For info on a specific role, type \`!r info ROLE\`, where ROLE is the internal name of the role*`)
   })
 }
