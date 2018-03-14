@@ -186,6 +186,7 @@ exports.finalise_user = function(id, role) {
     userdb.run("update signed_up_users set finalised = 1 where user_id = $id;", {$id:id})
     userdb.run("commit;")
   })
+  
 }
 
 exports.any_left_unfinalised = function() {
