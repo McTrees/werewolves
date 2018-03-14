@@ -185,7 +185,7 @@ exports.commands.setrole = async function (msg, client, args) {
         msg.reply(`user <@${id}> hasn't signed up! Don't to give them a role, silly. 😏`)
       } else {
         msg.reply(`giving <@${id}> role ${role}`)
-        user.finalise_user(id, role)
+        user.finalise_user(client, id, role)
       }
     }
     setTimeout(()=>{ //delay by 1 sec to allow the database to be updated. it's not perfect but it works

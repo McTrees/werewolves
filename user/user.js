@@ -178,7 +178,7 @@ exports.all_with_role = function(role) {
   });
 }
 
-exports.finalise_user = function(id, role) {
+exports.finalise_user = function(client, id, role) {
   // turns a signed up user into a player with a role
   userdb.serialize(function(){
     userdb.run("begin transaction;")
