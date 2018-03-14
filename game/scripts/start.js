@@ -33,7 +33,8 @@ module.exports = async function(game, id_list) {
       role.game_start(game, player)
     }
   })
-  // give participant role <-- LAST
+
+  // give participant role
   id_list.forEach(async function(id) {
     game._client.guilds.get(config.guild_id).fetchMember(id).then(member=>{
       member.addRole(config.role_ids.participant).then(member=>{
