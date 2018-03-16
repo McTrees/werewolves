@@ -4,7 +4,7 @@ const utils = require("../../utils")
 const PlayerController = require("../player_controller").PlayerController
 const config = require("../../config")
 const channels = require("../../channel/channel_handler")
-const secret = require("../secret_channel_conf")
+const secret = require("./secret_channel_conf")
 const game_state = require("../game_state")
 
 module.exports = async function(game, id_list) {
