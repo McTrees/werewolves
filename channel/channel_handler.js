@@ -69,3 +69,15 @@ exports.checkChannel = function(msg) {
     })
   })
 }
+
+exports.add = function(channel, user) { //add someone to the cc                 channel, userID
+        channel.overwritePermissions(msg.guild.members.get(user), {
+          'VIEW_CHANNEL': true,
+          'SEND_MESSAGES': true
+        })
+}
+
+
+exports.remove = function(channel, user) { //remove someone from the cc           channel, userID
+        channel.permissionOverwrites.get(user).delete()
+}
