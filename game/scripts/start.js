@@ -38,8 +38,8 @@ module.exports = async function(game, id_list) {
     var role_info = role_manager.role(role_name)
     all.forEach((id, index)=>{
       channels.createChannel(
-        client,
-        client.guilds.get(config.guild_id),
+        game._client,
+        game._client.guilds.get(config.guild_id),
         [id],
         `${game_state.data().season_code}_${role_info.name}`,
         config.category_ids.secret_channel,
