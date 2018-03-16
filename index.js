@@ -27,6 +27,7 @@ if(process.argv.indexOf("--reset-data") > -1){
 	utils.warningMessage("Will reset WHOLE database, even the global profiles!");
 	utils.warningMessage("Shut down the bot NOW if you want to prevent that!");
 	utils.warningMessage("You have 10 seconds to shut the bot down!")
+	utils.warningMessage("(Type CTRL+C)")
 	setTimeout(function(){
 		utils.warningMessage("RESETTING ALL DATA!")
 		require("./user/user").init(true)
