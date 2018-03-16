@@ -1,3 +1,7 @@
+// TODO - implement a languages system.
+// Also implement in the same function a way to append personal records. 
+// And whatever else may be needed
+
 const utils = require("../utils.js")
 const sqlite3 = require("sqlite3")
 const userdb = new sqlite3.Database("user/user.db")

@@ -44,7 +44,6 @@ for(i in dirs){dirsF[i] = '`'+dirs[i]+'`'}
 
 **Example:** \`!help u signup\`
 
-
 Possible categories: ` + dirsF.join(", "))
       return
 }

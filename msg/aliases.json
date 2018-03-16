@@ -16,9 +16,9 @@
   "setwins":"up setwins",
   "setrecord":"up setrecord",
 
-  "startPoll": "p startpoll",
-  "endPoll": "p endpoll",
-  "checkPoll": "p checkpoll",
+  "startpoll": "p startpoll",
+  "endpoll": "p endpoll",
+  "checkpoll": "p checkpoll",
   "threaten":"p threaten",
 
   "day":"g day",

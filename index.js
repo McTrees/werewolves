@@ -10,7 +10,6 @@ if (config.developerOptions.remoteErrorReporting == "true") {
 }
 
 const fs = require('fs');
-
 const utils = require('./utils');
 update = true
 reset_data = false;
