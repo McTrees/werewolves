@@ -41,7 +41,7 @@ module.exports = async function(game, id_list) {
         game._client,
         game._client.guilds.get(config.guild_id),
         [id],
-        `${game_state.data().season_code}_${role_info.name}`,
+        `${game_state.data().season_code}-${role_info.name}`,
         config.category_ids.secret_channel,
         role_info.documentation
       )
