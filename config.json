@@ -24,6 +24,10 @@
 		"town_square": "420264108714098699"
 	},
 
+	"category_ids": {
+		"secret_channel": "395967115124932609"
+	},
+
 	"role_ids": {
 		"gameMaster": "414734541614350347",
 		"mayor":"413347795437879297",
