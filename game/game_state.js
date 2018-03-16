@@ -203,7 +203,7 @@ exports.next_day_or_night = function() {
     set_data(data)
 }
 
-exports.is_day = function(n = state.time) {
+exports.is_day = function(n = exports.data().time) {
   // true if n is day time, false if n is night time
   return (n % 2) == 0 // even numbers are day time
 }

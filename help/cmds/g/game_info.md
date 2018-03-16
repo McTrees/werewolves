@@ -1,5 +1,5 @@
 **g game_info**
-Description: Used to query the information of the current game
+Description: Used to query the information of the current game.
 
 Usage: `!g game_info`. This command takes no arguments.
 Example: `!g game_info`

@@ -24,75 +24,78 @@ if (process.argv.indexOf("--debug") > -1) {
 //WARNING - Use this flag only during the testing phase, or if the server is being reset.
 if(process.argv.indexOf("--reset-data") > -1){
 	reset_data = true;
-	utils.warningMessage("Will reset WHOLE database, even the global profiles.");
-	utils.warningMessage("Shut down the bot NOW if you want to prevent that.");
-}
-
-if (process.argv.indexOf("--noupdate") > -1) {
-	update = false; //dont check for updates
-}
-
-// Check for updates
-if (update) {
-	try {
-	checkForUpdate();
-	} catch(err) {
-		utils.errorMessage("Could not check for updates. Please check your internet connection and try again.")
-	}
+	utils.warningMessage("Will reset WHOLE database, even the global profiles!");
+	utils.warningMessage("Shut down the bot NOW if you want to prevent that!");
+	utils.warningMessage("You have 10 seconds to shut the bot down!")
+	setTimeout(function(){
+		utils.warningMessage("RESETTING ALL DATA!")
+		require("./user/user").init(true)
+		require("./game/game_state").init(true)
+		require("./game/db_fns").init(true)
+		utils.warningMessage("DONE")
+	}, 10e3)
 } else {
-    utils.infoMessage("Skipping update check.")
+
+	if (process.argv.indexOf("--noupdate") > -1) {
+		update = false; //dont check for updates
+	}
+
+	// Check for updates
+	if (update) {
+		try {
+		checkForUpdate();
+		} catch(err) {
+			utils.errorMessage("Could not check for updates. Please check your internet connection and try again.")
+		}
+	} else {
+	    utils.infoMessage("Skipping update check.")
+
+	}
+
+	utils.debugMessage("Debug messages enabled.");
+	const token = require('./token').token;
+	utils.debugMessage("Config loaded!");
+
+	utils.debugMessage("Loading external modules...");
+	const discord = require('discord.js');
+	const client = new discord.Client();
+
+	utils.debugMessage("Loaded external modules, loading other modules.");
+	const msg_handler = require("./msg/msg_handler");
+	const failsafes = require("./failsafes");
+	utils.debugMessage("Loaded modules.");
+
+	utils.debugMessage("Running inits:")
+	require("./user/user").init(false)
+	require("./game/game_state").init(false)
+	require("./game/db_fns").init(false)
+	utils.debugMessage("Inits done")
+
+	if (token == 'insert-token-here') {
+		utils.errorMessage("Incorrect login credentials passed! Please edit token.json with your bot's token.", true)
+		process.exit();
+	}
+
+	// this makes unhandled promise rejections a fatal error, not a supressed warning.
+	// this should hopefully make debugging easier
+	// hopefully
+	process.on('unhandledRejection', ball => { throw ball })
+
+	client.on('ready', () => {
+	  utils.successMessage("Logged in!", true);
+	  failsafes(client) // run 'failsafes' module
+	});
+
+	client.on('message', msg => {
+	  msg_handler(msg, client);
+	});
+
+
+	//Now login
+	client.login(token)
+
 
 }
-
-utils.debugMessage("Debug messages enabled.");
-const token = require('./token').token;
-utils.debugMessage("Config and token loaded!");
-
-utils.debugMessage("Loading external modules...");
-const discord = require('discord.js');
-const client = new discord.Client();
-
-utils.debugMessage("Loaded external modules, loading other modules.");
-const msg_handler = require("./msg/msg_handler");
-const failsafes = require("./failsafes");
-utils.debugMessage("Loaded modules.");
-
-utils.debugMessage("Running inits:")
-require("./user/user").init(reset_data)
-require("./game/game_state").init(reset_data)
-require("./game/db_fns").init(reset_data)
-require("./poll/polls.js").init(reset_data);//In order to make sure that polls.json is initialised if it doesn't exist.
-//Actually some of the stuff above is async, so the following message gets printed _before_ inits are actually done
-utils.debugMessage("Inits done.")
-
-if (token == 'insert-token-here') {
-	utils.errorMessage("Incorrect login credentials passed! Please edit token.json with your bot's token.", true)
-	process.exit();
-}
-
-// this makes unhandled promise rejections a fatal error, not a supressed warning.
-// this should hopefully make debugging easier
-// hopefully
-process.on('unhandledRejection', ball => { throw ball })
-
-client.on('ready', () => {
-  utils.successMessage("Logged in!", true);
-  failsafes(client) // run 'failsafes' module
-});
-
-client.on('message', msg => {
-  msg_handler(msg, client);
-});
-
-
-//Now login
-client.login(token)
-
-
-
-
-
-
 // Internals
 
 function checkForUpdate() {

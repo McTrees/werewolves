@@ -3,7 +3,7 @@ fs = require("fs")
 path = require("path")
 
 try {
-  var stats = require("./stats.json")//I changed it because otherwise I get errors
+  var stats = require("./stats")
 } catch(err) {
   utils.warningMessage("Resetting today's stats because erors are fun")
   json = `
@@ -13,7 +13,7 @@ try {
       "CCCreations": 0
   }`
   fs.writeFileSync("./analytics/stats.json", json, 'utf8')
-  var stats = require("./stats.json")//same here
+  var stats = require("./stats")
 }
 
 

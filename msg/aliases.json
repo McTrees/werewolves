@@ -1,31 +1,32 @@
 {
   "help": "h",
 
-  "signup": "u signup",
-  "users":"u signup_all",
-  "signuppoop": "u signup 💩",
+  "role_info": "r roleinfo",
 
-  "register_global":"up register_global",
+  "signup": "u signup",
+  "users":"u signupall",
+
+  "registerglobal":"up registerglobal",
   "profile": "up profile",
 
-  "set_age":"up set_age",
-  "set_gender":"up set_gender",
-  "set_info":"up set_info",
-  "set_games":"up set_games",
-  "set_wins":"up set_wins",
-  "set_record":"up set_record",
+  "setage":"up setage",
+  "setgender":"up setgender",
+  "setinfo":"up setinfo",
+  "setgames":"up setgames",
+  "setwins":"up setwins",
+  "setrecord":"up setrecord",
 
-  "start_poll": "p start_poll",
-  "end_poll": "p end_poll",
-  "check_poll": "p check_poll",
+  "startpoll": "p startpoll",
+  "endpoll": "p endpoll",
+  "checkpoll": "p checkpoll",
   "threaten":"p threaten",
 
   "day":"g day",
   "night":"g night",
-  "info":"g game_info",
+  "info":"g gameinfo",
   "kill":"g kill",
-  "ww_kill":"g kill w",
-  "lynch_kill":"g kill l",
+  "wwkill":"g kill w",
+  "lynchkill":"g kill l",
 
   "ccreate":"c create",
   "cadd":"c add",

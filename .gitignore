@@ -7,6 +7,7 @@ poll/internal_old.js
 game.dat
 cc/cc.json
 game/state.json
+game/kill_queue.json
 *.log
 analytics/stats.json
 channel/channels.json

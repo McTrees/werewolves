@@ -28,6 +28,7 @@ const FILENAMES = {
   p: "../poll/polls.js",
   c: "../cc/ccs.js",
   g: "../game/game.js",
+  r: "../role/role.js"
   //s: "../suggest/suggest.js"
 }
 getAllCommands = function() {
@@ -56,8 +57,15 @@ getAllCommands = function() {
   return commands
 }
 
+String.prototype.replaceAll = function(search, replacement) {
+    var target = this;
+    return target.replace(new RegExp(search, 'g'), replacement);
+};
+
 module.exports = function(msg, client) {
+  msg.content = msg.content.replaceAll("_", "")
   if (msg.author == client.user) {return}; //ignore own messages
+  if (msg.channel.type == "text" && msg.guild.id !== config.guild_id) {return}
   stats.increment("Messages", 1)
   if (msg.content.indexOf(`<@&${config.role_ids.gameMaster}>`) > -1) {
     stats.increment("GMPings", 1)
@@ -110,7 +118,7 @@ module.exports = function(msg, client) {
           } else {
             fail(msg, client, splitMessage)
           }
-        }//?? else { fail(msg, client) }
+        }
       }
     } catch (em_all) {
       msg.reply(`An error occurred...`);
@@ -129,12 +137,11 @@ module.exports = function(msg, client) {
 function fail(msg, client, splitMessage) {
   // invalid command
   if (splitMessage[1]) {
-  msg_cmd = config.bot_prefix + splitMessage[0] + " " + splitMessage[1]
-} else {
-  msg_cmd = config.bot_prefix + splitMessage[0]
-}
+    msg_cmd = config.bot_prefix + splitMessage[0] + " " + splitMessage[1]
+  } else {
+    msg_cmd = config.bot_prefix + splitMessage[0]
+  }
   const all_commands = getAllCommands()
-  didYouMean.threshold = null;
   probablecommand = didYouMean(msg_cmd, all_commands)
   if (probablecommand == null) {
     msg.reply(`\`${msg_cmd}\` is an unknown command.`)

@@ -24,21 +24,21 @@ exports.role = function(name) {
     Object.defineProperty(d, "documentation", {
       get: function() {
         return(
-
 `**${this.name}** (\`${this.id}\`)
 
 ${this.description?this.description:"[no description]"}
-
-${this.long_description?this.long_description:""}`
+${this.long_description?"\n"+this.long_description:""}`
         )
       }
     })
   }
-
   return d
 }
 
 exports.fallback = function(name) {
+  if (typeof name !== "string") {
+    throw new Error("fallback arg needs to be the name of the role!")
+  }
   let res = name.replace(/\w+$/, "defaults.js")
   let data = require(BASE+res)
   return data

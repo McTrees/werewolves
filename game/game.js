@@ -19,6 +19,7 @@ class GameController {
     }
     this.u = user
     this.tags = db_fns.tags
+    this.win_teams = db_fns.win_teams
     this._client = client
     this._gamedb = db_fns._db
     this._userdb = this.u._db
@@ -49,7 +50,7 @@ exports.is_started = function () {
   return game_state.data().state_num > 1
 };
 
-exports.commands.open_signups = function(msg, client) {
+exports.commands.opensignups = function(msg, client) {
   // game state 0->1
   if (game_state.data().state_num !== 0){
     msg.channel.send("This is the wrong game state, buddy!")
@@ -59,7 +60,7 @@ exports.commands.open_signups = function(msg, client) {
   }
 }
 
-exports.commands.game_info = function(msg, client) {
+exports.commands.gameinfo = function(msg, client) {
     utils.debugMessage("Game info command called")
     var data = game_state.data()
     var emb = new discord.RichEmbed()
@@ -72,7 +73,7 @@ exports.commands.game_info = function(msg, client) {
     msg.channel.send(emb)
 }
 
-exports.commands.set_season_info = function(msg, client, args) {
+exports.commands.setseasoninfo = function(msg, client, args) {
     utils.debugMessage("Set season info command called")
     game_state.set_season_code(args[0])
     game_state.set_season_name(args.slice(1).join(" "))
@@ -83,7 +84,7 @@ exports.commands.tag = function(msg, client, args) {
   if (game_state.data().state_num !== 4){
     msg.reply("a game is not in progress")
   } else {
-    utils.debugMessage(`tag command: ${msg.content}}`)
+    utils.debugMessage(`tag command: ${msg.content}`)
     var subcommand = args[0]
     switch (subcommand) {
       case "add":
@@ -104,7 +105,7 @@ exports.commands.tag = function(msg, client, args) {
           db_fns.tags.remove_tag(id, args[2])
         })
         break
-      case "all_with":
+      case "allwith":
         if (args.length !== 2) {
           msg.reply("wrong syntax!")
           return
@@ -114,7 +115,7 @@ exports.commands.tag = function(msg, client, args) {
 ${list.map(id=>`- <@${id}>`).join("\n")}`)
         })
         break
-      case "all_of":
+      case "allof":
         if (args.length !== 2) {
           msg.reply("wrong syntax!")
           return
@@ -131,7 +132,7 @@ ${list.map(tag=>`- \`${tag}\``).join("\n")}`)
   }
 }
 
-exports.commands.start_season = function (msg, client) {
+exports.commands.startseason = function (msg, client) {
   // game state 1 -> 2
   // start a new season
   if (game_state.data().state_num !== 1) {
@@ -155,12 +156,12 @@ function startgame(client) {
       gm_confirm = client.channels.get(config.channel_ids.gm_confirm)
       gm_confirm.send(`Signed up users: ${asu.map(id=>`\n- <@${id.user_id}>`)}`)
       gm_confirm.send(`Valid roles: ${VALID_ROLES.map(n=>`\n- \`${n}\` (${role_manager.role(n).name})`)}`)
-      gm_confirm.send("For every user, please say `!g set_role @mention ROLE`, where ROLE is any of " + VALID_ROLES)
+      gm_confirm.send("For every user, please say `!g set_role @mention ROLE`")
     })
   })
 }
 
-exports.commands.set_role = async function (msg, client, args) {
+exports.commands.setrole = async function (msg, client, args) {
   // game state 2 only
   if (args.length !== 2) {
     msg.reply("invalid syntax!")
@@ -184,7 +185,7 @@ exports.commands.set_role = async function (msg, client, args) {
         msg.reply(`user <@${id}> hasn't signed up! Don't to give them a role, silly. 😏`)
       } else {
         msg.reply(`giving <@${id}> role ${role}`)
-        user.finalise_user(id, role)
+        user.finalise_user(client, id, role)
       }
     }
     setTimeout(()=>{ //delay by 1 sec to allow the database to be updated. it's not perfect but it works
@@ -201,7 +202,7 @@ exports.commands.set_role = async function (msg, client, args) {
   }
 }
 
-exports.commands.send_roles = async function(msg, client) {
+exports.commands.sendroles = async function(msg, client) {
   // game state 2->3
   if (game_state.data().state_num !== 2){
     msg.reply("the sign-up is currently open, or a game is not being set up.\nI'm sorry for the inconvenience!")
@@ -239,7 +240,7 @@ We hope you are happy with the role you gained, and we hope you'll enjoy the gam
 Good luck... :full_moon:
 
 
-Do you not understand your role? Don't worry! Use the command \`~rm roleinfo ROLE\` for an explanation.
+Do you not understand your role? Don't worry! Use the command \`!r info ROLE\` for an explanation. *(For example: \`!r info inno/basic\`)*
 You can (hopfully) use commands in this Direct Message!`
           u.send(str).catch(e=>{
             if (e.message == 'Cannot send messages to this user') {
@@ -260,6 +261,7 @@ exports.commands.begin = async function(msg, client) {
   if (game_state.data().state_num !== 3 ){
     msg.reply("this is the wrong game state for that, buddy.")
   } else {
+    scripts.start(new GameController(client), (await user.all_alive()).map(r=>r.id)) // why is this id and not user_id
     msg.reply("😁, the game actually started, yay!")
     game_state.set_state_num(4)
   }
@@ -277,6 +279,7 @@ exports.commands.day = async function(msg, client) {
   } else {
     game_state.next_day_or_night()
     execute_kill_q(msg, client)
+    day_and_night(msg, client)
     msg.reply(`[👍] It is now ${game_state.nice_time(d.time)}!`)
     stats = require("../analytics/analytics.js").get_stats()
     msg.reply(`**Today's Stats:**\n - ${stats.Messages} messages were sent!\n - The Game Masters were pinged ${stats.GMPings} times!\n - ${stats.CCCreations} Conspiracy Channels were created!`)
@@ -294,8 +297,33 @@ exports.commands.night = async function(msg, client) {
   } else {
     game_state.next_day_or_night()
     execute_kill_q(msg, client)
+    day_and_night(msg, client)
     msg.reply(`[👍] It is now ${game_state.nice_time(d.time)}!`)
   }
+}
+
+async function day_and_night(msg, client) {
+  // check wins:
+  var all_o = await user.all_alive()
+  var all = all_o.map(row=>row.id)
+  var number_left = all.length
+  utils.debugMessage(`day_and_night users ${all} num ${number_left}`)
+  all.forEach(async function(user) {
+    var player = new PlayerController(user)
+    var role = role_manager.role(await player.role)
+    if (role.win_teams && role.win_teams.wins_with) {
+      if (await db_fns.win_teams.all_have_win_team(number_left, role.win_teams.wins_with)) {
+        msg.reply(`${player} has won!!!`)
+      }
+    } else {
+      var fb = role_manager.fallback(await player.role)
+      if (fb.win_teams && fb.win_teams.wins_with) {
+        if (await db_fns.win_teams.all_have_win_team(number_left, fb.win_teams.wins_with)) {
+          msg.reply(`${player} has won!!!`)
+        }
+      }
+    }
+  })
 }
 
 exports.commands.kill = async function(msg, client, args) {
