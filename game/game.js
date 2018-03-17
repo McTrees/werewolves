@@ -392,7 +392,7 @@ async function kill(who, why, client) {
     // so we should use the fallback
     did_they_die = role_manager.fallback(their_role).on_death(kill_desc, game, me)
   }
-  if (did_they_die){
+  if (did_they_die) {
     set_dead(who, client)
   }
 }
