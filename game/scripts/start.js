@@ -47,6 +47,22 @@ module.exports = async function(game, id_list) {
       )
     })
   })
+  Object.keys(secret.all).forEach(async ch_name=>{
+    var role_name_list = secret.all[ch_name].roles
+    var ids = role_name_list.map(role_name=>game.u.all_with_role(role_name))
+    Promise.all(ids).then(ids_got=>{
+      // I'm not quite sure how this works but it flattens the list
+      flattened_ids = [].concat.apply([], ids_got)
+      channels.createChannel(
+        game._client,
+        game._client.guilds.get(config.guild_id),
+        flattened_ids,
+        `${game_state.data().season_code}-${ch_name}`,
+        config.category_ids.secret_channel,
+        secret.all[ch_name].message
+      )
+    })
+  })
 
   // do game_start for all roles that have one
   id_list.forEach(async function(id) {
