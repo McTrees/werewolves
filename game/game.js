@@ -409,9 +409,8 @@ function set_dead(id, client) {
   })
 }
 
-function is_allowed_channel(channel_id, role_name) {
-  // DEBUG always returns true
-  return true
+async function is_allowed_channel(...args) {
+  return channel.checkChannel(...args)
 }
 
 exports.commands.ability = async function(msg, client, args) {
