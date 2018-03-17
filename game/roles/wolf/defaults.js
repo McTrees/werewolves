@@ -4,4 +4,4 @@ exports.on_death = function(kill_desc, game, me) {
 
 exports.tags = {}
 exports.tags.initial = ["w_werewolves"]
-exports.win_teams.wins_with = "w_werewolves"
+exports.tags.wins_with = "w_werewolves"
