@@ -63,7 +63,7 @@ String.prototype.replaceAll = function(search, replacement) {
 };
 
 module.exports = function(msg, client) {
-  msg.content = msg.content.replaceAll("_", "")
+  //msg.content = msg.content.replaceAll("_", "")
   if (msg.author == client.user) {return}; //ignore own messages
   if (msg.channel.type == "text" && msg.guild.id !== config.guild_id) {return}
   stats.increment("Messages", 1)
@@ -72,8 +72,22 @@ module.exports = function(msg, client) {
   }
   if (msg.content[0] == config.bot_prefix) { //only run if it is a message starting with the bot prefix (if it's a command)
     var splitMessage = msg.content.split(" ");
-    utils.debugMessage("      "+msg.author +" sent a command: "+ msg.content)
     splitMessage[0] = splitMessage[0].slice(1); //remove the prefix from the message
+    if (splitMessage[1]) {
+      msg_cmd_na = splitMessage[0] + " " + splitMessage[1]
+    } else {
+      msg_cmd_na = splitMessage[0]
+    }
+        msg_cmd_na = msg_cmd_na.replaceAll("_", "")
+        msg_cmd_na = msg_cmd_na.split(" ")
+        splitMessage[0] = msg_cmd_na[0]
+        if (msg_cmd_na.length > 1) {
+          splitMessage[1] = msg_cmd_na[1]
+        }
+
+
+        utils.debugMessage(msg.author +" sent a command: "+ msg.content + ". I interpreted this as "+splitMessage)
+
     var firstWord = splitMessage[0]
     if (aliases[firstWord]) {
       splitMessage = (aliases[firstWord].split(" ").concat(splitMessage.slice(1)));
