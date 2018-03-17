@@ -168,6 +168,11 @@ exports.set_role = function(id, role) {
   userdb.run("replace into players (user_id, role) values ($id, $role);", {$id:id,$role:role})
 }
 
+exports.set_alive = function(id, alive) {
+  utils.debugMessage(`setting ${id}'s aliveness to ${alive}`)
+  userdb.run("replace into players (user_id, alive) values ($id, $alive)", {$id:id,$alive:alive})
+}
+
 exports.all_with_role = function(role) {
   return new Promise(function(resolve, reject) {
     utils.debugMessage(`getting all players with role ${role}`)
