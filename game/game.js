@@ -19,7 +19,6 @@ class GameController {
     }
     this.u = user
     this.tags = db_fns.tags
-    this.win_teams = db_fns.win_teams
     this._client = client
     this._gamedb = db_fns._db
     this._userdb = this.u._db

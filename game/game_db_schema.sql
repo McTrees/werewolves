@@ -1,7 +1,6 @@
 BEGIN TRANSACTION;
 DROP TABLE IF EXISTS player_tags;
 DROP TABLE IF EXISTS love;
-DROP TABLE IF EXISTS win_teams;
 DROP TABLE IF EXISTS ability_timings;
 
 CREATE TABLE player_tags (
