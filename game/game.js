@@ -312,14 +312,14 @@ async function day_and_night(msg, client) {
   all.forEach(async function(user) {
     var player = new PlayerController(user)
     var role = role_manager.role(await player.role)
-    if (role.win_teams && role.win_teams.wins_with) {
-      if (await db_fns.win_teams.all_have_win_team(number_left, role.win_teams.wins_with)) {
+    if (role.tags && role.tags.wins_with) {
+      if (await db_fns.tags.all_have_tag(number_left, role.tags.wins_with)) {
         msg.reply(`${player} has won!!!`)
       }
     } else {
       var fb = role_manager.fallback(await player.role)
-      if (fb.win_teams && fb.win_teams.wins_with) {
-        if (await db_fns.win_teams.all_have_win_team(number_left, fb.win_teams.wins_with)) {
+      if (fb.tags && fb.tags.wins_with) {
+        if (await db_fns.tags.all_have_tag(number_left, fb.tags.wins_with)) {
           msg.reply(`${player} has won!!!`)
         }
       }
