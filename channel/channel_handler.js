@@ -12,7 +12,10 @@ function writedata(data) { //function writes ccconf (odbj) to cc.json
   })
 }
 
-exports.createChannel = function(client, guild, ids, name, category, message) { //client, guild, array of the ids of players to add, the name of the channel, the cartegory to go in (id), message to be sent in that channel
+exports.createChannel = function(client, guild, ids, name, category, message) {
+  //client, guild, array of the ids of players to add, ...
+  // the name of the channel, the cartegory to go in (id), ...
+  // message to be sent in that channel
   fs.readFile('./channel/channels.json', {
     encoding: 'utf-8'
   }, function(err, data) { //read cc.json to ccconfig
@@ -65,4 +68,16 @@ exports.checkChannel = function(msg) {
       }
     })
   })
+}
+
+exports.add = function(channel, user) { //add someone to the cc                 channel, userID
+        channel.overwritePermissions(msg.guild.members.get(user), {
+          'VIEW_CHANNEL': true,
+          'SEND_MESSAGES': true
+        })
+}
+
+
+exports.remove = function(channel, user) { //remove someone from the cc           channel, userID
+        channel.permissionOverwrites.get(user).delete()
 }

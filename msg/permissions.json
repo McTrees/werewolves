@@ -8,9 +8,13 @@
 		"g day",
 		"g night",
 		"g tag",
-		"up setgames",
-		"up setwins",
-		"up setrecord",
-		"g begin"
+		"g begin",
+		"up set_games",
+		"up set_wins",
+		"up set_record",
+		"p start_poll",
+		"p check_poll",
+		"p end_poll",
+		"p threaten"
 	]
 }

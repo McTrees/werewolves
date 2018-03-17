@@ -62,7 +62,7 @@ exports.commands.signup = function (msg, client, content) {
           // already in use
           msg.channel.send(`Sorry but <@${id}> is already using that emoji!`)
         }).catch(()=>{
-          addUser(msg.author.id, utils.toBase64(content[0])).then(old=>{
+          addUser(client, msg.author.id, utils.toBase64(content[0])).then(old=>{
             if (old) {
               msg.channel.send(`<@${msg.author.id}>'s emoji changed from ${utils.fromBase64(old)} to ${content[0]}`)
             } else {
@@ -178,7 +178,7 @@ exports.all_with_role = function(role) {
   });
 }
 
-exports.finalise_user = function(id, role) {
+exports.finalise_user = function(client, id, role) {
   // turns a signed up user into a player with a role
   userdb.serialize(function(){
     userdb.run("begin transaction;")
@@ -186,6 +186,7 @@ exports.finalise_user = function(id, role) {
     userdb.run("update signed_up_users set finalised = 1 where user_id = $id;", {$id:id})
     userdb.run("commit;")
   })
+  // they didn't want the participant role to be added here.
 }
 
 exports.any_left_unfinalised = function() {
@@ -239,7 +240,7 @@ exports.resolve_to_id = function(str) {
 
 // moved from db_fns.js
 
-function addUser(id, emoji) {
+function addUser(client, id, emoji) {
   // if no one else is using that emoji, sign them up
   // or change their emoji
   // returns promise:
@@ -261,6 +262,7 @@ function addUser(id, emoji) {
         //not signed up, wants to.
         utils.debugMessage("User wants to sign up and not replace an emoji");
         userdb.run("insert into signed_up_users (user_id, emoji) values (?, ?)", [id, emoji], ()=>{
+          client.guilds.get(config.guild_id).fetchMember(id).then(member=>member.addRole(config.role_ids.signed_up))
           resolve()
         })
       })
