@@ -403,8 +403,11 @@ function set_dead(id, client) {
   ch.send(`<@${id}> is dead!`)
   ch.guild.fetchMember(id).then(m=>{
     if (m) {
-      m.addRole(config.role_ids.dead)
-      //TODO remove living role
+      m.removeRole(config.role_ids.participant).then(m=>
+        m.addRole(config.role_ids.dead).then(m=>
+          user.set_alive(id, false)
+        )
+      )
     }
   })
 }
