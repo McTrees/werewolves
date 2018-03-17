@@ -1,2 +1,2 @@
 exports.name = "Baker"
-exports.description = "Knows who all the other bakers are"
+exports.description = "All bakers are innocent, and all bakers know who the other bakers are."
