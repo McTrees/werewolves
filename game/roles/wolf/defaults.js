@@ -2,6 +2,6 @@ exports.on_death = function(kill_desc, game, me) {
   return true
 }
 
-exports.win_teams = {}
-exports.win_teams.starts_on = ["werewolves"]
-exports.win_teams.wins_with = "werewolves"
+exports.tags = {}
+exports.tags.initial = ["w_werewolves"]
+exports.win_teams.wins_with = "w_werewolves"
