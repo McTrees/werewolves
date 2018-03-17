@@ -43,13 +43,6 @@ const scripts = {
   start: require("./scripts/start")
 }
 
-exports.is_started = function () {
-  // decides if a game is currently in progress.
-  // TODO: replace all uses of this with the proper one
-  // DEPRECIATED:: DON'T USE THIS!!!
-  return game_state.data().state_num > 1
-};
-
 exports.commands.opensignups = function(msg, client) {
   // game state 0->1
   if (game_state.data().state_num !== 0){
