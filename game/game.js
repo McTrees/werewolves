@@ -389,7 +389,8 @@ async function day_and_night(msg, client) {
   var all_player_ids = all_rows.map(row=>row.id)
   var number_left = all_rows.length
   utils.debugMessage(`day_and_night users ${all_player_ids} num ${number_left}`)
-  Promise.all(all_player_ids.map(async function(user) {
+  setTimeout(function(){
+    Promise.all(all_player_ids.map(async function(user) {
     var player = new PlayerController(user)
     var role = role_manager.role(await player.role)
     if (role.tags && role.tags.wins_with) {
@@ -403,8 +404,10 @@ async function day_and_night(msg, client) {
   })).then(data=>{
     // we now have something like [ {id:id, won:won}, {id:id, won:won}, ... ]
     winners = data.filter(item=>item.won)
-    console.log(winners)
-  })
+    if (winners !== []) {
+      new GameController(client).win(winners)
+    }
+  })}, 2e3)
 }
 /*
 ██   ██ ██ ██      ██           ██████ ███    ███ ██████
