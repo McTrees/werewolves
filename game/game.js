@@ -385,25 +385,25 @@ exports.commands.night = async function(msg, client) {
 
 async function day_and_night(msg, client) {
   // check wins:
-  var all_o = await user.all_alive()
-  var all = all_o.map(row=>row.id)
-  var number_left = all.length
-  utils.debugMessage(`day_and_night users ${all} num ${number_left}`)
-  all.forEach(async function(user) {
+  var all_rows = await user.all_alive()
+  var all_player_ids = all_rows.map(row=>row.id)
+  var number_left = all_rows.length
+  utils.debugMessage(`day_and_night users ${all_player_ids} num ${number_left}`)
+  Promise.all(all_player_ids.map(async function(user) {
     var player = new PlayerController(user)
     var role = role_manager.role(await player.role)
     if (role.tags && role.tags.wins_with) {
-      if (await db_fns.tags.all_have_tag(number_left, role.tags.wins_with)) {
-        msg.reply(`${player} has won!!!`)
-      }
+      return ({id:user, won: await db_fns.tags.all_have_tag(number_left, role.tags.wins_with)})
     } else {
       var fb = role_manager.fallback(await player.role)
       if (fb.tags && fb.tags.wins_with) {
-        if (await db_fns.tags.all_have_tag(number_left, fb.tags.wins_with)) {
-          msg.reply(`${player} has won!!!`)
-        }
+        return ({id:user, won: await db_fns.tags.all_have_tag(number_left, fb.tags.wins_with)})
       }
     }
+  })).then(data=>{
+    // we now have something like [ {id:id, won:won}, {id:id, won:won}, ... ]
+    winners = data.filter(item=>item.won)
+    console.log(winners)
   })
 }
 /*
