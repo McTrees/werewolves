@@ -33,7 +33,6 @@ if(process.argv.indexOf("--reset-data") > -1){
 		require("./user/user").init(true)
 		require("./game/game_state").init(true)
 		require("./game/db_fns").init(true)
-		utils.warningMessage("DONE")
 		require("./channel/channel_handler").init(true)
 	}, 10e3)
 } else {
