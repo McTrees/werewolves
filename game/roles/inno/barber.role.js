@@ -7,7 +7,7 @@ exports.abilities.kill = {
   desc: "kill one player.",
   timings : {
     allow_night : false
-  }
+  },
   run(game, me, args, cb) {
     game.masters.tell(`Barber-killing <@${args[0]}`)
     game.u.resolve_to_id(args[0]).then(id=>{
