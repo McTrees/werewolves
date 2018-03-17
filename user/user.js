@@ -165,12 +165,12 @@ exports.get_role = function(id) {
 exports.set_role = function(id, role) {
   // sets a users role
   utils.debugMessage(`setting ${id}'s role to ${role}`)
-  userdb.run("replace into players (user_id, role) values ($id, $role);", {$id:id,$role:role})
+  userdb.run("update players set role = $role where id = $id;", {$id:id,$role:role})
 }
 
 exports.set_alive = function(id, alive) {
   utils.debugMessage(`setting ${id}'s aliveness to ${alive}`)
-  userdb.run("replace into players (user_id, alive) values ($id, $alive)", {$id:id,$alive:alive})
+  userdb.run("update players set alive = $alive where id = $id", {$id:id,$alive:alive})
 }
 
 exports.all_with_role = function(role) {
