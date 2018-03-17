@@ -76,7 +76,7 @@ exports.init = function(reset) {
             utils.infoMessage(`game state is currently '${nice_names[pdata.state_num]}' (#${pdata.state_num}) `)
           } else {
             // bad
-            throw "out of range"
+            throw new Error("out of range")
           }
         } catch(e) {
           // oh no, the json file isn't valid!
