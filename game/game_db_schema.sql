@@ -3,6 +3,7 @@ DROP TABLE IF EXISTS player_tags;
 DROP TABLE IF EXISTS love;
 DROP TABLE IF EXISTS ability_timings;
 
+
 CREATE TABLE player_tags (
   user_id char(21) not null,
   tag_name varchar(18) not null
