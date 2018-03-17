@@ -366,7 +366,7 @@ exports.commands.night = async function(msg, client) {
     return
   }
   var d = game_state.data()
-  if (game_state.is_day(d.time)) {
+  if (!game_state.is_day(d.time)) {
     msg.reply("it's already night time! In particular, it's currently "+game_state.nice_time(d.time)+".")
   } else {
     game_state.next_day_or_night()
