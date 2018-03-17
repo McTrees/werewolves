@@ -12,6 +12,23 @@ function writedata(data) { //function writes ccconf (odbj) to cc.json
   })
 }
 
+exports.init = function(reset) {
+  if (!reset) {
+    // normal bot startup. create the file if it is not there.
+    if (!fs.existsSync("channel/channels.json")) {
+      // better create it!
+      utils.warningMessage("secret channel file not found - creating a new one.")
+      fs.closeSync(fs.openSync("channel/channels.json", 'w'));
+    }
+  } else {
+    // we need to reset it
+    utils.warningMessage("resetting secret channel file")
+    fs.writeFile("channel/channels.json", "{}", function(err) {
+      if (err) {throw err;}
+    })
+  }
+}
+
 exports.createChannel = function(client, guild, ids, name, category, message) {
   //client, guild, array of the ids of players to add, ...
   // the name of the channel, the cartegory to go in (id), ...
