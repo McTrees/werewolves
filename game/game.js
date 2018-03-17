@@ -1,6 +1,7 @@
 const events = require("events")
 const config = require("../config")
 const fs = require("fs")
+const channel = require("../channel/channel_handler")
 const user = require("../user/user.js")
 const discord = require("discord.js")
 const admin = require("../admin/admin")
