@@ -69,20 +69,14 @@ exports.createChannel = function(client, guild, ids, name, category, message) {
 
 
 
-exports.checkChannel = function(msg) {
-  fs.readFile('./channel/channels.json', {
-    encoding: 'utf-8'
-  }, function(err, data) {
-    if (err) throw err;
-    data = JSON.parse(data);
-    user.get_role(msg.member.id).then(function(role) {
-      id = msg.channel.id
-      actualId = data[role]
-      if (actualId == id) {
-        return (true);
-      } else {
-        return (false);
-      }
+exports.checkChannel = function(channel_id, role_name) {
+  return new Promise(function(resolve, reject) {
+    fs.readFile('./channel/channels.json', {
+      encoding: 'utf-8'
+    }, function(err, data) {
+      if (err) throw err;
+      data = JSON.parse(data);
+      resolve(data[role_name] == channel_id)
     })
   })
 }
