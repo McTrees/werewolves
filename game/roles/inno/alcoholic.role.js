@@ -4,7 +4,7 @@ exports.name = "Alcoholic"
 exports.description = "Can only talk in the tavern."
 
 exports.game_start = function(game,me) {
-  var guild = game.guild
+  var guild = game._client.guilds.get(config.guild_id)
   guild.channels.find("id", config.channel_ids.town_square).overwritePermissions(guild.fetchMember(me.user_id), {
     'SEND_MESSAGES': false,
   })
