@@ -241,7 +241,8 @@ Good luck... :full_moon:
 
 
 Do you not understand your role? Don't worry! Use the command \`!r info ROLE\` for an explanation. *(For example: \`!r info inno/basic\`)*
-You can (hopfully) use commands in this Direct Message!`
+You can use commands in this Direct Message.
+If you need help, don't ask me - I'm just a dumb robot. Ping the Game Masters in the actual server - they'll be happy to help.`
           u.send(str).catch(e=>{
             if (e.message == 'Cannot send messages to this user') {
               msg.reply(`user <@${id}> has DMs disabled!`)
