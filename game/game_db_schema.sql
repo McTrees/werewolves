@@ -14,11 +14,6 @@ CREATE TABLE love (
   affected_id char(21) not null
 );
 
-CREATE TABLE win_teams (
-  user_id char(21) not null,
-  team varchar(18) not null
-);
-
 CREATE TABLE ability_timings (
   user_id char(21) not null,
   ability_name char(21) not null,
