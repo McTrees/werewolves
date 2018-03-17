@@ -42,6 +42,11 @@ class GameController {
     var r = l.map(i=>this.player(i))
     return r
   }
+  win(id_list) {
+    this.masters.send(`I believe some players have won @here! I think that
+- ${id_list.join("\n -")}
+have all won! I could be wrong though! So I purposefully haven't done anything.`)
+  }
 }
 
 const scripts = {
