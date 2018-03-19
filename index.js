@@ -34,6 +34,7 @@ if(process.argv.indexOf("--reset-data") > -1){
 		require("./game/game_state").init(true)
 		require("./game/db_fns").init(true)
 		require("./channel/channel_handler").init(true)
+		require("./analytics/analytics").reset_data(reset_data)
 	}, 10e3)
 } else {
 
