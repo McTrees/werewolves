@@ -444,7 +444,16 @@ exports.commands.kill = async function(msg, client, args) {
                                    ▀▀
 */
 
+
+function get_kq() {
+  return require("./kill_queue.json")
+}
+function write_kq(toWrite) {
+  fs.writeFileSync("./game/kill_queue.json", JSON.stringify(toWrite))
+}
 async function add_to_kill_q(who, why, client) {
+  var kill_q = get_kq()
+  utils.debugMessage("Got QK as " + kill_q)
   if (typeof kill_q == 'undefined') {
     kill_q = []
   }
@@ -452,14 +461,16 @@ async function add_to_kill_q(who, why, client) {
     who: who,
     why: why
   })
+  write_kq(kill_q)
   utils.debugMessage("First item in Kill Q is now:" + kill_q[0].who + ":" + kill_q[0].why)
 }
 
 async function execute_kill_q(msg, client) {
+  var kill_q = get_kq()
   if (typeof kill_q == 'undefined') {
     kill_q = []
   }
-  if (kill_q === []) {
+  if (kill_q == []) {
     msg.reply("Nobody was killed, the Queue was empty.")
     return //No need to bother executing anything
   }
@@ -469,6 +480,7 @@ async function execute_kill_q(msg, client) {
     kill(death.who, death.why, client)
   })
   kill_q = []
+  write_kq(kill_q)
   msg.reply("Finished executing Kill Queue")
 }
 /*
