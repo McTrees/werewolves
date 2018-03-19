@@ -17,10 +17,11 @@ if (!fs.existsSync(STATS_PATH)) {
 
 
 exports.reset_data = function(confirm) {
-  utils.infoMessage("Resetting stats")
-  fs.writeFileSync(STATS_PATH, DEFAULTS, 'utf8')
+  if (confirm) {
+    utils.infoMessage("Resetting stats")
+    fs.writeFileSync(STATS_PATH, DEFAULTS, 'utf8')
+  }
 }
-
 exports.increment = function(thing, amount) {
   var stats_r = fs.readFileSync(STATS_PATH)
   var stats = JSON.parse(stats_r)
