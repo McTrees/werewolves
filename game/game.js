@@ -350,6 +350,7 @@ exports.commands.day = async function(msg, client) {
     msg.reply(`[👍] It is now ${game_state.nice_time(d.time)}!`)
     stats = require("../analytics/analytics.js").get_stats()
     msg.reply(`**Today's Stats:**\n - ${stats.Messages} messages were sent!\n - The Game Masters were pinged ${stats.GMPings} times!\n - ${stats.CCCreations} Conspiracy Channels were created!`)
+    require("../analytics/analytics.js").reset_data(true)
   }
 }
 /*
