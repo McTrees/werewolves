@@ -53,14 +53,16 @@ module.exports = async function(game, id_list) {
     Promise.all(ids).then(ids_got=>{
       // I'm not quite sure how this works but it flattens the list
       flattened_ids = [].concat.apply([], ids_got)
-      channels.createChannel(
-        game._client,
-        game._client.guilds.get(config.guild_id),
-        flattened_ids,
-        `${game_state.data().season_code}-${ch_name}`,
-        config.category_ids.secret_channel,
-        secret.all[ch_name].message
-      )
+      if (flattened_ids !== []) {
+        channels.createChannel(
+          game._client,
+          game._client.guilds.get(config.guild_id),
+          flattened_ids,
+          `${game_state.data().season_code}-${ch_name}`,
+          config.category_ids.secret_channel,
+          secret.all[ch_name].message
+        )
+      }
     })
   })
 
