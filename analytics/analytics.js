@@ -2,28 +2,32 @@ utils = require("../utils")
 fs = require("fs")
 path = require("path")
 
-try {
-  var stats = require("./stats")
-} catch(err) {
-  utils.warningMessage("Resetting today's stats because erors are fun")
-  json = `
-  {
-      "Messages": 0,
-      "GMPings": 0,
-      "CCCreations": 0
-  }`
-  fs.writeFileSync("./analytics/stats.json", json, 'utf8')
-  var stats = require("./stats")
+const STATS_PATH = "./analytics/stats.json"
+const DEFAULTS = JSON.stringify(
+{
+    "Messages": 0,
+    "GMPings": 0,
+    "CCCreations": 0
+})
+
+if (!fs.existsSync(STATS_PATH)) {
+  utils.warningMessage("Resetting stats on startup")
+  fs.writeFileSync(STATS_PATH, DEFAULTS, 'utf8')
 }
 
 
-exports.increment = function(thing, amount) {
+exports.reset_data = function(confirm) {
+  utils.infoMessage("Resetting stats")
+  fs.writeFileSync(STATS_PATH, DEFAULTS, 'utf8')
+}
 
+exports.increment = function(thing, amount) {
+  var stats_r = fs.readFileSync(STATS_PATH)
+  var stats = JSON.parse(stats_r)
   stats[thing] = stats[thing] + amount
-  //utils.debugMessage("Incrementing " + thing + ": Got " + stats[thing])
-  fs.writeFileSync( path.resolve( __dirname, "./stats.json" ) , JSON.stringify(stats), 'utf8'); // write it back
+  fs.writeFileSync(STATS_PATH , JSON.stringify(stats), 'utf8'); // write it back
 }
 
 exports.get_stats = function() {
-  return stats;
+  return JSON.parse(fs.readFileSync(STATS_PATH))
 }
