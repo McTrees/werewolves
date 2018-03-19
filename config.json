@@ -40,9 +40,9 @@
 	"developerOptions": {
 		"showErrorsToDevs": "true",
 		"showErrorsToUsers": "false",
-		"logDebugMessages": "true",
+		"logDebugMessages": "false",
 		"logOtherMessages": "true",
 		"saveLogFiles": "false",
-		"remoteErrorReporting": "false"
+		"remoteErrorReporting": "true"
 	}
 }
