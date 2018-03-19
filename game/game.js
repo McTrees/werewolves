@@ -426,6 +426,15 @@ exports.commands.kill = async function(msg, client, args) {
     msg.reply("wrong syntax!")
   } else {
     var stupid_hack = true
+    /*
+    Stupid hacks - BenTechy66 2018 - To be sung to the tune of 'stupid deaths' from 'Horrible Histories'
+
+    Stupid hacks, stupid hacks
+    they're shitty but they work (He Heeeee~)
+    
+    stupid hacks, stupid hacks
+    these lines are wasting space (Hoo Hooooo~)
+    */
     var dead_person_id = await user.resolve_to_id(args[1]).catch(function(error) {
       msg.reply("Incorrect syntax / person to be killed! Syntax is: `g kill <why> <@who>`. for example, `g kill w @BenTechy66#8809`")
       stupid_hack = false
