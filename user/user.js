@@ -132,7 +132,7 @@ exports.all_signed_up = function() {
 exports.all_alive = function() {
   // promise of all alive users and their emojis
   return new Promise(function(resolve, reject) {
-    userdb.all("select p.user_id id, s.emoji emoji from players as p inner join signed_up_users as s on p.user_id = s.user_id", [], function(err, rows){
+    userdb.all("select p.user_id id, s.emoji emoji from players as p inner join signed_up_users as s on p.user_id = s.user_id and p.alive = 1;", [], function(err, rows){
       if (err) { throw err }
       else{
         resolve(rows)
@@ -165,7 +165,12 @@ exports.get_role = function(id) {
 exports.set_role = function(id, role) {
   // sets a users role
   utils.debugMessage(`setting ${id}'s role to ${role}`)
-  userdb.run("replace into players (user_id, role) values ($id, $role);", {$id:id,$role:role})
+  userdb.run("update players set role = $role where user_id = $id;", {$id:id,$role:role})
+}
+
+exports.set_alive = function(id, alive) {
+  utils.debugMessage(`setting ${id}'s aliveness to ${alive}`)
+  userdb.run("update players set alive = $alive where user_id = $id", {$id:id,$alive:alive})
 }
 
 exports.all_with_role = function(role) {

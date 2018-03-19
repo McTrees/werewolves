@@ -8,20 +8,20 @@ const secret = require("./secret_channel_conf")
 const game_state = require("../game_state")
 
 module.exports = async function(game, id_list) {
-  // win teams
-  utils.debugMessage("Assigning win teams...")
+  // start tags
+  utils.debugMessage("Assigning starting tags")
   id_list.forEach(async function(id) {
     var player = game.player(id)
     var role = role_manager.role(await (player.role))
-    if (role.win_teams && Array.isArray(role.win_teams.starts_on)) {
-      role.win_teams.starts_on.forEach(tm=>{
-        db_fns.win_teams.add_win_team(pl.id, tm)
+    if (role.tags && Array.isArray(role.tags.initial)) {
+      role.tags.initial.forEach(tag=>{
+        db_fns.tags.add_tag(pl.id, tag)
       })
     } else {
       var fb_role = role_manager.fallback(await (player.role))
-      if (fb_role.win_teams && Array.isArray(fb_role.win_teams.starts_on)) {
-        fb_role.win_teams.starts_on.forEach(team=>{
-          db_fns.win_teams.add_win_team(player.id, team)
+      if (fb_role.tags && Array.isArray(fb_role.tags.initial)) {
+        fb_role.tags.initial.forEach(tag=>{
+          db_fns.tags.add_tag(player.id, tag)
         })
       }
     }

@@ -58,7 +58,6 @@ exports.tags.all_tags_of = function(id) {
     })
   })
 }
-
 exports.tags.all_with_tag = function(tag) {
   utils.debugMessage(`geting all people with tag ${tag}`)
   return new Promise(function(resolve, reject) {
@@ -69,31 +68,10 @@ exports.tags.all_with_tag = function(tag) {
     })
   })
 }
-
-exports.win_teams = {}
-exports.win_teams.add_win_team = function(id, team) {
-  utils.debugMessage(`add win team: giving ${id} team ${team}`)
-  // adds a team to a user
-  gamedb.run("insert into win_teams (user_id, team) values ($id, $t);", {$id:id,$t:team}, function(err) { if (err) throw err})
-}
-exports.win_teams.remove_win_team = function(id, team) {
-  utils.debugMessage(`remove win_team: taking ${id}'s team ${team}`)
-  // removes team from user
-  gamedb.run("delete from win_teams where user_id = $id and team = $t;", {$id:id,$t:team}, function(err) {if (err) throw err})
-}
-exports.win_teams.has_win_team = function(id, team) {
-  // true or false, whether user `id` has team `yeam`
+exports.tags.all_have_tag = function(num_alive, tag) {
+  // true or false, depending on whether all players have tag
   return new Promise(function(resolve, reject) {
-    gamedb.get("select user_id from win_teams where user_id = $id and team = $t;", {$id:id,$t:tag}, function(err, row) {
-      if (err) { throw err; }
-      resolve(!!row)
-    })
-  })
-}
-exports.win_teams.all_have_win_team = function(num_alive, team) {
-  // true or false, depending on whether all players have team
-  return new Promise(function(resolve, reject) {
-    gamedb.all("select user_id from win_teams where team = $t;", {$t:team}, function(err, rows) {
+    gamedb.all("select user_id from player_tags where tag_name = $t;", {$t:tag}, function(err, rows) {
       if (err) throw err
       resolve(rows.length === num_alive)
     })
