@@ -425,14 +425,8 @@ exports.commands.kill = async function(msg, client, args) {
   if (args.length !== 2) {
     msg.reply("wrong syntax!")
   } else {
-    if(game_state.data().night_time) {
-      kill_time = "day"
-    } else {
-      kill_time = "night"
+      msg.reply(`Added ${args[1]} to Kill Queue for the next cycle`)
     }
-    msg.reply(`Adding ${args[0]} to Kill Queue for the next time it switches to ${kill_time}`)
-    var dead_person_id = await user.resolve_to_id(args[1])
-    add_to_kill_q(dead_person_id, args[0], client)
   }
 }
 /*
