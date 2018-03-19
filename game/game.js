@@ -425,6 +425,13 @@ exports.commands.kill = async function(msg, client, args) {
   if (args.length !== 2) {
     msg.reply("wrong syntax!")
   } else {
+    var stupid_hack = true
+    var dead_person_id = await user.resolve_to_id(args[1]).catch(function(error) {
+      msg.reply("Incorrect syntax / person to be killed! Syntax is: `g kill <why> <@who>`. for example, `g kill w @BenTechy66#8809`")
+      stupid_hack = false
+    })
+    if (stupid_hack) {
+      add_to_kill_q(dead_person_id, args[0], client)
       msg.reply(`Added ${args[1]} to Kill Queue for the next cycle`)
     }
   }
