@@ -44,7 +44,7 @@ const season_code_max_length = 8
 
 const defaults = {
   state_num: 0,
-  season_code: "??",
+  season_code: "no-name",
   season_name: "No Season Name Yet!",
   time: 0
 }
