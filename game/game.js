@@ -350,6 +350,7 @@ exports.commands.day = async function(msg, client) {
     msg.reply(`[👍] It is now ${game_state.nice_time(d.time)}!`)
     stats = require("../analytics/analytics.js").get_stats()
     msg.reply(`**Today's Stats:**\n - ${stats.Messages} messages were sent!\n - The Game Masters were pinged ${stats.GMPings} times!\n - ${stats.CCCreations} Conspiracy Channels were created!`)
+    require("../analytics/analytics.js").reset_data(true)
   }
 }
 /*
@@ -424,14 +425,24 @@ exports.commands.kill = async function(msg, client, args) {
   if (args.length !== 2) {
     msg.reply("wrong syntax!")
   } else {
-    if(game_state.data().night_time) {
-      kill_time = "day"
-    } else {
-      kill_time = "night"
+    var stupid_hack = true
+    /*
+    Stupid hacks - BenTechy66 2018 - To be sung to the tune of 'stupid deaths' from 'Horrible Histories'
+
+    Stupid hacks, stupid hacks
+    they're shitty but they work (He Heeeee~)
+    
+    stupid hacks, stupid hacks
+    these lines are wasting space (Hoo Hooooo~)
+    */
+    var dead_person_id = await user.resolve_to_id(args[1]).catch(function(error) {
+      msg.reply("Incorrect syntax / person to be killed! Syntax is: `g kill <why> <@who>`. for example, `g kill w @BenTechy66#8809`")
+      stupid_hack = false
+    })
+    if (stupid_hack) {
+      add_to_kill_q(dead_person_id, args[0], client)
+      msg.reply(`Added ${args[1]} to Kill Queue for the next cycle`)
     }
-    msg.reply(`Adding ${args[0]} to Kill Queue for the next time it switches to ${kill_time}`)
-    var dead_person_id = await user.resolve_to_id(args[1])
-    add_to_kill_q(dead_person_id, args[0], client)
   }
 }
 /*
@@ -443,7 +454,16 @@ exports.commands.kill = async function(msg, client, args) {
                                    ▀▀
 */
 
+
+function get_kq() {
+  return require("./kill_queue.json")
+}
+function write_kq(toWrite) {
+  fs.writeFileSync("./game/kill_queue.json", JSON.stringify(toWrite))
+}
 async function add_to_kill_q(who, why, client) {
+  var kill_q = get_kq()
+  utils.debugMessage("Got QK as " + kill_q)
   if (typeof kill_q == 'undefined') {
     kill_q = []
   }
@@ -451,14 +471,16 @@ async function add_to_kill_q(who, why, client) {
     who: who,
     why: why
   })
+  write_kq(kill_q)
   utils.debugMessage("First item in Kill Q is now:" + kill_q[0].who + ":" + kill_q[0].why)
 }
 
 async function execute_kill_q(msg, client) {
+  var kill_q = get_kq()
   if (typeof kill_q == 'undefined') {
     kill_q = []
   }
-  if (kill_q === []) {
+  if (kill_q == []) {
     msg.reply("Nobody was killed, the Queue was empty.")
     return //No need to bother executing anything
   }
@@ -468,6 +490,7 @@ async function execute_kill_q(msg, client) {
     kill(death.who, death.why, client)
   })
   kill_q = []
+  write_kq(kill_q)
   msg.reply("Finished executing Kill Queue")
 }
 /*
