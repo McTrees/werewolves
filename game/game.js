@@ -576,8 +576,8 @@ exports.use_ability = async function(msg, client, abn, rest) {
   var u = msg.author.id
   var r = await user.get_role(u)
   var ri = role_manager.role(r)
-  if (!await(is_allowed_channel(msg.channel.id, ri.id))){
-    msg.reply("you can't use that ability because your role does not have an ability with that name")
+  if (!await(is_allowed_channel(msg.channel.id, r))){
+    msg.reply("This channel does not support that ability!\n*I'm not saying that you are or aren't able to use that ability: only that **if** you can, you can't use it here*")
   } else if (!await db_fns.timings.can_use(u, abn, game_state.data().time)) {
     msg.reply("you currently can't use that ability: you'll have to wait till later.\n*If you want to undo an ability or you think there is an error, please ping a game master.*")
   } else {
