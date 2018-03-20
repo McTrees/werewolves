@@ -2,7 +2,7 @@ const utils = require("../utils")
 const fs = require("fs")
 const path = require("path")
 
-const STATS_PATH = "./analytics/stats.json"
+const STATS_PATH = path.join(__dirname, "stats.json")
 const DEFAULTS = JSON.stringify(
 {
     "Messages": 0,
