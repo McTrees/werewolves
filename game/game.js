@@ -494,6 +494,8 @@ async function execute_kill_q(msg, client) {
   kill_q.forEach(function(death) {
     msg.reply(`Running through kill sequence for <@${death.who}>`)
     kill(death.who, death.why, client)
+    write_kq(kill_q)
+    msg.reply("Finished executing Kill Queue")
   })
   kill_q = []
   write_kq(kill_q)
