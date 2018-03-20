@@ -1,6 +1,6 @@
-utils = require("../utils")
-fs = require("fs")
-path = require("path")
+const utils = require("../utils")
+const fs = require("fs")
+const path = require("path")
 
 const STATS_PATH = "./analytics/stats.json"
 const DEFAULTS = JSON.stringify(
