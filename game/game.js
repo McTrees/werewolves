@@ -345,7 +345,6 @@ exports.commands.day = async function(msg, client) {
     msg.reply("it's already day time! In particular, it's currently "+game_state.nice_time(d.time)+".")
   } else {
     game_state.next_day_or_night()
-    execute_kill_q(msg, client)
     await execute_kill_q(msg, client)
     day_and_night(msg, client)
     msg.reply(`[👍] It is now ${game_state.nice_time(d.time)}!`)
@@ -372,7 +371,7 @@ exports.commands.night = async function(msg, client) {
     msg.reply("it's already night time! In particular, it's currently "+game_state.nice_time(d.time)+".")
   } else {
     game_state.next_day_or_night()
-    execute_kill_q(msg, client)
+    await execute_kill_q(msg, client)
     day_and_night(msg, client)
     msg.reply(`[👍] It is now ${game_state.nice_time(d.time)}!`)
   }
