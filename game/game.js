@@ -575,26 +575,30 @@ exports.use_ability = async function(msg, client, abn, rest) {
   // not an actual command
   var u = msg.author.id
   var r = await user.get_role(u)
-  var ri = role_manager.role(r)
-  if (!await(is_allowed_channel(msg.channel.id, r))){
-    msg.reply("This channel does not support that ability!\n*I'm not saying that you are or aren't able to use that ability: only that **if** you can, you can't use it here*")
-  } else if (!await db_fns.timings.can_use(u, abn, game_state.data().time)) {
-    msg.reply("you currently can't use that ability: you'll have to wait till later.\n*If you want to undo an ability or you think there is an error, please ping a game master.*")
+  if (r == undefined) {
+    msg.channel.send(`Hmm. That's interesting. I don't seem to have any records for ${msg.author}. Most likely you are not signed up.`)
   } else {
-    if (ri.abilities && ri.abilities[abn] && typeof ri.abilities[abn].run == "function") {
-      msg.reply("running ability!")
-      utils.debugMessage(`${u} is running ability ${abn}; args ${rest}`)
-      var abl = ri.abilities[abn]
-      abl.run(new GameController(client), new PlayerController(msg.author.id, client), rest, function(worked, message) {
-        if (worked) {
-          db_fns.timings.add_next_time(u, abn, game_state.data().time + abl.timings.periods)
-          msg.reply(message?message:"your ability was successful! :)")
-        } else {
-          msg.reply(message?message:"your ability failed. :(")
-        }
-      })
+    var ri = role_manager.role(r)
+    if (!await(is_allowed_channel(msg.channel.id, r))){
+      msg.reply("This channel does not support that ability!\n*I'm not saying that you are or aren't able to use that ability: only that **if** you can, you can't use it here*")
+    } else if (!await db_fns.timings.can_use(u, abn, game_state.data().time)) {
+      msg.reply("you currently can't use that ability: you'll have to wait till later.\n*If you want to undo an ability or you think there is an error, please ping a game master.*")
     } else {
-      msg.reply("you don't have an abiltiy with that name!")
+      if (ri.abilities && ri.abilities[abn] && typeof ri.abilities[abn].run == "function") {
+        msg.reply("running ability!")
+        utils.debugMessage(`${u} is running ability ${abn}; args ${rest}`)
+        var abl = ri.abilities[abn]
+        abl.run(new GameController(client), new PlayerController(msg.author.id, client), rest, function(worked, message) {
+          if (worked) {
+            db_fns.timings.add_next_time(u, abn, game_state.data().time + abl.timings.periods)
+            msg.reply(message?message:"your ability was successful! :)")
+          } else {
+            msg.reply(message?message:"your ability failed. :(")
+          }
+        })
+      } else {
+        msg.reply("you don't have an abiltiy with that name!")
+      }
     }
   }
 }
