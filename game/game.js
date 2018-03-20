@@ -466,7 +466,6 @@ function write_kq(toWrite) {
 }
 <<<<<<< HEAD
 exports.kill_q.write = write_kq
-
 async function add_to_kill_q(who, why, client) {
   var kill_q = get_kq()
   utils.debugMessage("Got QK as " + kill_q)
