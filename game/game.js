@@ -460,10 +460,12 @@ function get_kq() {
   return require("./kill_queue.json")
 }
 exports.kill_q.get = get_kq
+
 function write_kq(toWrite) {
   fs.writeFileSync("./game/kill_queue.json", JSON.stringify(toWrite))
 }
 exports.kill_q.write = write_qk
+
 async function add_to_kill_q(who, why, client) {
   var kill_q = get_kq()
   utils.debugMessage("Got QK as " + kill_q)
@@ -478,6 +480,7 @@ async function add_to_kill_q(who, why, client) {
   utils.debugMessage("First item in Kill Q is now:" + kill_q[0].who + ":" + kill_q[0].why)
 }
 exports.kill_q.add = add_to_kill_q
+
 async function execute_kill_q(msg, client) {
   var kill_q = get_kq()
   if (typeof kill_q == 'undefined') {
@@ -497,6 +500,7 @@ async function execute_kill_q(msg, client) {
   msg.reply("Finished executing Kill Queue")
 }
 exports.kill_q.execute = execute_kill_q
+
 /*
 ██   ██ ██ ██      ██
 ██  ██  ██ ██      ██
