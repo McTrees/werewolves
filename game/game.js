@@ -569,12 +569,11 @@ async function is_allowed_channel(...args) {
 
 exports.commands.ability = async function(msg, client, args) {
   // for now it just does this
-  exports.use_ability(msg, client, args)
+  exports.use_ability(msg, client, args[0], args.slice(1))
 }
-exports.use_ability = async function(msg, client, split) {
+exports.use_ability = async function(msg, client, abn, rest) {
   // not an actual command
   var u = msg.author.id
-  var abn = split[0]
   var r = await user.get_role(u)
   var ri = role_manager.role(r)
   if (!await(is_allowed_channel(msg.channel.id, ri.id))){
@@ -584,9 +583,9 @@ exports.use_ability = async function(msg, client, split) {
   } else {
     if (ri.abilities && ri.abilities[abn] && typeof ri.abilities[abn].run == "function") {
       msg.reply("running ability!")
-      utils.debugMessage(`${u} is running ability ${abn}; args ${split}`)
+      utils.debugMessage(`${u} is running ability ${abn}; args ${rest}`)
       var abl = ri.abilities[abn]
-      abl.run(new GameController(client), new PlayerController(msg.author.id, client), split.slice(1), function(worked, message) {
+      abl.run(new GameController(client), new PlayerController(msg.author.id, client), rest, function(worked, message) {
         if (worked) {
           db_fns.timings.add_next_time(u, abn, game_state.data().time + abl.timings.periods)
           msg.reply(message?message:"your ability was successful! :)")
