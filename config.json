@@ -1,6 +1,6 @@
 {
 	"bot_prefix": "!",
-	"season": "5",
+	"ability_prefix": "%",
 	"messageTimeout": 3000,
 	"guild_id":"395966781589815296",
 

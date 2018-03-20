@@ -13,6 +13,8 @@ const aliases = require('./aliases');
 const utils = require("../utils");
 const role_specific = require("./role_specific_handler")
 const permissions = require("./permissions")
+const state = require("../game/game_state")
+const game = require("../game/game")
 const msg = require("./msg_handler")
 const didYouMean = require("didYouMean")
 const stats = require("../analytics/analytics.js")
@@ -143,6 +145,15 @@ module.exports = function(msg, client) {
         }
         utils.errorMessage(`error ${em_all} at ${em_all.stack}`);
      }
+    }
+  } else if (msg.content[0] == config.ability_prefix) {
+    // ability commands are a bit different
+    if (state.data().state_num !== 4) {
+      msg.reply("we're not in a game at the moment so you can't do that.")
+    } else {
+      var no_prefix = msg.content.slice(1)
+      var split_msg = no_prefix.split(' ')
+      game.use_ability(msg, client, split_msg[0], split_msg.slice(1))
     }
   }
 }
