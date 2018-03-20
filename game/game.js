@@ -346,6 +346,7 @@ exports.commands.day = async function(msg, client) {
   } else {
     game_state.next_day_or_night()
     execute_kill_q(msg, client)
+    await execute_kill_q(msg, client)
     day_and_night(msg, client)
     msg.reply(`[👍] It is now ${game_state.nice_time(d.time)}!`)
     stats = require("../analytics/analytics.js").get_stats()
