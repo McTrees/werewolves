@@ -482,24 +482,26 @@ async function add_to_kill_q(who, why, client) {
 exports.kill_q.add = add_to_kill_q
 
 async function execute_kill_q(msg, client) {
-  var kill_q = get_kq()
-  if (typeof kill_q == 'undefined') {
+  return new Promise(function(resolve, reject) {
+    var kill_q = get_kq()
+    if (typeof kill_q == 'undefined') {
+      kill_q = []
+    }
+    if (kill_q == []) {
+      msg.reply("Nobody was killed, the Queue was empty.")
+      resolve()
+      return //No need to bother executing anything
+    }
+    msg.reply("Starting kill queue...")
+    kill_q.forEach(function(death) {
+      msg.reply(`Running through kill sequence for <@${death.who}>`)
+      kill(death.who, death.why, client)
+    })
     kill_q = []
-  }
-  if (kill_q == []) {
-    msg.reply("Nobody was killed, the Queue was empty.")
-    return //No need to bother executing anything
-  }
-  msg.reply("Starting kill queue...")
-  kill_q.forEach(function(death) {
-    msg.reply(`Running through kill sequence for <@${death.who}>`)
-    kill(death.who, death.why, client)
     write_kq(kill_q)
     msg.reply("Finished executing Kill Queue")
+    resolve()
   })
-  kill_q = []
-  write_kq(kill_q)
-  msg.reply("Finished executing Kill Queue")
 }
 exports.kill_q.execute = execute_kill_q
 
