@@ -29,7 +29,6 @@ const FILENAMES = {
   c: "../cc/ccs.js",
   g: "../game/game.js",
   r: "../role/role.js"
-  //s: "../suggest/suggest.js"
 }
 getAllCommands = function() {
   commands = []
