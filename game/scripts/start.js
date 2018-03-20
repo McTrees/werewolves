@@ -43,7 +43,8 @@ module.exports = async function(game, id_list) {
         [id],
         `${game_state.data().season_code}-${role_info.name}`,
         config.category_ids.secret_channel,
-        role_info.documentation
+        role_info.documentation,
+        role_name
       )
     })
   })
@@ -60,7 +61,8 @@ module.exports = async function(game, id_list) {
           flattened_ids,
           `${game_state.data().season_code}-${ch_name}`,
           config.category_ids.secret_channel,
-          secret.all[ch_name].message
+          secret.all[ch_name].message,
+          role_name_list[0]
         )
       }
     })

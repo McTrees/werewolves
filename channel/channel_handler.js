@@ -29,10 +29,10 @@ exports.init = function(reset) {
   }
 }
 
-exports.createChannel = function(client, guild, ids, name, category, message) {
+exports.createChannel = function(client, guild, ids, name, category, message, role) {
   //client, guild, array of the ids of players to add, ...
   // the name of the channel, the cartegory to go in (id), ...
-  // message to be sent in that channel
+  // message to be sent in that channel, name of the role to associate with the channel
   fs.readFile('./channel/channels.json', {
     encoding: 'utf-8'
   }, function(err, data) { //read cc.json to ccconfig
@@ -41,7 +41,6 @@ exports.createChannel = function(client, guild, ids, name, category, message) {
 
     guild.createChannel(name, "text").then(channel =>
       channel.setParent(guild.channels.get(category))
-
       //set perms
     ).then(function(channel) {
       channel.overwritePermissions(client.user.id, { //the bot can see it
@@ -59,10 +58,8 @@ exports.createChannel = function(client, guild, ids, name, category, message) {
         })
       })
       channel.send(message)
-      user.get_role(ids[0]).then(function(role) {
-        data[role] = channel.id
-        writedata(data)
-      })
+      data[role] = channel.id
+      writedata(data)
     })
   })
 }
