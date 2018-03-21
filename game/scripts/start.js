@@ -49,6 +49,7 @@ module.exports = async function(game, id_list) {
       })
     })
   })
+  // all channels are for everyone with any of a set of roles
   Object.keys(secret.all).forEach(ch_name=>{
     var role_name_list = secret.all[ch_name].roles
     var ids = role_name_list.map(role_name=>game.u.all_with_role(role_name))
