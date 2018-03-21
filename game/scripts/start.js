@@ -29,8 +29,8 @@ module.exports = async function(game, id_list) {
 
   // create secret channels
   // we will assume that all role names in the conf file are valid,
-  // because it's your fault if you change it and also
-  // i cba validating it here
+  // because it's your fault if you change it
+  // and also i cba validating it here
 
   // individual channels are 1 person per channel
   secret.individual.forEach(role_name=>{
