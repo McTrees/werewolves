@@ -33,28 +33,29 @@ module.exports = async function(game, id_list) {
   // i cba validating it here
 
   // individual channels are 1 person per channel
-  secret.individual.forEach(async role_name=>{
-    var all = await game.u.all_with_role(role_name)
-    var role_info = role_manager.role(role_name)
-    all.forEach((id, index)=>{
-      channels.createChannel(
-        game._client,
-        game._client.guilds.get(config.guild_id),
-        [id],
-        `${game_state.data().season_code}-${role_info.name}`,
-        config.category_ids.secret_channel,
-        role_info.documentation,
-        role_name
-      )
+  secret.individual.forEach(role_name=>{
+    game.u.all_with_role(role_name).then(all=>{
+      var role_info = role_manager.role(role_name)
+      all.forEach((id, index)=>{
+        channels.createChannel(
+          game._client,
+          game._client.guilds.get(config.guild_id),
+          [id],
+          `${game_state.data().season_code}-${role_info.name}`,
+          config.category_ids.secret_channel,
+          role_info.documentation,
+          role_name
+        )
+      })
     })
   })
-  Object.keys(secret.all).forEach(async ch_name=>{
+  Object.keys(secret.all).forEach(ch_name=>{
     var role_name_list = secret.all[ch_name].roles
     var ids = role_name_list.map(role_name=>game.u.all_with_role(role_name))
     Promise.all(ids).then(ids_got=>{
       // I'm not quite sure how this works but it flattens the list
       flattened_ids = [].concat.apply([], ids_got)
-      if (flattened_ids !== []) {
+      if (flattened_ids.length > 0) {
         channels.createChannel(
           game._client,
           game._client.guilds.get(config.guild_id),
