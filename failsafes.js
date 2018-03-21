@@ -1,7 +1,8 @@
 const discord = require("discord.js")
+const config = require("./config")
 
 module.exports = function(client) {
-var general = client.channels.get("395966781589815298");
+var general = client.channels.get(config.channel_ids.gm_confirm);
 client.on('guildMemberRemove', member => {
   let guild = member.guild
   const embed = new discord.RichEmbed()
