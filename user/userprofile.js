@@ -2,9 +2,11 @@
 // Also implement in the same function a way to append personal records. 
 // And whatever else may be needed
 
+const fs = require('fs');
+const path = require("path");
 const utils = require("../utils.js")
 const sqlite3 = require("sqlite3")
-const userdb = new sqlite3.Database("user/user.db")
+const userdb = new sqlite3.Database("user/profiles.db")
 const discord = require('discord.js')
 const config = require('../config');
 const aliases = require('./aliases.json');
@@ -16,6 +18,28 @@ const aliases = require('./aliases.json');
 ██       ██ ██  ██      ██    ██ ██   ██    ██    ██      ██   ██
 ███████ ██   ██ ██       ██████  ██   ██    ██    ███████ ██████
 */
+
+exports.init = function(reset_data) {
+  // called on bot start
+  fs.readFile(path.join(__dirname, 'profiles.db'), {encoding: "utf-8"}, function(err, data){
+    if(err) throw err;
+    if (data === '' || reset_data) { // database is empty and needs to be created or you want to reset data
+      fs.readFile(path.join(__dirname, 'profiles_db_schema.sql'), {encoding: "utf-8"}, function(er, schema) {
+        if (er) throw er
+        else {
+          utils.warningMessage(reset_data?"You chose to reset the user-profile data for this bot, creating new user-profile database.":"User-profile database not found - creating a new one");
+          userdb.exec(schema);
+          if(reset_data){
+            utils.warningMessage("Database reset.");
+          }else{
+            utils.successMessage("Database created!");
+          }
+        }
+      })
+    }
+  })
+}
+
 exports.commands = {}
 //Register yourself in global database
 exports.commands.registerglobal = async function(msg, client, args){
@@ -201,11 +225,11 @@ function setPropertyWithSpaces(msg, client, name, args){
 	var user = msg.author;
 	var data = "If you're seeing this the bot isn't functioning correctly.";
 	if(!args || args.length == 0){
-		utils.errorMessage(`Too few arguments provided for set_${name}!`);
+		utils.errorMessage(`Too few arguments provided for set${name}!`);
 		if(!msg.member.roles.has(config.role_ids.gameMaster)){
-			msg.reply(`correct syntax is: \`!set_${name} <${name}>\`.`);
+			msg.reply(`correct syntax is: \`!set${name} <${name}>\`.`);
 		}else{
-			msg.reply(`correct syntax is: \`!set_${name} [<user>] <${name}>\` (\`<user>\` must be a mention).`);
+			msg.reply(`correct syntax is: \`!set${name} [<user>] <${name}>\` (\`<user>\` must be a mention).`);
 		}
 		return;
 	}else if(args.length === 1){
@@ -230,19 +254,19 @@ function setProperty(msg, client, name, args){
 	var user = msg.author;
 	var val;
 	if(args.length > 2 || (!msg.member.roles.has(config.role_ids.gameMaster) && args.length === 2)){
-		utils.errorMessage(`Too many arguments provided for set_${name}!`);
+		utils.errorMessage(`Too many arguments provided for set${name}!`);
 		if(!msg.member.roles.has(config.role_ids.gameMaster)){
-			msg.reply(`correct syntax is: \`!set_${name} <${name}>\`.`);
+			msg.reply(`correct syntax is: \`!set${name} <${name}>\`.`);
 		}else{
-			msg.reply(`correct syntax is: \`!set_${name} [<user>] <${name}>\` (\`<user>\` must be a mention).`);
+			msg.reply(`correct syntax is: \`!set${name} [<user>] <${name}>\` (\`<user>\` must be a mention).`);
 		}
 		return;
 	}else if(args.length === 2){
 		//We know that the author is a GM as if the author isn't a GM the last if would've executed
 		var result = /^<@!?(\d+)>$/.exec(args[0]);
 		if(result === null){
-			utils.errorMessage(`A mention was not provided as first argument to set_${name} by a GM`);
-			msg.reply(`correct syntax is: \`!set$_{name} [<user>] <${name}>\` (\`<user>\` must be a mention).`);
+			utils.errorMessage(`A mention was not provided as first argument to set${name} by a GM`);
+			msg.reply(`correct syntax is: \`!set${name} [<user>] <${name}>\` (\`<user>\` must be a mention).`);
 			return;
 		}
 		user = client.users.get(result[1]);
@@ -252,8 +276,8 @@ function setProperty(msg, client, name, args){
 		val = args[0];
 		utils.debugMessage(`User @${user.username} wants to set their ${name}.`);
 	}else{
-		utils.errorMessage(`Too few arguments provided for set_${name}!`);
-		msg.reply(`correct syntax is: \`!set_${name} <${name}>\`.`);
+		utils.errorMessage(`Too few arguments provided for set${name}!`);
+		msg.reply(`correct syntax is: \`!set${name} <${name}>\`.`);
 		return;
 	}
 	if(aliases["dbnames"][name]){
@@ -267,12 +291,12 @@ function updateDB(msg, name, col_name, val, user){
 		if(aliases[(name + "Options")][val.toLowerCase()]){
 			val = aliases[(name + "Options")][val.toLowerCase()];
 		}else{
-			msg.reply(`\`${val}\` is not a valid option for \`!set_${name}\``);
+			msg.reply(`\`${val}\` is not a valid option for \`!set${name}\``);
 			return;
 		}
 	}
 	if(aliases[(name + "CharacterLimit")] && val.length > aliases[(name + "CharacterLimit")]){
-		msg.reply(`\`${val}\` has too many characters for \`!set_${name}\` (limit is ${aliases[(name + "CharacterLimit")]})`);
+		msg.reply(`\`${val}\` has too many characters for \`!set${name}\` (limit is ${aliases[(name + "CharacterLimit")]})`);
 		return;
 	}
 	userdb.run("update global_player set " + col_name + " = ? where user_id = ?", [val, user.id], function(err) {

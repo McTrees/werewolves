@@ -30,7 +30,7 @@ exports.init = function(reset_data) {
       fs.readFile(path.join(__dirname, 'user_db_schema.sql'), {encoding: "utf-8"}, function(er, schema) {
         if (er) throw er
         else {
-          utils.warningMessage(reset_data?"You chose to reset the server data for this bot, creating new user database.":"User database not found - creating a new one");
+          utils.warningMessage(reset_data?"You chose to reset the game data for this bot, creating new user database.":"User database not found - creating a new one");
           userdb.exec(schema);
           if(reset_data){
             utils.warningMessage("Database reset.");
