@@ -3,6 +3,8 @@ exports.name = "Pyromancer"
 
 exports.description = "Powders a player per night, or can ignite all powdered players."
 
+const POWDER_TAG = "powdered"
+
 exports.abilities = {} //Because Javascript
 exports.abilities.powder = {
   timings : {
@@ -14,8 +16,22 @@ exports.abilities.powder = {
   run(game, me, args, cb) {
     game.masters.tell(me.id, `powdering ${args[0]}`)
     game.u.resolve_to_id(args[0]).then(id=>{
-      game.tags.add_tag(id, "powdered")
-      cb(true, `successfully powdered <@${id}>`)
+      game.u.get_role(id).then(r=>{
+        if (r === undefined) {
+          cb(false, "couldn't powder that person")
+        } else if (r == "solo/pyro") {
+          cb(false, "that person was a pyromancer! try again")
+        } else {
+          game.tags.has_tag(id, POWDER_TAG).then(has=>{
+            if (!has) {
+              game.tags.add_tag(id, POWDER_TAG)
+              cb(true, `successfully powdered <@${id}>`)
+            } else {
+              cb(false, `they are already powdered! try again`)
+            }
+          })
+        }
+      })
     }).catch(e=>{
       cb(false, "couldn't powder that person")
     })
