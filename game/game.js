@@ -589,17 +589,24 @@ exports.use_ability = async function(msg, client, abn, rest) {
       msg.reply("you currently can't use that ability: you'll have to wait till later.\n*If you want to undo an ability or you think there is an error, please ping a game master.*")
     } else {
       if (ri.abilities && ri.abilities[abn] && typeof ri.abilities[abn].run == "function") {
-        msg.reply("running ability!")
-        utils.debugMessage(`${u} is running ability ${abn}; args ${rest}`)
         var abl = ri.abilities[abn]
-        abl.run(new GameController(client), new PlayerController(msg.author.id, client), rest, function(worked, message) {
-          if (worked) {
-            db_fns.timings.add_next_time(u, abn, game_state.data().time + abl.timings.periods)
-            msg.reply(message?message:"your ability was successful! :)")
-          } else {
-            msg.reply(message?message:"your ability failed. :(")
-          }
-        })
+        if (abl.timings && abl.timings.allow_night === false && !game_state.is_day()){
+          msg.reply("it is currently night time, and that ability is not usable at night.")
+        } else if (abl.timings && abl.timings.allow_day === false && !game_state.is_day()) {
+          msg.reply("it is currently day time, and that ability is not usable in the day.")
+        } else {
+          msg.reply("running ability!")
+          utils.debugMessage(`${u} is running ability ${abn}; args ${rest}`)
+          abl.run(new GameController(client), new PlayerController(msg.author.id, client), rest, function(worked, message) {
+            if (worked) {
+              db_fns.timings.add_next_time(u, abn, game_state.data().time + abl.timings.periods)
+              msg.reply(message?message:"your ability was successful! :)")
+            } else {
+              msg.reply(message?message:"your ability failed. :(")
+            }
+          })
+
+        }
       } else {
         msg.reply("you don't have an abiltiy with that name!")
       }
