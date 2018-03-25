@@ -55,7 +55,7 @@ exports.commands.start_poll = function (msg, client, args){
 		msg_text: txt,
 		channel_id: ch,
 		type: type,
-		options: [{
+		options: [/*{
 			id: "329977469350445069",
 			emoji: "😃"
 		}, {
@@ -67,10 +67,10 @@ exports.commands.start_poll = function (msg, client, args){
 		},{
 			id: "334600339208798218",
 			emoji: "🍆"
-		}]
+		}*/]
 	};
 	players.all_alive().then((rows) =>{
-		/*meh
+		
 		if(!rows || rows.length === 0)throw new Error("The database returned nothing! The game has probably not started!");
 		rows.forEach((row) => {
 			utils.debugMessage("Row: " + row);
@@ -79,7 +79,7 @@ exports.commands.start_poll = function (msg, client, args){
 				emoji: row.emoji
 			});
 		});
-		*/
+		
 		id = internal.startPoll(client, data);
 		//Send message informing GMs of new poll
 		if(id != -1)client.channels.get(config.channel_ids.gm_confirm).send("A new Poll, `" + txt + "` (id: " + id + ") was created.");
