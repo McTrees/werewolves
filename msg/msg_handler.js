@@ -121,6 +121,8 @@ module.exports = function(msg, client) {
       // help is special-cased
       if (firstWord == "h") {
         require("../help/help.js")["helpCmd"](msg, client, splitMessage.slice(1), splitMessage.slice(2));
+      } else if(firstWord == "guide") {
+        require("../help/guide.js")["guideCmd"](msg, client, splitMessage.slice(1), splitMessage.slice(2));
       } else {
         if (!FILENAMES[firstWord]) {
           fail(msg, client, splitMessage)
