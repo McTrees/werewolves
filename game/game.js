@@ -605,7 +605,6 @@ exports.use_ability = async function(msg, client, abn, rest) {
               msg.reply(message?message:"your ability failed. :(")
             }
           })
-
         }
       } else {
         msg.reply("you don't have an abiltiy with that name!")
