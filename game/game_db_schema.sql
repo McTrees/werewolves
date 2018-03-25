@@ -3,7 +3,6 @@ DROP TABLE IF EXISTS player_tags;
 DROP TABLE IF EXISTS love;
 DROP TABLE IF EXISTS ability_timings;
 
-
 CREATE TABLE player_tags (
   user_id char(21) not null,
   tag_name varchar(18) not null
@@ -17,6 +16,9 @@ CREATE TABLE love (
 CREATE TABLE ability_timings (
   user_id char(21) not null,
   ability_name char(21) not null,
-  next_time_can_use integer not null
+  next_time_can_use integer not null,
+  times_this_cycle integer not null default 1
 );
+
+
 COMMIT;
