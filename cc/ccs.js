@@ -93,7 +93,8 @@ function createChannel(showCreator, people, client, name, ccconf, msg) { //funct
 }
 
 exports.createCmd = function(msg, client, args) { //command for making a cc
-  utils.debugMessage("start of create")
+  utils.debugMessage("start of create CC")
+  msg.delete()
   var name = args[0]; //set var for cc name
   var showCreator = true; //default for showing the creator
 
