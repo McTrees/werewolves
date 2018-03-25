@@ -71,7 +71,6 @@ function createChannel(showCreator, people, client, name, ccconf, msg) { //funct
         channel.overwritePermissions(msg.guild.members.get(user), { //everyone specified can see it
           'VIEW_CHANNEL': true,
           'SEND_MESSAGES': true,
-          'READ_MESSAGE_HISTORY': true
         })
       })
     })
