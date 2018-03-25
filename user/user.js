@@ -154,9 +154,6 @@ exports.get_role = function(id) {
         } else {
           resolve(row.role)
         }
-        //} else {
-      //    reject()
-      //  }
       }
     })
   });
