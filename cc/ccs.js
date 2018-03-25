@@ -70,7 +70,8 @@ function createChannel(showCreator, people, client, name, ccconf, msg) { //funct
       user.resolve_to_id(element).then(function(user) {
         channel.overwritePermissions(msg.guild.members.get(user), { //everyone specified can see it
           'VIEW_CHANNEL': true,
-          'SEND_MESSAGES': true
+          'SEND_MESSAGES': true,
+          'READ_MESSAGE_HISTORY': true
         })
       })
     })
@@ -94,7 +95,7 @@ function createChannel(showCreator, people, client, name, ccconf, msg) { //funct
 
 exports.createCmd = function(msg, client, args) { //command for making a cc
   utils.debugMessage("start of create CC")
-  msg.delete()
+  msg.delete()_
   var name = args[0]; //set var for cc name
   var showCreator = true; //default for showing the creator
 
