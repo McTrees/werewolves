@@ -1,6 +1,7 @@
 const events = require("events")
 const config = require("../config")
 const fs = require("fs")
+const channel = require("../channel/channel_handler")
 const user = require("../user/user.js")
 const discord = require("discord.js")
 const admin = require("../admin/admin")
@@ -11,6 +12,13 @@ const PlayerController = require("./player_controller").PlayerController
 const db_fns = require("./db_fns")
 exports.commands = {}
 
+/*
+ ██████  ██████  ███    ██ ████████ ██████   ██████  ██      ██      ███████ ██████
+██      ██    ██ ████   ██    ██    ██   ██ ██    ██ ██      ██      ██      ██   ██
+██      ██    ██ ██ ██  ██    ██    ██████  ██    ██ ██      ██      █████   ██████
+██      ██    ██ ██  ██ ██    ██    ██   ██ ██    ██ ██      ██      ██      ██   ██
+ ██████  ██████  ██   ████    ██    ██   ██  ██████  ███████ ███████ ███████ ██   ██
+*/
 class GameController {
   constructor(client) {
     this.masters = client.channels.get(config.channel_ids.gm_confirm)
@@ -19,7 +27,6 @@ class GameController {
     }
     this.u = user
     this.tags = db_fns.tags
-    this.win_teams = db_fns.win_teams
     this._client = client
     this._gamedb = db_fns._db
     this._userdb = this.u._db
@@ -35,6 +42,11 @@ class GameController {
     var r = l.map(i=>this.player(i))
     return r
   }
+  win(id_list) {
+    this.masters.send(`I believe some players have won @here! I think that
+- ${id_list.join("\n -")}
+have all won! I could be wrong though! So I purposefully haven't done anything.`)
+  }
 }
 
 const scripts = {
@@ -42,15 +54,15 @@ const scripts = {
   every_night: require("./scripts/every_night"),
   start: require("./scripts/start")
 }
+/*
+ ██████  ██████  ███████ ███    ██ ███████ ██  ██████  ███    ██ ██    ██ ██████
+██    ██ ██   ██ ██      ████   ██ ██      ██ ██       ████   ██ ██    ██ ██   ██
+██    ██ ██████  █████   ██ ██  ██ ███████ ██ ██   ███ ██ ██  ██ ██    ██ ██████
+██    ██ ██      ██      ██  ██ ██      ██ ██ ██    ██ ██  ██ ██ ██    ██ ██
+ ██████  ██      ███████ ██   ████ ███████ ██  ██████  ██   ████  ██████  ██
+*/
 
-exports.is_started = function () {
-  // decides if a game is currently in progress.
-  // TODO: replace all uses of this with the proper one
-  // DEPRECIATED:: DON'T USE THIS!!!
-  return game_state.data().state_num > 1
-};
-
-exports.commands.opensignups = function(msg, client) {
+exports.commands.opensignup = function(msg, client) {
   // game state 0->1
   if (game_state.data().state_num !== 0){
     msg.channel.send("This is the wrong game state, buddy!")
@@ -59,6 +71,13 @@ exports.commands.opensignups = function(msg, client) {
     msg.reply("the sign-up has been opened! Yay!")
   }
 }
+/*
+ ██████   █████  ███    ███ ███████ ██ ███    ██ ███████  ██████
+██       ██   ██ ████  ████ ██      ██ ████   ██ ██      ██    ██
+██   ███ ███████ ██ ████ ██ █████   ██ ██ ██  ██ █████   ██    ██
+██    ██ ██   ██ ██  ██  ██ ██      ██ ██  ██ ██ ██      ██    ██
+ ██████  ██   ██ ██      ██ ███████ ██ ██   ████ ██       ██████
+*/
 
 exports.commands.gameinfo = function(msg, client) {
     utils.debugMessage("Game info command called")
@@ -72,6 +91,13 @@ exports.commands.gameinfo = function(msg, client) {
       .addField("Game time", game_state.nice_time(data.time))
     msg.channel.send(emb)
 }
+/*
+███████ ███████ ████████ ███████ ███████  █████  ███████  ██████  ███    ██ ██ ███    ██ ███████  ██████
+██      ██         ██    ██      ██      ██   ██ ██      ██    ██ ████   ██ ██ ████   ██ ██      ██    ██
+███████ █████      ██    ███████ █████   ███████ ███████ ██    ██ ██ ██  ██ ██ ██ ██  ██ █████   ██    ██
+     ██ ██         ██         ██ ██      ██   ██      ██ ██    ██ ██  ██ ██ ██ ██  ██ ██ ██      ██    ██
+███████ ███████    ██    ███████ ███████ ██   ██ ███████  ██████  ██   ████ ██ ██   ████ ██       ██████
+*/
 
 exports.commands.setseasoninfo = function(msg, client, args) {
     utils.debugMessage("Set season info command called")
@@ -79,7 +105,14 @@ exports.commands.setseasoninfo = function(msg, client, args) {
     game_state.set_season_name(args.slice(1).join(" "))
 }
 
-// Tags
+/*
+████████  █████   ██████  ███████
+   ██    ██   ██ ██       ██
+   ██    ███████ ██   ███ ███████
+   ██    ██   ██ ██    ██      ██
+   ██    ██   ██  ██████  ███████
+*/
+
 exports.commands.tag = function(msg, client, args) {
   if (game_state.data().state_num !== 4){
     msg.reply("a game is not in progress")
@@ -128,9 +161,15 @@ ${list.map(tag=>`- \`${tag}\``).join("\n")}`)
         })
         break
     }
-
   }
 }
+/*
+███████ ████████  █████  ██████  ████████ ███████ ███████  █████  ███████  ██████  ███    ██
+██         ██    ██   ██ ██   ██    ██    ██      ██      ██   ██ ██      ██    ██ ████   ██
+███████    ██    ███████ ██████     ██    ███████ █████   ███████ ███████ ██    ██ ██ ██  ██
+     ██    ██    ██   ██ ██   ██    ██         ██ ██      ██   ██      ██ ██    ██ ██  ██ ██
+███████    ██    ██   ██ ██   ██    ██    ███████ ███████ ██   ██ ███████  ██████  ██   ████
+*/
 
 exports.commands.startseason = function (msg, client) {
   // game state 1 -> 2
@@ -160,6 +199,13 @@ function startgame(client) {
     })
   })
 }
+/*
+███████ ███████ ████████ ██████   ██████  ██      ███████
+██      ██         ██    ██   ██ ██    ██ ██      ██
+███████ █████      ██    ██████  ██    ██ ██      █████
+     ██ ██         ██    ██   ██ ██    ██ ██      ██
+███████ ███████    ██    ██   ██  ██████  ███████ ███████
+*/
 
 exports.commands.setrole = async function (msg, client, args) {
   // game state 2 only
@@ -201,6 +247,13 @@ exports.commands.setrole = async function (msg, client, args) {
     }, 1000)
   }
 }
+/*
+███████ ███████ ███    ██ ██████  ██████   ██████  ██      ███████ ███████
+██      ██      ████   ██ ██   ██ ██   ██ ██    ██ ██      ██      ██
+███████ █████   ██ ██  ██ ██   ██ ██████  ██    ██ ██      █████   ███████
+     ██ ██      ██  ██ ██ ██   ██ ██   ██ ██    ██ ██      ██           ██
+███████ ███████ ██   ████ ██████  ██   ██  ██████  ███████ ███████ ███████
+*/
 
 exports.commands.sendroles = async function(msg, client) {
   // game state 2->3
@@ -241,7 +294,8 @@ Good luck... :full_moon:
 
 
 Do you not understand your role? Don't worry! Use the command \`!r info ROLE\` for an explanation. *(For example: \`!r info inno/basic\`)*
-You can (hopfully) use commands in this Direct Message!`
+You can use commands in this Direct Message.
+If you need help, don't ask me - I'm just a dumb robot. Ping the Game Masters in the actual server - they'll be happy to help.`
           u.send(str).catch(e=>{
             if (e.message == 'Cannot send messages to this user') {
               msg.reply(`user <@${id}> has DMs disabled!`)
@@ -254,6 +308,13 @@ You can (hopfully) use commands in this Direct Message!`
     }
   }
 }
+/*
+██████  ███████  ██████  ██ ███    ██
+██   ██ ██      ██       ██ ████   ██
+██████  █████   ██   ███ ██ ██ ██  ██
+██   ██ ██      ██    ██ ██ ██  ██ ██
+██████  ███████  ██████  ██ ██   ████
+*/
 
 exports.commands.begin = async function(msg, client) {
   // game state 3->4
@@ -265,8 +326,14 @@ exports.commands.begin = async function(msg, client) {
     msg.reply("😁, the game actually started, yay!")
     game_state.set_state_num(4)
   }
-
 }
+/*
+██████   █████  ██    ██
+██   ██ ██   ██  ██  ██
+██   ██ ███████   ████
+██   ██ ██   ██    ██
+██████  ██   ██    ██
+*/
 
 exports.commands.day = async function(msg, client) {
   if (game_state.data().state_num !== 4) {
@@ -278,13 +345,21 @@ exports.commands.day = async function(msg, client) {
     msg.reply("it's already day time! In particular, it's currently "+game_state.nice_time(d.time)+".")
   } else {
     game_state.next_day_or_night()
-    execute_kill_q(msg, client)
+    await execute_kill_q(msg, client)
     day_and_night(msg, client)
     msg.reply(`[👍] It is now ${game_state.nice_time(d.time)}!`)
     stats = require("../analytics/analytics.js").get_stats()
     msg.reply(`**Today's Stats:**\n - ${stats.Messages} messages were sent!\n - The Game Masters were pinged ${stats.GMPings} times!\n - ${stats.CCCreations} Conspiracy Channels were created!`)
+    require("../analytics/analytics.js").reset_data(true)
   }
 }
+/*
+███    ██ ██  ██████  ██   ██ ████████
+████   ██ ██ ██       ██   ██    ██
+██ ██  ██ ██ ██   ███ ███████    ██
+██  ██ ██ ██ ██    ██ ██   ██    ██
+██   ████ ██  ██████  ██   ██    ██
+*/
 
 exports.commands.night = async function(msg, client) {
   if (game_state.data().state_num !== 4) {
@@ -292,39 +367,56 @@ exports.commands.night = async function(msg, client) {
     return
   }
   var d = game_state.data()
-  if (d.is_day) {
+  if (!game_state.is_day(d.time)) {
     msg.reply("it's already night time! In particular, it's currently "+game_state.nice_time(d.time)+".")
   } else {
     game_state.next_day_or_night()
-    execute_kill_q(msg, client)
+    await execute_kill_q(msg, client)
     day_and_night(msg, client)
     msg.reply(`[👍] It is now ${game_state.nice_time(d.time)}!`)
   }
 }
+/*
+██████   █████  ██    ██      █████  ███    ██ ██████      ███    ██ ██  ██████  ██   ██ ████████
+██   ██ ██   ██  ██  ██      ██   ██ ████   ██ ██   ██     ████   ██ ██ ██       ██   ██    ██
+██   ██ ███████   ████       ███████ ██ ██  ██ ██   ██     ██ ██  ██ ██ ██   ███ ███████    ██
+██   ██ ██   ██    ██        ██   ██ ██  ██ ██ ██   ██     ██  ██ ██ ██ ██    ██ ██   ██    ██
+██████  ██   ██    ██        ██   ██ ██   ████ ██████      ██   ████ ██  ██████  ██   ██    ██
+*/
 
 async function day_and_night(msg, client) {
   // check wins:
-  var all_o = await user.all_alive()
-  var all = all_o.map(row=>row.id)
-  var number_left = all.length
-  utils.debugMessage(`day_and_night users ${all} num ${number_left}`)
-  all.forEach(async function(user) {
+  var all_rows = await user.all_alive()
+  var all_player_ids = all_rows.map(row=>row.id)
+  var number_left = all_rows.length
+  utils.debugMessage(`day_and_night users ${all_player_ids} num ${number_left}`)
+  setTimeout(function(){
+    Promise.all(all_player_ids.map(async function(user) {
     var player = new PlayerController(user)
     var role = role_manager.role(await player.role)
-    if (role.win_teams && role.win_teams.wins_with) {
-      if (await db_fns.win_teams.all_have_win_team(number_left, role.win_teams.wins_with)) {
-        msg.reply(`${player} has won!!!`)
-      }
+    if (role.tags && role.tags.wins_with) {
+      return ({id:user, won: await db_fns.tags.all_have_tag(number_left, role.tags.wins_with)})
     } else {
       var fb = role_manager.fallback(await player.role)
-      if (fb.win_teams && fb.win_teams.wins_with) {
-        if (await db_fns.win_teams.all_have_win_team(number_left, fb.win_teams.wins_with)) {
-          msg.reply(`${player} has won!!!`)
-        }
+      if (fb.tags && fb.tags.wins_with) {
+        return ({id:user, won: await db_fns.tags.all_have_tag(number_left, fb.tags.wins_with)})
       }
     }
-  })
+  })).then(data=>{
+    // we now have something like [ {id:id, won:won}, {id:id, won:won}, ... ]
+    winners = data.filter(item=>item.won)
+    if (winners !== []) {
+      new GameController(client).win(winners)
+    }
+  })}, 2e3)
 }
+/*
+██   ██ ██ ██      ██           ██████ ███    ███ ██████
+██  ██  ██ ██      ██          ██      ████  ████ ██   ██
+█████   ██ ██      ██          ██      ██ ████ ██ ██   ██
+██  ██  ██ ██      ██          ██      ██  ██  ██ ██   ██
+██   ██ ██ ███████ ███████      ██████ ██      ██ ██████
+*/
 
 exports.commands.kill = async function(msg, client, args) {
   // kills someone
@@ -333,18 +425,50 @@ exports.commands.kill = async function(msg, client, args) {
   if (args.length !== 2) {
     msg.reply("wrong syntax!")
   } else {
-    if(game_state.data().night_time) {
-      kill_time = "day"
-    } else {
-      kill_time = "night"
+    var stupid_hack = true
+    /*
+    Stupid hacks - BenTechy66 2018 - To be sung to the tune of 'stupid deaths' from 'Horrible Histories'
+
+    Stupid hacks, stupid hacks
+    they're shitty but they work (He Heeeee~)
+
+    stupid hacks, stupid hacks
+    these lines are wasting space (Hoo Hooooo~)
+    */
+    var dead_person_id = await user.resolve_to_id(args[1]).catch(function(error) {
+      msg.reply("Incorrect syntax / person to be killed! Syntax is: `g kill <why> <@who>`. for example, `g kill w @BenTechy66#8809`")
+      stupid_hack = false
+    })
+    if (stupid_hack) {
+      add_to_kill_q(dead_person_id, args[0], client)
+      msg.reply(`Added ${args[1]} to Kill Queue for the next cycle`)
     }
-    msg.reply(`Adding ${args[0]} to Kill Queue for the next time it switches to ${kill_time}`)
-    var dead_person_id = await user.resolve_to_id(args[1])
-    add_to_kill_q(dead_person_id, args[0], client)
   }
 }
+/*
+██   ██ ██ ██      ██           ██████
+██  ██  ██ ██      ██          ██    ██
+█████   ██ ██      ██          ██    ██
+██  ██  ██ ██      ██          ██ ▄▄ ██
+██   ██ ██ ███████ ███████      ██████
+                                   ▀▀
+*/
+exports.kill_q = {}
+// I'm not sure which of these will be needed outside so I'll export all of them
 
+function get_kq() {
+  return require("./kill_queue.json")
+}
+exports.kill_q.get = get_kq
+
+function write_kq(toWrite) {
+  fs.writeFileSync("./game/kill_queue.json", JSON.stringify(toWrite))
+}
+
+exports.kill_q.write = write_kq
 async function add_to_kill_q(who, why, client) {
+  var kill_q = get_kq()
+  utils.debugMessage("Got QK as " + kill_q)
   if (typeof kill_q == 'undefined') {
     kill_q = []
   }
@@ -352,25 +476,42 @@ async function add_to_kill_q(who, why, client) {
     who: who,
     why: why
   })
+  write_kq(kill_q)
   utils.debugMessage("First item in Kill Q is now:" + kill_q[0].who + ":" + kill_q[0].why)
 }
+exports.kill_q.add = add_to_kill_q
 
 async function execute_kill_q(msg, client) {
-  if (typeof kill_q == 'undefined') {
+  return new Promise(function(resolve, reject) {
+    var kill_q = get_kq()
+    if (typeof kill_q == 'undefined') {
+      kill_q = []
+    }
+    if (kill_q == []) {
+      msg.reply("Nobody was killed, the Queue was empty.")
+      resolve()
+      return //No need to bother executing anything
+    }
+    msg.reply("Starting kill queue...")
+    kill_q.forEach(function(death) {
+      msg.reply(`Running through kill sequence for <@${death.who}>`)
+      kill(death.who, death.why, client)
+    })
     kill_q = []
-  }
-  if (kill_q === []) {
-    msg.reply("Nobody was killed, the Queue was empty.")
-    return //No need to bother executing anything
-  }
-  msg.reply("Starting kill queue...")
-  kill_q.forEach(function(death) {
-    msg.reply(`Running through kill sequence for <@${death.who}>`)
-    kill(death.who, death.why, client)
+    write_kq(kill_q)
+    msg.reply("Finished executing Kill Queue")
+    resolve()
   })
-  kill_q = []
-  msg.reply("Finished executing Kill Queue")
 }
+exports.kill_q.execute = execute_kill_q
+
+/*
+██   ██ ██ ██      ██
+██  ██  ██ ██      ██
+█████   ██ ██      ██
+██  ██  ██ ██      ██
+██   ██ ██ ███████ ███████
+*/
 
 async function kill(who, why, client) {
   // who should be id of who to kill
@@ -391,10 +532,17 @@ async function kill(who, why, client) {
     // so we should use the fallback
     did_they_die = role_manager.fallback(their_role).on_death(kill_desc, game, me)
   }
-  if (did_they_die){
+  if (did_they_die) {
     set_dead(who, client)
   }
 }
+/*
+███████ ███████ ████████     ██████  ███████  █████  ██████
+██      ██         ██        ██   ██ ██      ██   ██ ██   ██
+███████ █████      ██        ██   ██ █████   ███████ ██   ██
+     ██ ██         ██        ██   ██ ██      ██   ██ ██   ██
+███████ ███████    ██        ██████  ███████ ██   ██ ██████
+*/
 
 function set_dead(id, client) {
   // gives them the dead role
@@ -402,48 +550,65 @@ function set_dead(id, client) {
   ch.send(`<@${id}> is dead!`)
   ch.guild.fetchMember(id).then(m=>{
     if (m) {
-      m.addRole(config.role_ids.dead)
-      //TODO remove living role
+      m.removeRole(config.role_ids.participant).then(m=>
+        m.addRole(config.role_ids.dead).then(m=>
+          user.set_alive(id, false)
+        )
+      )
     }
   })
 }
 
-function is_allowed_channel(channel_id, role_name) {
-  // DEBUG always returns true
-  return true
+async function is_allowed_channel(...args) {
+  return channel.checkChannel(...args)
 }
+
+/*
+ █████  ██████  ██ ██      ██ ████████ ██ ███████ ███████
+██   ██ ██   ██ ██ ██      ██    ██    ██ ██      ██
+███████ ██████  ██ ██      ██    ██    ██ █████   ███████
+██   ██ ██   ██ ██ ██      ██    ██    ██ ██           ██
+██   ██ ██████  ██ ███████ ██    ██    ██ ███████ ███████
+*/
 
 exports.commands.ability = async function(msg, client, args) {
   // for now it just does this
-  exports.use_ability(msg, client, args)
+  exports.use_ability(msg, client, args[0], args.slice(1))
 }
-
-// role abilities
-exports.use_ability = async function(msg, client, split) {
+exports.use_ability = async function(msg, client, abn, rest) {
   // not an actual command
   var u = msg.author.id
-  var abn = split[0]
   var r = await user.get_role(u)
-  var ri = role_manager.role(r)
-  if (!is_allowed_channel(msg.channel.id, ri.id)){
-    msg.reply("you can't use that ability because your role does not have an ability with that name")
-  } else if (!await db_fns.timings.can_use(u, abn, game_state.data().time)) {
-    msg.reply("you currently can't use that ability: you'll have to wait till later.\n*If you want to undo an ability or you think there is an error, please ping a game master.*")
+  if (r == undefined) {
+    msg.channel.send(`Hmm. That's interesting. I don't seem to have any records for ${msg.author}. Most likely you are not signed up.`)
   } else {
-    if (ri.abilities && ri.abilities[abn] && typeof ri.abilities[abn].run == "function") {
-      msg.reply("running ability!")
-      utils.debugMessage(`${u} is running ability ${abn}; args ${split}`)
-      var abl = ri.abilities[abn]
-      abl.run(new GameController(client), new PlayerController(msg.author.id, client), split.slice(1), function(worked, message) {
-        if (worked) {
-          db_fns.timings.add_next_time(u, abn, game_state.data().time + abl.timings.periods)
-          msg.reply(message?message:"your ability was successful! :)")
-        } else {
-          msg.reply(message?message:"your ability failed. :(")
-        }
-      })
+    var ri = role_manager.role(r)
+    if (!await(is_allowed_channel(msg.channel.id, r))){
+      msg.reply("This channel does not support that ability!\n*I'm not saying that you are or aren't able to use that ability: only that **if** you can, you can't use it here*")
+    } else if (!await db_fns.timings.can_use(u, abn, game_state.data().time)) {
+      msg.reply("you currently can't use that ability: you'll have to wait till later.\n*If you want to undo an ability or you think there is an error, please ping a game master.*")
     } else {
-      msg.reply("you don't have an abiltiy with that name!")
+      if (ri.abilities && ri.abilities[abn] && typeof ri.abilities[abn].run == "function") {
+        var abl = ri.abilities[abn]
+        if (abl.timings && abl.timings.allow_night === false && !game_state.is_day()){
+          msg.reply("it is currently night time, and that ability is not usable at night.")
+        } else if (abl.timings && abl.timings.allow_day === false && !game_state.is_day()) {
+          msg.reply("it is currently day time, and that ability is not usable in the day.")
+        } else {
+          msg.reply("running ability!")
+          utils.debugMessage(`${u} is running ability ${abn}; args ${rest}`)
+          abl.run(new GameController(client), new PlayerController(msg.author.id, client), rest, function(worked, message) {
+            if (worked) {
+              db_fns.timings.add_next_time(u, abn, game_state.data().time + abl.timings.periods)
+              msg.reply(message?message:"your ability was successful! :)")
+            } else {
+              msg.reply(message?message:"your ability failed. :(")
+            }
+          })
+        }
+      } else {
+        msg.reply("you don't have an abiltiy with that name!")
+      }
     }
   }
 }

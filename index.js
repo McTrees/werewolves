@@ -12,7 +12,6 @@ if (config.developerOptions.remoteErrorReporting == "true") {
 const fs = require('fs');
 const utils = require('./utils');
 update = true
-reset_data = false;
 
 utils.infoMessage("Starting bot...");
 // Check to see if the user wants to run in debug mode
@@ -22,20 +21,24 @@ if (process.argv.indexOf("--debug") > -1) {
 
 //Check if the user wants to reset the entire server data (including global profiles)
 //WARNING - Use this flag only during the testing phase, or if the server is being reset.
-if(process.argv.indexOf("--reset-data") > -1){
-	reset_data = true;
-	utils.warningMessage("Will reset WHOLE database, even the global profiles!");
+//Maybe someone could figure out a better way of doing this, but this will work
+var reset_data = (process.argv.indexOf("--reset-data") > -1);
+var reset_profiles = (process.argv.indexOf("--reset-profiles") > -1);
+if(reset_data || reset_profiles){
+	utils.warningMessage("Will reset the " + ((reset_data && reset_profiles)?"ENTIRE server data including global profiles!":(reset_data?"ENTIRE game data - which is everything except global profiles.":"global user-profiles.")));
 	utils.warningMessage("Shut down the bot NOW if you want to prevent that!");
-	utils.warningMessage("You have 10 seconds to shut the bot down!")
-	utils.warningMessage("(Type CTRL+C)")
+	utils.warningMessage("You have 10 seconds to shut the bot down! (Type CTRL+C)")
 	setTimeout(function(){
-		utils.warningMessage("RESETTING ALL DATA!")
-		require("./user/user").init(true)
-		require("./game/game_state").init(true)
-		require("./game/db_fns").init(true)
-		utils.warningMessage("DONE")
+		utils.warningMessage((reset_data && reset_profiles)?"RESETTING ENTIRE SERVER DATA":(reset_data?"RESETTING GAME DATA!":"RESETTING GLOBAL USER-PROFILES!"))
+		require("./user/user").init(reset_data)
+		require("./user/userprofile").init(reset_profiles)
+		require("./game/game_state").init(reset_data)
+		require("./game/db_fns").init(reset_data)
+		require("./poll/polls.js").init(reset_data)
+		require("./channel/channel_handler").init(reset_data)
+		require("./analytics/analytics").reset_data(reset_data)
 	}, 10e3)
-} else {
+}else {
 
 	if (process.argv.indexOf("--noupdate") > -1) {
 		update = false; //dont check for updates
@@ -67,9 +70,12 @@ if(process.argv.indexOf("--reset-data") > -1){
 	utils.debugMessage("Loaded modules.");
 
 	utils.debugMessage("Running inits:")
-	require("./user/user").init(false)
-	require("./game/game_state").init(false)
-	require("./game/db_fns").init(false)
+	require("./user/user").init(false)//This
+	require("./user/userprofile").init(false)//and this are async
+	require("./game/game_state").init(false)//This,
+	require("./game/db_fns").init(false)//this
+	require("./channel/channel_handler").init(false)//and this I don't know about
+	require("./poll/polls.js").init(false)//This is sync, so don't worry about it
 	utils.debugMessage("Inits done")
 
 	if (token == 'insert-token-here') {

@@ -17,11 +17,11 @@ function getDirectories(path) {
 }
 
 
-exports.helpCmd = function(msg, client, args, cmd) {
+exports.guideCmd = function(msg, client, args, cmd) {
   items_removed = false
   var messageContent = msg.content.split(" ");
   messageContent[0] = messageContent[0].slice(1); //remove the prefix from the message
-  const dirs = getDirectories("./help/cmds/")
+  const dirs = getDirectories("./help/guides/")
   if (msg.author == client.user) return; //ignore own messages
   messageContent = msg.content.split(" ");
    if (messageContent[0][0] == config.bot_prefix) { //only run if it is a message starting with the bot prefix (if it's a command)
@@ -31,24 +31,24 @@ exports.helpCmd = function(msg, client, args, cmd) {
       args = aliases[args[0]].split(" ");
       cmd[0] = args[1]
     } catch (err) {} //check aliases
-    utils.debugMessage("helpCmd called with args: '" + args + "' and cmd '" + cmd + "'")
+    utils.debugMessage("guideCmd called with args: '" + args + "' and cmd '" + cmd + "'")
 
     if (args == [] || args == undefined || args == "") {
-      p = "./cmds/"
+      p = "./guides/"
 dirsF = []
 for(i in dirs){dirsF[i] = '`'+dirs[i]+'`'}
       msg.channel.send(`
-\`help\` help:
+\`guide\` help:
 
-**Usage:** \`!help category command\`
+**Usage:** \`!guide guide step\`
 
-**Example:** \`!help u signup\`
+**Example:** \`!guide signing_up one\`
 
-Possible categories: ` + dirsF.join(", "))
+Possible guides: ` + dirsF.join(", ")) + "\n\n*Looking for a command? Try ``!help`.*"
       return
 }
      else if (cmd == [] || cmd == undefined || cmd == "") {
-      glob("**.md", { cwd: path.join(__dirname, "cmds/" + args) }, function(err, matches) {
+      glob("**.md", { cwd: path.join(__dirname, "guides/" + args) }, function(err, matches) {
         if (matches) {
           commands = []
           var i = matches.indexOf("index.md");
@@ -90,7 +90,7 @@ Possible categories: ` + dirsF.join(", "))
             match = " - " + match
             commands.push(match)
           }
-          fs.readFile('./help/cmds/' + args[0] + '/index.md', {
+          fs.readFile('./help/guides/' + args[0] + '/index.md', {
             encoding: 'utf-8'
           }, function(err, data) {
             if (err) {
@@ -103,13 +103,13 @@ Possible categories: ` + dirsF.join(", "))
               if (items_removed) {
                 append = "\n\n*Some items have been removed as you did not have permission to run them.*"
               }
-              msg.channel.send(`${data}${commands.join("")}\n\n*Need more info? Use \`help category command\`. For example: \`!help ${args} ${matches[0].replace(/\.md$/, "")}\`*${append}`)
+              msg.channel.send(`${data}${commands.join("")}\n\n*Need more info? Use \`guide guide step\`. For example: \`!help ${args} ${matches[0].replace(/\.md$/, "")}\`*${append}`)
             }
           })
 
         }
         else {
-          msg.channel.send("Sorry, but I don't have any commands in that help category. Valid categories are: *[WIP/TODO]*")
+          msg.channel.send("Sorry, but I don't have any steps in that guide. Valid categories are: *[WIP/TODO]*")
         }
       } )
       // msg.reply("This will eventually list all commands in the category specified")
@@ -118,17 +118,10 @@ Possible categories: ` + dirsF.join(", "))
     } else {
       utils.debugMessage(`Help cmd called w/ ${cmd} & ${args}`)
     }
-    /**
-    * For the brave souls who get this far: You are the chosen ones,
-    * the valiant knights of programming who toil away, without rest,
-    * fixing our most awful code. To you, true saviors, kings of men,
-    * I say this: never gonna give you up, never gonna let you down,
-    * never gonna run around and desert you. Never gonna make you cry,
-    * never gonna say goodbye. Never gonna tell a lie and hurt you.
-    */
-    utils.debugMessage('Reading file: ' + './help/cmds/' + args[0] + "/" +cmd[0] + '.md')
+
+    utils.debugMessage('Reading file: ' + './help/guides/' + args[0] + "/" +cmd[0] + '.md')
     try {
-    fs.readFile('./help/cmds/' + args[0] + '/' + cmd[0] + '.md', {
+    fs.readFile('./help/guides/' + args[0] + '/' + cmd[0] + '.md', {
       encoding: 'utf-8'
     }, function(err, data) {
       if (err) {

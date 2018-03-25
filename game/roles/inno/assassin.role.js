@@ -8,11 +8,11 @@ exports.abilities.assasinate = {
     allow_day : false
   },
   name: "Assasinate",
-  desc: "Assasinate one player. Usable once per night", //TODO: Make timeframe work
+  desc: "Assasinate one player. Usable once per night",
   run(game, me, args, cb) {
     game.masters.tell(`Assasinating <@${args[0]}`)
     game.u.resolve_to_id(args[0]).then(id=>{
-      if (game.state.day_num == 1 && game.state.night_time == false){
+      if (game.state.time > 2){
         cb(false)
         me.tell(`You can't assasinate on the first night`)
       }else{

@@ -44,7 +44,7 @@ const season_code_max_length = 8
 
 const defaults = {
   state_num: 0,
-  season_code: "??",
+  season_code: "no-name",
   season_name: "No Season Name Yet!",
   time: 0
 }
@@ -76,7 +76,7 @@ exports.init = function(reset) {
             utils.infoMessage(`game state is currently '${nice_names[pdata.state_num]}' (#${pdata.state_num}) `)
           } else {
             // bad
-            throw "out of range"
+            throw new Error("out of range")
           }
         } catch(e) {
           // oh no, the json file isn't valid!

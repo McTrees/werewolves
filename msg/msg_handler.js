@@ -13,6 +13,8 @@ const aliases = require('./aliases');
 const utils = require("../utils");
 const role_specific = require("./role_specific_handler")
 const permissions = require("./permissions")
+const state = require("../game/game_state")
+const game = require("../game/game")
 const msg = require("./msg_handler")
 const didYouMean = require("didYouMean")
 const stats = require("../analytics/analytics.js")
@@ -29,7 +31,6 @@ const FILENAMES = {
   c: "../cc/ccs.js",
   g: "../game/game.js",
   r: "../role/role.js"
-  //s: "../suggest/suggest.js"
 }
 getAllCommands = function() {
   commands = []
@@ -63,7 +64,7 @@ String.prototype.replaceAll = function(search, replacement) {
 };
 
 module.exports = function(msg, client) {
-  msg.content = msg.content.replaceAll("_", "")
+  //msg.content = msg.content.replaceAll("_", "")
   if (msg.author == client.user) {return}; //ignore own messages
   if (msg.channel.type == "text" && msg.guild.id !== config.guild_id) {return}
   stats.increment("Messages", 1)
@@ -72,8 +73,22 @@ module.exports = function(msg, client) {
   }
   if (msg.content[0] == config.bot_prefix) { //only run if it is a message starting with the bot prefix (if it's a command)
     var splitMessage = msg.content.split(" ");
-    utils.debugMessage("      "+msg.author +" sent a command: "+ msg.content)
     splitMessage[0] = splitMessage[0].slice(1); //remove the prefix from the message
+    if (splitMessage[1]) {
+      msg_cmd_na = splitMessage[0] + " " + splitMessage[1]
+    } else {
+      msg_cmd_na = splitMessage[0]
+    }
+        msg_cmd_na = msg_cmd_na.replaceAll("_", "")
+        msg_cmd_na = msg_cmd_na.split(" ")
+        splitMessage[0] = msg_cmd_na[0]
+        if (msg_cmd_na.length > 1) {
+          splitMessage[1] = msg_cmd_na[1]
+        }
+
+
+        utils.debugMessage(msg.author +" sent a command: "+ msg.content + ". I interpreted this as "+splitMessage)
+
     var firstWord = splitMessage[0]
     if (aliases[firstWord]) {
       splitMessage = (aliases[firstWord].split(" ").concat(splitMessage.slice(1)));
@@ -106,6 +121,8 @@ module.exports = function(msg, client) {
       // help is special-cased
       if (firstWord == "h") {
         require("../help/help.js")["helpCmd"](msg, client, splitMessage.slice(1), splitMessage.slice(2));
+      } else if(firstWord == "guide") {
+        require("../help/guide.js")["guideCmd"](msg, client, splitMessage.slice(1), splitMessage.slice(2));
       } else {
         if (!FILENAMES[firstWord]) {
           fail(msg, client, splitMessage)
@@ -130,6 +147,15 @@ module.exports = function(msg, client) {
         }
         utils.errorMessage(`error ${em_all} at ${em_all.stack}`);
      }
+    }
+  } else if (msg.content[0] == config.ability_prefix) {
+    // ability commands are a bit different
+    if (state.data().state_num !== 4) {
+      msg.reply("we're not in a game at the moment so you can't do that.")
+    } else {
+      var no_prefix = msg.content.slice(1)
+      var split_msg = no_prefix.split(' ')
+      game.use_ability(msg, client, split_msg[0], split_msg.slice(1))
     }
   }
 }

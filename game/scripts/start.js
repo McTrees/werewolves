@@ -8,20 +8,20 @@ const secret = require("./secret_channel_conf")
 const game_state = require("../game_state")
 
 module.exports = async function(game, id_list) {
-  // win teams
-  utils.debugMessage("Assigning win teams...")
+  // start tags
+  utils.debugMessage("Assigning starting tags")
   id_list.forEach(async function(id) {
     var player = game.player(id)
     var role = role_manager.role(await (player.role))
-    if (role.win_teams && Array.isArray(role.win_teams.starts_on)) {
-      role.win_teams.starts_on.forEach(tm=>{
-        db_fns.win_teams.add_win_team(pl.id, tm)
+    if (role.tags && Array.isArray(role.tags.initial)) {
+      role.tags.initial.forEach(tag=>{
+        db_fns.tags.add_tag(pl.id, tag)
       })
     } else {
       var fb_role = role_manager.fallback(await (player.role))
-      if (fb_role.win_teams && Array.isArray(fb_role.win_teams.starts_on)) {
-        fb_role.win_teams.starts_on.forEach(team=>{
-          db_fns.win_teams.add_win_team(player.id, team)
+      if (fb_role.tags && Array.isArray(fb_role.tags.initial)) {
+        fb_role.tags.initial.forEach(tag=>{
+          db_fns.tags.add_tag(player.id, tag)
         })
       }
     }
@@ -29,22 +29,44 @@ module.exports = async function(game, id_list) {
 
   // create secret channels
   // we will assume that all role names in the conf file are valid,
-  // because it's your fault if you change it and also
-  // i cba validating it here
+  // because it's your fault if you change it
+  // and also i cba validating it here
 
   // individual channels are 1 person per channel
-  secret.individual.forEach(async role_name=>{
-    var all = await game.u.all_with_role(role_name)
-    var role_info = role_manager.role(role_name)
-    all.forEach((id, index)=>{
-      channels.createChannel(
-        game._client,
-        game._client.guilds.get(config.guild_id),
-        [id],
-        `${game_state.data().season_code}-${role_info.name}`,
-        config.category_ids.secret_channel,
-        role_info.documentation
-      )
+  secret.individual.forEach(role_name=>{
+    game.u.all_with_role(role_name).then(all=>{
+      var role_info = role_manager.role(role_name)
+      all.forEach((id, index)=>{
+        channels.createChannel(
+          game._client,
+          game._client.guilds.get(config.guild_id),
+          [id],
+          `${game_state.data().season_code}-${role_info.name}`,
+          config.category_ids.secret_channel,
+          role_info.documentation,
+          role_name
+        )
+      })
+    })
+  })
+  // all channels are for everyone with any of a set of roles
+  Object.keys(secret.all).forEach(ch_name=>{
+    var role_name_list = secret.all[ch_name].roles
+    var ids = role_name_list.map(role_name=>game.u.all_with_role(role_name))
+    Promise.all(ids).then(ids_got=>{
+      // I'm not quite sure how this works but it flattens the list
+      flattened_ids = [].concat.apply([], ids_got)
+      if (flattened_ids.length > 0) {
+        channels.createChannel(
+          game._client,
+          game._client.guilds.get(config.guild_id),
+          flattened_ids,
+          `${game_state.data().season_code}-${ch_name}`,
+          config.category_ids.secret_channel,
+          secret.all[ch_name].message,
+          role_name_list[0]
+        )
+      }
     })
   })
 
