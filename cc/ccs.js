@@ -52,7 +52,7 @@ function createChannel(showCreator, people, client, name, ccconf, msg) { //funct
     })
     utils.debugMessage("added bot")
     channel.overwritePermissions(msg.guild.roles.find("name", "@everyone"), { //@everyone can't see it
-      'VIEW_CHANNEL': false,
+      'VIEW_CHANNEL': false
     })
     utils.debugMessage("removed everyone")
     channel.overwritePermissions(msg.guild.roles.get(config.role_ids.gameMaster), { //gamemaster can see it
@@ -94,7 +94,7 @@ function createChannel(showCreator, people, client, name, ccconf, msg) { //funct
 
 exports.createCmd = function(msg, client, args) { //command for making a cc
   utils.debugMessage("start of create CC")
-  msg.delete()_
+  msg.delete()
   var name = args[0]; //set var for cc name
   var showCreator = true; //default for showing the creator
 
