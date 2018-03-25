@@ -168,7 +168,7 @@ exports.addCmd = function(msg, client, args) { //add someone to the cc
   }
   allPeople = msg.channel.permissionOverwrites.findAll("type", "member") //gets all the members of the cc
   allPeople = allPeople.filter(function(obj) { //removes all members apart from the owner
-    return (obj.allow != 0 || obj.allow == 1024) && obj.id != client.user.id;
+    return (obj.allow != 0 || obj.allow == 68608) && obj.id != client.user.id;
   });
   allRoles = msg.channel.permissionOverwrites.findAll("type", "role") //gets all the roles of the cc
   allRoles = allRoles.filter(function(obj) { //filters for all roles with permission
@@ -211,7 +211,7 @@ exports.removeCmd = function(msg, client, args) { //remove someone from the cc
   }
   allPeople = msg.channel.permissionOverwrites.findAll("type", "member") //gets all the members of the cc
   allPeople = allPeople.filter(function(obj) { //removes all members apart from the owner
-    return (obj.allow != 0 || obj.allow == 1024) && obj.id != client.user.id;
+    return (obj.allow != 0 || obj.allow == 68608) && obj.id != client.user.id;
   });
   allRoles = msg.channel.permissionOverwrites.findAll("type", "role") //gets all the roles of the cc
   allRoles = allRoles.filter(function(obj) { //filters for all roles with permission
