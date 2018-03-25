@@ -31,5 +31,7 @@
   "ccreate":"c create",
   "cadd":"c add",
   "cremove":"c remove",
-  "clist" :"c list"
+  "clist" :"c list",
+  "cinfo" :"c list",
+  "c info" :"c list"
 }
