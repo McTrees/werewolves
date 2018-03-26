@@ -8,7 +8,10 @@ var fs = require('fs')
 const glob = require('glob')
 const permissions = require('../msg/permissions')
 
-
+String.prototype.replaceAll = function(search, replacement) {
+    var target = this;
+    return target.replace(new RegExp(search, 'g'), replacement);
+};
 
 function getDirectories(path) {
   return fs.readdirSync(path).filter(function (file) {
@@ -61,6 +64,8 @@ Possible categories: ` + dirsF.join(", "))
             match = matches[match]
             match = match.replace(/\.md$/, "")
             cmd = args[0] + " " + match
+            c2 = cmd
+            cmd = cmd.replaceAll("_", "")
             utils.debugMessage("Calculating permissions for user and removing commands which he has no permissions for.")
             utils.debugMessage(`Checking ${cmd} against permissions.json`)
             p = permissions.gm_only
@@ -82,6 +87,7 @@ Possible categories: ` + dirsF.join(", "))
               utils.debugMessage("Command not in permissions; assuming all can run")
             }
           }
+          cmd = c2
           matches = matches_2
           for (var match in matches) {
             match = matches[match]
