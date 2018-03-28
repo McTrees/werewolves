@@ -66,6 +66,7 @@ String.prototype.replaceAll = function(search, replacement) {
 module.exports = function(msg, client) {
   //msg.content = msg.content.replaceAll("_", "")
   if (msg.author == client.user) {return}; //ignore own messages
+  if (msg.guild === null){msg.reply("currently you cannot send commands in a DM");return};//prevent DMs
   if (msg.channel.type == "text" && msg.guild.id !== config.guild_id) {return}
   stats.increment("Messages", 1)
   if (msg.content.indexOf(`<@&${config.role_ids.gameMaster}>`) > -1) {
@@ -121,6 +122,8 @@ module.exports = function(msg, client) {
       // help is special-cased
       if (firstWord == "h") {
         require("../help/help.js")["helpCmd"](msg, client, splitMessage.slice(1), splitMessage.slice(2));
+      } else if(firstWord == "guide") {
+        require("../help/guide.js")["guideCmd"](msg, client, splitMessage.slice(1), splitMessage.slice(2));
       } else {
         if (!FILENAMES[firstWord]) {
           fail(msg, client, splitMessage)

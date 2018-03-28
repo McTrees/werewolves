@@ -52,7 +52,7 @@ function createChannel(showCreator, people, client, name, ccconf, msg) { //funct
     })
     utils.debugMessage("added bot")
     channel.overwritePermissions(msg.guild.roles.find("name", "@everyone"), { //@everyone can't see it
-      'VIEW_CHANNEL': false,
+      'VIEW_CHANNEL': false
     })
     utils.debugMessage("removed everyone")
     channel.overwritePermissions(msg.guild.roles.get(config.role_ids.gameMaster), { //gamemaster can see it
@@ -93,7 +93,8 @@ function createChannel(showCreator, people, client, name, ccconf, msg) { //funct
 }
 
 exports.createCmd = function(msg, client, args) { //command for making a cc
-  utils.debugMessage("start of create")
+  utils.debugMessage("start of create CC")
+  msg.delete()
   var name = args[0]; //set var for cc name
   var showCreator = true; //default for showing the creator
 
@@ -167,15 +168,13 @@ exports.addCmd = function(msg, client, args) { //add someone to the cc
   }
   allPeople = msg.channel.permissionOverwrites.findAll("type", "member") //gets all the members of the cc
   allPeople = allPeople.filter(function(obj) { //removes all members apart from the owner
-    return (obj.allow != 0 || obj.allow == 1024) && obj.id != client.user.id;
+    return (obj.allow != 0 || obj.allow == 68608) && obj.id != client.user.id;
   });
   allRoles = msg.channel.permissionOverwrites.findAll("type", "role") //gets all the roles of the cc
   allRoles = allRoles.filter(function(obj) { //filters for all roles with permission
     return obj.allow == 66560;
   });
-  console.log(allPeople[0].id)
-  console.log(msg.author.id)
-  if (!allPeople[0].id == msg.author.id && !msg.member.roles.has(allRoles[0].id)) { //checks if they have perms, from the role or they are channel owner
+  if (!allPeople[0].id == msg.author.id || !msg.member.roles.has(allRoles[0].id)) { //checks if they have perms, from the role or they are channel owner
     msg.reply(config.messages.general.permission_denied)
     return;
   }
@@ -212,14 +211,12 @@ exports.removeCmd = function(msg, client, args) { //remove someone from the cc
   }
   allPeople = msg.channel.permissionOverwrites.findAll("type", "member") //gets all the members of the cc
   allPeople = allPeople.filter(function(obj) { //removes all members apart from the owner
-    return (obj.allow != 0 || obj.allow == 1024) && obj.id != client.user.id;
+    return (obj.allow != 0 || obj.allow == 68608) && obj.id != client.user.id;
   });
   allRoles = msg.channel.permissionOverwrites.findAll("type", "role") //gets all the roles of the cc
   allRoles = allRoles.filter(function(obj) { //filters for all roles with permission
     return obj.allow == 66560;
   });
-  console.log(allPeople[0].id)
-  console.log(msg.author.id)
   if (!allPeople[0].id == msg.author.id || !msg.member.roles.has(allRoles[0].id)) { //checks if they have perms, from the role or they are channel owner
     msg.reply(config.messages.general.permission_denied)
     return;
