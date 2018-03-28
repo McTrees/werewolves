@@ -469,8 +469,8 @@ exports.kill_q.get = get_kq
 function write_kq(toWrite) {
   fs.writeFileSync("./game/kill_queue.json", JSON.stringify(toWrite))
 }
-
 exports.kill_q.write = write_kq
+
 async function add_to_kill_q(who, why, client) {
   var kill_q = get_kq()
   utils.debugMessage("Got QK as " + kill_q)
