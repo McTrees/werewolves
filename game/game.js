@@ -43,9 +43,14 @@ class GameController {
     return r
   }
   win(id_list) {
-    this.masters.send(`I believe some players have won @here! I think that
-- ${id_list.join("\n -")}
-have all won! I could be wrong though! So I purposefully haven't done anything.`)
+    if (id_list.length > 0 ) {
+      this.masters.send(`I believe some players have won @here! I think that
+  - ${id_list.join("\n -")}
+  have all won! I could be wrong though! So I purposefully haven't done anything.`)
+    }
+  }
+  kill(id, reason) {
+    add_to_kill_q(id, reason, this._client)
   }
 }
 
