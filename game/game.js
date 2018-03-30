@@ -350,13 +350,13 @@ exports.commands.day = async function(msg, client) {
     msg.reply("it's already day time! In particular, it's currently "+game_state.nice_time(d.time)+".")
   } else {
     game_state.next_day_or_night()
-    await execute_kill_q(msg, client)
     await scripts.every_day(new GameController(client), await (user.all_alive()))
+    await execute_kill_q(msg, client)
     day_and_night(msg, client)
-    msg.reply(`[👍] It is now ${game_state.nice_time(d.time)}!`)
     stats = require("../analytics/analytics.js").get_stats()
     msg.reply(`**Today's Stats:**\n - ${stats.Messages} messages were sent!\n - The Game Masters were pinged ${stats.GMPings} times!\n - ${stats.CCCreations} Conspiracy Channels were created!`)
     require("../analytics/analytics.js").reset_data(true)
+    msg.reply(`[👍] It is now ${game_state.nice_time(d.time)}!`)
   }
 }
 /*
@@ -377,8 +377,8 @@ exports.commands.night = async function(msg, client) {
     msg.reply("it's already night time! In particular, it's currently "+game_state.nice_time(d.time)+".")
   } else {
     game_state.next_day_or_night()
-    await execute_kill_q(msg, client)
     await scripts.every_night(new GameController(client), await (user.all_alive()))
+    await execute_kill_q(msg, client)
     day_and_night(msg, client)
     msg.reply(`[👍] It is now ${game_state.nice_time(d.time)}!`)
   }
