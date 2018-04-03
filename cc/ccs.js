@@ -66,15 +66,15 @@ function createChannel(showCreator, people, client, name, ccconf, msg) { //funct
     })
     utils.debugMessage("added author")
     channel.overwritePermissions(msg.guild.roles.get(config.role_ids.dead), { //dead peps (LOL HAHA SUCKS TO BE YOU) can't send in it
-      SEND_MESSAGES: false,
+      SEND_MESSAGES: false
     })
     channel.overwritePermissions(msg.guild.roles.get(config.role_ids.participant), { //alive peps can send in it
-      SEND_MESSAGES: true,
+      SEND_MESSAGES: true
     })
     people.forEach(function(element) {
       user.resolve_to_id(element).then(function(user) {
         channel.overwritePermissions(msg.guild.members.get(user), { //everyone specified can see it
-          'VIEW_CHANNEL': true,
+          'VIEW_CHANNEL': true
         })
       })
     })
