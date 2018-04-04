@@ -1,5 +1,5 @@
 exports.name = "Runner"
-exports.description = "can run away from the werewolves once"
+exports.description = "Can run away from the werewolves once"
 
 exports.on_death = function(kill_desc, game, me) {
   if (kill_desc.by == "w") {

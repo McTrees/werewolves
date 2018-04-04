@@ -1,2 +1,2 @@
-exports.name = "Baker"
-exports.description = "Knows who all the other bakers are"
+exports.name = "Hell hound"
+exports.description = "Knows who all the other hell hounds are"
