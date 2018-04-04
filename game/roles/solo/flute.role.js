@@ -21,7 +21,7 @@ exports.abilities.enchant = {
     game.u.resolve_to_id(args[0]).then(id=>{
       game.u.get_role(id).then(r=>{
         if (r === undefined) {
-          cb(false, "couldn't powder that person")
+          cb(false, "couldn't enchant that person")
         } else if (r == "solo/flute") {
           cb(false, "that person was a flute player! try again")
         } else {
