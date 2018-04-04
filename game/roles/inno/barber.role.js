@@ -21,7 +21,7 @@ exports.abilities.kill = {
         } else{
           me.tell(`You won't be announced as barber`)
         }
-        game.player(id).kill("barber-killed")
+        game.player(id).kill("barber-killed");//Do NOT change the word "barber-killed"
         cb(true)
         me.tell(`successfully killed <@${args[0]}>`)
       }
