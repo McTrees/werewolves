@@ -44,10 +44,16 @@ exports.createChannel = function(client, guild, ids, name, category, message, ro
       VIEW_CHANNEL: true
     })
     channel.overwritePermissions(guild.roles.find("name", "@everyone"), { //@everyone can't see it
-      VIEW_CHANNEL: false,
+      VIEW_CHANNEL: false
     })
     channel.overwritePermissions(guild.roles.get(config.role_ids.gameMaster), { //gamemaster can see it
-      VIEW_CHANNEL: true,
+      VIEW_CHANNEL: true
+    })
+    channel.overwritePermissions(guild.roles.get(config.role_ids.dead), { //dead peps (LOL HAHA SUCKS TO BE YOU) can't send in it
+      SEND_MESSAGES: false
+    })
+    channel.overwritePermissions(guild.roles.get(config.role_ids.participant), { //alive peps can send in it
+      SEND_MESSAGES: true
     })
     ids.forEach(function(element) {
       channel.overwritePermissions(guild.members.get(element), { //everyone specified can see it
