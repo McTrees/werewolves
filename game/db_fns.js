@@ -7,17 +7,17 @@ const utils = require("../utils")
 exports.init = function(reset_data) {
   // called on bot start
   fs.readFile(path.join(__dirname, 'game.db'), {encoding: "utf-8"}, function(err, data){
-    if(err) throw err;
+    if(err) throw err
     if (data === '' || reset_data) { // database is empty and needs to be created
       fs.readFile(path.join(__dirname, 'game_db_schema.sql'), {encoding: "utf-8"}, function(er, schema) {
         if (er) throw er
         else {
           utils.warningMessage(reset_data?"You chose to reset the game database for this bot, creating new game database.":"game database not found - creating a new one");
-          gamedb.exec(schema);
+          gamedb.exec(schema)
           if(reset_data){
-            utils.warningMessage("Database reset.");
+            utils.warningMessage("Database reset.")
           }else{
-            utils.successMessage("Database created!");
+            utils.successMessage("Database created!")
           }
         }
       })
@@ -78,25 +78,14 @@ exports.tags.all_have_tag = function(num_alive, tag) {
   })
 }
 
+
+
 exports.timings = {}
 // functions for managing ability timings
 exports.timings.add_next_time = function(user_id, ability_name, next_time_can_use) {
   utils.debugMessage(`add_next_time: user ${user_id}, abn ${ability_name}, next time ${next_time_can_use}`)
   // makes it so u can't use abn till next_cycle time
   gamedb.serialize(function() {
-	  /*
-    gamedb.run("delete from ability_timings where user_id = $u and ability_name = $a", {
-      $u:user_id,$a:ability_name
-    })
-    gamedb.run("replace into ability_timings (user_id, ability_name, next_time_can_use) values ($u,$a,$n)", {
-      $u:user_id,
-      $a:ability_name,
-      $n:next_time_can_use
-    }, function(err){
-      utils.debugMessage("=== in the add_next_time === err is "+err+" ===")
-    })
-	*/
-	//Using UPDATE now
 	gamedb.run("update ability_timings set next_time_can_use = $n where user_id=$u and ability_name=$a", {
       $u:user_id,
       $a:ability_name,
@@ -105,7 +94,6 @@ exports.timings.add_next_time = function(user_id, ability_name, next_time_can_us
       utils.debugMessage("=== in the add_next_time === err is "+err+" ===")
     })
   })
-
 }
 
 exports.timings.can_use = function(user_id, ability_name, current_cycle) {
