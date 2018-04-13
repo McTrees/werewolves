@@ -1,6 +1,6 @@
 BEGIN TRANSACTION;
 DROP TABLE IF EXISTS player_tags;
-DROP TABLE IF EXISTS love;
+DROP TABLE IF EXISTS relationships;
 DROP TABLE IF EXISTS ability_timings;
 
 CREATE TABLE player_tags (
@@ -8,9 +8,10 @@ CREATE TABLE player_tags (
   tag_name varchar(18) not null
 );
 
-CREATE TABLE love (
-  lover_id char(21) not null,
-  affected_id char(21) not null
+CREATE TABLE relationships (
+  relationship_name varchar(18) not null,
+  affector_id char(21) not null,
+  affectee_id char(21) not null
 );
 
 CREATE TABLE ability_timings (
