@@ -56,6 +56,9 @@ exports.fallback = function(name) {
                                 |_____|    |_____|                                |_____|              |_____|
 */
 
+
+var role_dictionary = {}
+
 exports.resolve_to_internal_role_name = function(role_name) {
   //Expects a role name, for example "Vampire" and returns an internal role name, such as vamp/vampire
   //role_name is case insensitive
