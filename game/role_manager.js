@@ -57,7 +57,6 @@ exports.fallback = function(name) {
 */
 
 
-var role_dictionary = {}
 global.role_dictionary = {}
 
 exports.resolve_to_internal_role_name = function(role_name) {
