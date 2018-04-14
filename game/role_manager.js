@@ -57,7 +57,7 @@ exports.fallback = function(name) {
 */
 
 exports.resolve_to_internal_role_name = function(role_name) {
-  //Expects a role name, for example "Vampire" and returns an internal role name, such as vampire/vampire
+  //Expects a role name, for example "Vampire" and returns an internal role name, such as vamp/vampire
   //role_name is case insensitive
   //Spaces are handled, but this function shouldn't be called with a list, such as ['white', 'werewolf']
   //role_name should be a string, containing only the role name, as defined in a role's exports.name
