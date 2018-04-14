@@ -67,4 +67,18 @@ exports.resolve_to_internal_role_name = function(role_name) {
   return(role_dictionary(role_name))
 }
 
+
+exports.init_role_dictionary = function() {
+  glob("**/*.role.js", { cwd: path.join(__dirname, "roles")}, function(err, files){
+    if (err) {throw err;}
+    // get rid of .role.js suffix
+    var role_names = files.map(n=>n.replace(/\.role\.js$/, '')) //All internal role names into a variable
+    var irn_and_ern = {}
+    for(var irn of role_names) {
+      //For each IRN, such as wolf/whitewerewolf, require it and add the name property to a dictionary, with it's key being the proper role name
+      d = require(path.join(__dirname, "roles", irn) + ".role.js").name
+      irn_and_ern[d.toLowerCase()] = irn
+    }
+    return(irn_and_ern)
+  })
 }
