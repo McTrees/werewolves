@@ -82,6 +82,7 @@ exports.init_role_dictionary = function() {
       d = require(path.join(__dirname, "roles", irn) + ".role.js").name
       irn_and_ern[d.toLowerCase()] = irn
     }
+    role_dictionary = irn_and_ern
     return(irn_and_ern)
   })
 }
