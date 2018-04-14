@@ -74,6 +74,7 @@ exports.resolve_to_internal_role_name = function(role_name) {
 
 
 exports.init_role_dictionary = function() {
+exports.init_role_dictionary = async function() {
   glob("**/*.role.js", { cwd: path.join(__dirname, "roles")}, function(err, files){
     if (err) {throw err;}
     // get rid of .role.js suffix
