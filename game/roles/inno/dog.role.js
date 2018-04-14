@@ -5,6 +5,9 @@ exports.abilities = {} //Because Javascript
 exports.abilities.become = {
   name: "become",
   desc: "choose the role they would like to become",
+  timings: {
+    allow_day: false
+  },
   run(game, me, args, cb) {
     if(args[0].toUpperCase() == "WEREWOLF"){
       game.masters.tell(`Changing the role of <@${me.id} to wolf/werewolf`)
@@ -19,4 +22,9 @@ exports.abilities.become = {
       me.tell("that is not a valid role, roles include `innocent`, `werewolf` and `cursed civilian`")
     }
   }
+}
+
+exports.on_night_to_day = function(game, me) {
+  // this won't run if they already changed their role
+  me.role = "inno/basic"
 }

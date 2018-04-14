@@ -30,6 +30,7 @@ class GameController {
     this._client = client
     this._gamedb = db_fns._db
     this._userdb = this.u._db
+    this.kill_q = exports.kill_q
   }
   get data(){
     return game_state.data()
