@@ -58,6 +58,7 @@ exports.fallback = function(name) {
 
 
 var role_dictionary = {}
+global.role_dictionary = {}
 
 exports.resolve_to_internal_role_name = function(role_name) {
   //Expects a role name, for example "Vampire" and returns an internal role name, such as vamp/vampire
@@ -68,6 +69,7 @@ exports.resolve_to_internal_role_name = function(role_name) {
     role_dictionary = init_role_dictionary()
   }
   return(role_dictionary(role_name.toLowerCase()))
+  return(get_irn(global.role_dictionary, role_name))
 }
 
 
