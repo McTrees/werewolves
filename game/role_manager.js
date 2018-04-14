@@ -67,7 +67,7 @@ exports.resolve_to_internal_role_name = function(role_name) {
   if (typeof role_dictionary !== 'undefined') {
     role_dictionary = init_role_dictionary()
   }
-  return(role_dictionary(role_name))
+  return(role_dictionary(role_name.toLowerCase()))
 }
 
 
