@@ -64,15 +64,29 @@ exports.resolve_to_internal_role_name = function(role_name) {
   //role_name is case insensitive
   //Spaces are handled, but this function shouldn't be called with a list, such as ['white', 'werewolf']
   //role_name should be a string, containing only the role name, as defined in a role's exports.name
-  if (typeof role_dictionary !== 'undefined') {
-    role_dictionary = init_role_dictionary()
+  //if an internal role name is passed, this function will return it back at ya!
+
+  glob("**/*.role.js", { cwd: path.join(__dirname, "roles")}, function(err, files){ //Make sure we don't needlessly check for internal role names already passed to us
+    if (err) {throw err;}
+    // get rid of .role.js suffix
+    var role_names = files.map(n=>n.replace(/\.role\.js$/, '')) //All internal role names into a variable
+    if (!role_names.indexOf(role_name) > -1) {
+      return role_names
+    }
+  })
+
+  if (typeof global.role_dictionary !== 'undefined') {
+    exports.init_role_dictionary().then(function(data) {
+    return(get_irn(global.role_dictionary, role_name))
+    })
   }
-  return(role_dictionary(role_name.toLowerCase()))
   return(get_irn(global.role_dictionary, role_name))
 }
 
+function get_irn(role_dictionary, role_name) {
+  return(role_dictionary[role_name.toString().toLowerCase()])
+}
 
-exports.init_role_dictionary = function() {
 exports.init_role_dictionary = async function() {
   glob("**/*.role.js", { cwd: path.join(__dirname, "roles")}, function(err, files){
     if (err) {throw err;}
@@ -84,7 +98,7 @@ exports.init_role_dictionary = async function() {
       d = require(path.join(__dirname, "roles", irn) + ".role.js").name
       irn_and_ern[d.toLowerCase()] = irn
     }
-    role_dictionary = irn_and_ern
+    global.role_dictionary = irn_and_ern
     return(irn_and_ern)
   })
 }
