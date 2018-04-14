@@ -19,7 +19,7 @@ exports.abilities.kill = {
         game.tags.remove_tag(me.id, "has_kill_potion")
         game.masters.tell(`witch killing <@${id}>`)
         cb(true, `killed <@${id}>`)
-      }).catch(=>{
+      }).catch(err=>{
         cb(false, "could not kill that person")
       })
     }
