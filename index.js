@@ -76,6 +76,7 @@ if(reset_data || reset_profiles){
 	require("./game/db_fns").init(false)//this
 	require("./channel/channel_handler").init(false)//and this I don't know about
 	require("./poll/polls.js").init(false)//This is sync, so don't worry about it
+	require("./game/role_manager").init_role_dictionary() //I'm not expecting roles to change during execution
 	utils.debugMessage("Inits done")
 
 	if (token == 'insert-token-here') {
