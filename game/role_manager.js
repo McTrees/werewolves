@@ -45,3 +45,21 @@ exports.fallback = function(name) {
 }
 
 //exports.RoleInterface.from = exports.role // depreciated, don't use
+
+
+
+/*                      _              _           _       _                        _               _
+  _ __ ___  ___  ___ | |_   _____   | |_ ___    (_)_ __ | |_ ___ _ __ _ __   __ _| |    _ __ ___ | | ___     _ __   __ _ _ __ ___   ___
+ | '__/ _ \/ __|/ _ \| \ \ / / _ \  | __/ _ \   | | '_ \| __/ _ \ '__| '_ \ / _` | |   | '__/ _ \| |/ _ \   | '_ \ / _` | '_ ` _ \ / _ \
+ | | |  __/\__ \ (_) | |\ V /  __/  | || (_) |  | | | | | ||  __/ |  | | | | (_| | |   | | | (_) | |  __/   | | | | (_| | | | | | |  __/
+ |_|  \___||___/\___/|_| \_/ \___|___\__\___/___|_|_| |_|\__\___|_|  |_| |_|\__,_|_|___|_|  \___/|_|\___|___|_| |_|\__,_|_| |_| |_|\___|
+                                |_____|    |_____|                                |_____|              |_____|
+*/
+
+exports.resolve_to_internal_role_name = function(role_name) {
+  //Expects a role name, for example "Vampire" and returns an internal role name, such as vampire/vampire
+  //role_name is case insensitive
+  //Spaces are handled, but this function shouldn't be called with a list, such as ['white', 'werewolf']
+  //role_name should be a string, containing only the role name, as defined in a role's exports.name
+
+}
