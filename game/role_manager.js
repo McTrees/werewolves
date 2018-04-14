@@ -71,7 +71,7 @@ exports.resolve_to_internal_role_name = function(role_name) {
     // get rid of .role.js suffix
     var role_names = files.map(n=>n.replace(/\.role\.js$/, '')) //All internal role names into a variable
     if (!role_names.indexOf(role_name) > -1) {
-      return role_names
+      return role_name
     }
   })
 
