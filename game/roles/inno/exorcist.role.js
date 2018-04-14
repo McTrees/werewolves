@@ -14,7 +14,7 @@ exports.abilities.undoom = {
     allow_day:false
   },
   name: "Undoom",
-  desc: "Un-demonise or kill someone affiliated with vampires"
+  desc: "Un-demonise or kill someone affiliated with vampires",
   run(game, me, args, cb) {
     game.masters.tell("attempting to undoom "+args[0])
     game.u.resolve_to_id(args[0]).then(id=>{
