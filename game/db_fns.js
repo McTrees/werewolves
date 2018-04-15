@@ -78,7 +78,12 @@ exports.tags.all_have_tag = function(num_alive, tag) {
   })
 }
 
-
+exports.relationships = {}
+exports.relationships.add_rel = function(affector_id, relationship_name, affectee_id) {
+  utils.debugMessage(`add rel: ${affector_id} has rel ${relationship_name} with ${affectee_id}`)
+  gamedb.run("insert into relationships (affector_id, relationship_name, affectee_id) values ($aid, $r, $eid);", {$aid:affector_id,$r:relationship_name,$eid:affectee_id}, function(err) { if (err) throw err})
+}
+exports.relations
 
 exports.timings = {}
 // functions for managing ability timings
@@ -95,7 +100,6 @@ exports.timings.add_next_time = function(user_id, ability_name, next_time_can_us
     })
   })
 }
-
 exports.timings.can_use = function(user_id, ability_name, current_cycle) {
   utils.debugMessage(`can_use: user ${user_id}, abn ${ability_name}, current cycle ${current_cycle}`)
   return new Promise(function(resolve, reject) {
