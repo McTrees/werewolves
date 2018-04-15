@@ -9,8 +9,8 @@ CREATE TABLE player_tags (
 );
 
 CREATE TABLE relationships (
-  relationship_name varchar(18) not null,
   affector_id char(21) not null,
+  relationship_name varchar(18) not null,
   affectee_id char(21) not null
 );
 
