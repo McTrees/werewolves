@@ -83,7 +83,10 @@ exports.relationships.add_rel = function(affector_id, relationship_name, affecte
   utils.debugMessage(`add rel: ${affector_id} has rel ${relationship_name} with ${affectee_id}`)
   gamedb.run("insert into relationships (affector_id, relationship_name, affectee_id) values ($aid, $r, $eid);", {$aid:affector_id,$r:relationship_name,$eid:affectee_id}, function(err) { if (err) throw err})
 }
-exports.relations
+exports.relationships.remove_rel = function(affector_id, relationship_name, affectee_id) {
+  utils.debugMessage(`remove rel: ${affector_id} no longer has rel ${relationship_name} with ${affectee_id}`)
+  gamedb.run("delete from relationships where affector_id = $aid and relationship_name = $r and affectee_id = $eid;", {$aid:affector_id,$r:relationship_name,$eid:affectee_id}, function(err) { if (err) throw err})
+}
 
 exports.timings = {}
 // functions for managing ability timings
