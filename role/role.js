@@ -5,6 +5,9 @@ exports.commands = {}
 exports.commands.info = function(msg, client, rn) {
   // sends the user info about a role
   // expects a role name, such as inno/basic
+  // as of the update on 14/03/18 this function can now also take one-word role names, such as "Baker".
+
+  rn = role_manager.resolve_to_internal_role_name(rn)
   try {
     msg.channel.send(`${role_manager.role(rn).documentation}`)
   } catch (err) {
