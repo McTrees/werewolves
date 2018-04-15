@@ -88,6 +88,14 @@ exports.relationships.remove_rel = function(affector_id, relationship_name, affe
   utils.debugMessage(`remove rel: ${affector_id} no longer has rel ${relationship_name} with ${affectee_id}`)
   gamedb.run("delete from relationships where affector_id = $aid and relationship_name = $r and affectee_id = $eid;", {$aid:affector_id,$r:relationship_name,$eid:affectee_id}, function(err) { if (err) throw err})
 }
+exports.relationships.exists_rel = function(affector_id, relationship_name, affectee_id) {
+  return new Promise(function(resolve, reject) {
+    gamedb.get("select relationship_name from relationships where affector_id = $aid and relationship_name = $r and affectee_id = $eid;", {$aid:affector_id,$r:relationship_name,$eid:affectee_id}, function(row) {
+      if (err) {throw err;}
+      resolve(!!row)
+    })
+  })
+}
 
 exports.timings = {}
 // functions for managing ability timings
