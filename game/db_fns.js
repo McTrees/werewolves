@@ -96,6 +96,22 @@ exports.relationships.exists_rel = function(affector_id, relationship_name, affe
     })
   })
 }
+exports.relationships.all_affectees_of = function(affector_id, relationship_name) {
+  return new Promise(function(resolve, reject)) {
+    gamedb.all("select affectee_id from relationships where affector_id = $aid and relationship_name = $r;", {$aid:affector_id,$r:relationship_name}, function(err, rows) {
+      if (err) {throw err;}
+      resolve(rows.map(row=>row.affectee_id))
+    })
+  }
+}
+exports.relationships.all_affectors_of = function(relationship_name, affectee_id) {
+  return new Promise(function(resolve, reject)) {
+    gamedb.all("select affector_id from relationships where affecte_id = $eid and relationship_name = $r;", {$eid:affectee_id,$r:relationship_name}, function(err, rows) {
+      if (err) {throw err;}
+      resolve(rows.map(row=>row.affector_id))
+    })
+  }
+}
 
 exports.timings = {}
 // functions for managing ability timings
