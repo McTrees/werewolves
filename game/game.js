@@ -27,6 +27,7 @@ class GameController {
     }
     this.u = user
     this.tags = db_fns.tags
+    this.rels = db_fns.relationships
     this._client = client
     this._gamedb = db_fns._db
     this._userdb = this.u._db
