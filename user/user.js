@@ -77,27 +77,31 @@ exports.commands.signup = function (msg, client, content) {
     } else {
       msg.react(content[0]).then(mr=>{
         msg.clearReactions();
-        getUserId(utils.toBase64(content[0])).then((id)=>{
-          // already in use
-          msg.channel.send(`Sorry but <@${id}> is already using that emoji!`)
-        }).catch(()=>{
-          addUser(client, msg.author.id, utils.toBase64(content[0])).then(old=>{
-            if (old) {
-              msg.channel.send(`<@${msg.author.id}>'s emoji changed from ${utils.fromBase64(old)} to ${content[0]}`)
-            } else {
-              userprofile.registerIfNew(msg.author).then((result)=>{
-                if(result === 0){
-                  utils.debugMessage("A previous player of Werewolves has signed up for this season");
-                }else if (result === 1){
-                  client.channels.get(config.channel_ids.gm_confirm).send(`<@${msg.author.id}> is a new player!`);
-                }else{
-                  client.channels.get(config.channel_ids.gm_confirm).send(`Error in registering <@${msg.author.id}>!`);
-                }
-                msg.channel.send(`<@${msg.author.id}> signed up with emoji ${content[0]}`);
-              });
-            }
+        if FORBIDDEN_EMOJIS.includes(content[0]) {
+          msg.reply("you can't sign up with that emoji because it represents something special in the ghost market minigame for dead people")
+        } else {
+          getUserId(utils.toBase64(content[0])).then((id)=>{
+            // already in use
+            msg.channel.send(`Sorry but <@${id}> is already using that emoji!`)
+          }).catch(()=>{
+            addUser(client, msg.author.id, utils.toBase64(content[0])).then(old=>{
+              if (old) {
+                msg.channel.send(`<@${msg.author.id}>'s emoji changed from ${utils.fromBase64(old)} to ${content[0]}`)
+              } else {
+                userprofile.registerIfNew(msg.author).then((result)=>{
+                  if(result === 0){
+                    utils.debugMessage("A previous player of Werewolves has signed up for this season");
+                  }else if (result === 1){
+                    client.channels.get(config.channel_ids.gm_confirm).send(`<@${msg.author.id}> is a new player!`);
+                  }else{
+                    client.channels.get(config.channel_ids.gm_confirm).send(`Error in registering <@${msg.author.id}>!`);
+                  }
+                  msg.channel.send(`<@${msg.author.id}> signed up with emoji ${content[0]}`);
+                });
+              }
+            })
           })
-        })
+        }
       }).catch(()=>{ // react
         msg.reply(`${content[0]} is not a valid emoji...`)
       })
