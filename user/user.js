@@ -43,6 +43,25 @@ exports.init = function(reset_data) {
   })
 }
 
+const FORBIDDEN_EMOJIS = [
+  // emojis that players are not allowed to sign up with
+  // will be used for the dead market system
+  "😇",
+  "🐺",
+  "⚰",
+  "🎷",
+  "😈",
+  "☠",
+  "👼",
+  "👑",
+  "🏇",
+  "❄",
+  "🔥",
+  "❓",
+  "🤢",
+  "🔃"
+]
+
 exports.commands.signup = function (msg, client, content) {
   utils.debugMessage(`@${msg.author.username} ran signup command with emoji ${content[0]}`)
   // command for signing yourself up
