@@ -77,7 +77,7 @@ exports.commands.signup = function (msg, client, content) {
     } else {
       msg.react(content[0]).then(mr=>{
         msg.clearReactions();
-        if FORBIDDEN_EMOJIS.includes(content[0]) {
+        if (FORBIDDEN_EMOJIS.includes(content[0])) {
           msg.reply("you can't sign up with that emoji because it represents something special in the ghost market minigame for dead people")
         } else {
           getUserId(utils.toBase64(content[0])).then((id)=>{
