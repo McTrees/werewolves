@@ -12,10 +12,10 @@ exports.abilities.tell = {
     allow_day : false
   },
   run(game, me, args, cb) {
-    game.masters.tell(`Checking the Role of <@${args[0]}`)
+    game.masters.tell(`Checking the Role of <@${args[0]}>`)
     game.u.resolve_to_id(args[0]).then(id=>{
       utils.disguised_role(id).then(role=>{
-        cb(true, `<@${args[0]} has the role: ${role}`)
+        cb(true, `<@${args[0]}> has the role: ${role}`)
       })
     }).catch(e=>{
       cb(false, "couldn't get the role of that person")
