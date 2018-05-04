@@ -19,3 +19,11 @@ exports.abilities.disguise = {
     })
   }
 }
+
+exports.on_night_to_day = function(game, me) {
+  game.rels.all_of_type("disguised_as").then(rows=>{
+    rows.forEach(row=>{
+      game.rels.remove_rel(row.affector_id, "disguised_as", row.affectee_id)
+    })
+  })
+}
