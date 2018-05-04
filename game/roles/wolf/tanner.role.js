@@ -8,7 +8,7 @@ exports.abilities.disguise = {
     allow_day : false
   },
   name: "disguise",
-  desc: "disguise peeps",
+  desc: "Disguise anyone as another role.",
   run(game, me, args, cb) {
     game.masters.tell(me.id, `disguiseing <@${args[0]}> as ${args[1]}`)
     game.u.resolve_to_id(args[0]).then(id=>{
