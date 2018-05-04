@@ -605,14 +605,14 @@ exports.use_ability = async function(msg, client, abn, rest) {
         } else if (abl.timings && abl.timings.allow_day === false && !game_state.is_day()) {
           msg.reply("it is currently day time, and that ability is not usable in the day.")
         } else {
-          msg.reply("running ability!")
+          msg.channel.send("Running ability...")
           utils.debugMessage(`${u} is running ability ${abn}; args ${rest}`)
           abl.run(new GameController(client), new PlayerController(msg.author.id, client), rest, function(worked, message) {
             if (worked) {
               db_fns.timings.add_next_time(u, abn, game_state.data().time + abl.timings.periods)
-              msg.reply(message?message:"your ability was successful! :)")
+              msg.channel.send(message?message:"Your ability was successful!")
             } else {
-              msg.reply(message?message:"your ability failed. :(")
+              msg.channel.send(message?message:"Your ability failed.")
             }
           })
         }
