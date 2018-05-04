@@ -3,8 +3,6 @@
 exports.name = "White Werewolf"
 exports.description = "Kills a single wolf per 2 nights"
 
-exports.extra_secret_channels = ["wolf/werewolf"]
-
 exports.abilities = {}
 exports.abilities.kill = {
   name: "kill",
