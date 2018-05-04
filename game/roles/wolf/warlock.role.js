@@ -11,13 +11,17 @@ exports.abilities.tell = {
   desc: "Can check which role a player is",
   run(game, me, args, cb) {
     game.masters.tell(me.id, `Checking the Role of <@${args[0]}>`)
-    game.u.resolve_to_id(args[0]).then(id=>{
-      role = user.get_role(id)
-      me.tell(`<@${args[0]} has the role: ${role}`)
-      cb(true)
-    }).catch(e=>{
-      me.tell("couldn't get the role of that person")
-      cb(false)
-    })
+    if (me.has_tag("enchanted")) {
+      game.u.resolve_to_id(args[0]).then(id=>{
+        utils.disguised_role(id).then(role=>{
+          if (me.has_tag("enchanted" && Math.random > 1/10 * 6) {
+            role = "solo/flute"
+          }
+          cb(true, `<@${args[0]}> has the role: ${role}`)
+        })
+      }).catch(e=>{
+        cb(false, "couldn't get the role of that person")
+      })
+    }
   }
 }
