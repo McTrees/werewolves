@@ -112,6 +112,14 @@ exports.relationships.all_affectors_of = function(relationship_name, affectee_id
     })
   })
 }
+exports.relationships.all_of_type = function(relationship_name) {
+  return new Promise(function(resolve, reject) {
+    gamedb.all("select * from relationships where relationship_name = $r;", {$r:relationship_name}, function(err, rows){
+      if (err) {throw err;}
+      resolve(rows)
+    })
+  })
+}
 
 exports.timings = {}
 // functions for managing ability timings
