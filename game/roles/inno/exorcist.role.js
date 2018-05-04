@@ -16,7 +16,7 @@ exports.abilities.undoom = {
   name: "Undoom",
   desc: "Un-demonise or kill someone affiliated with vampires",
   run(game, me, args, cb) {
-    game.masters.tell("attempting to undoom "+args[0])
+    game.masters.tell(me.id, "attempting to undoom "+args[0])
     game.u.resolve_to_id(args[0]).then(id=>{
       pl = game.player(id)
       if (KILL_ROLES.includes(pl.role)) {

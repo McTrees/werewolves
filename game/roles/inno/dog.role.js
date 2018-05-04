@@ -10,13 +10,13 @@ exports.abilities.become = {
   },
   run(game, me, args, cb) {
     if(args[0].toUpperCase() == "WEREWOLF"){
-      game.masters.tell(`Changing the role of <@${me.id} to wolf/werewolf`)
+      game.masters.tell(me.id, `Changing to wolf/werewolf`)
       me.role = "wolf/werewolf"
     } else if( args[0].toUpperCase() == "INNOCENT"){
-      game.masters.tell(`Changing the role of <@${me.id} to inno/basic`)
+      game.masters.tell(me.id, `Changing to inno/basic`)
       me.role = "inno/basic"
     } else if(args[0].toUpperCase() == "CURSED CIVILIAN"){
-      game.masters.tell(`Changing the role of <@${me.id} to inno/cursed`)
+      game.masters.tell(me.id, `changing to inno/cursed`)
       me.role = "inno/cursed"
     }else{
       me.tell("that is not a valid role, roles include `innocent`, `werewolf` and `cursed civilian`")

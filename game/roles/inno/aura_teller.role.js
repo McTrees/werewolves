@@ -12,7 +12,7 @@ exports.abilities.tell = {
     allow_day : false
   },
   run(game, me, args, cb) {
-    game.masters.tell(`Checking the Aura of <@${args[0]}`)
+    game.masters.tell(me.id, `checking the Aura of <@${args[0]}>`)
     game.u.resolve_to_id(args[0]).then(id=>{
       if (wolfpack_roles.includes(user.get_role(id))) {
         cb(true)

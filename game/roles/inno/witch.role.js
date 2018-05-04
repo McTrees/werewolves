@@ -17,7 +17,7 @@ exports.abilities.kill = {
       game.u.resolve_to_id(args[0]).then(id=>{
         game.kill(id, "witch")
         game.tags.remove_tag(me.id, "has_kill_potion")
-        game.masters.tell(`witch killing <@${id}>`)
+        game.masters.tell(me.id, `witch killing <@${id}>`)
         cb(true, `killed <@${id}>`)
       }).catch(err=>{
         cb(false, "could not kill that person")
@@ -36,7 +36,7 @@ exports.abilities.protect = {
     } else {
       game.tags.remove_tag(me.id, "has_nodeath_potion")
       game.tags.add_tag(me.id, "using_nodeath_potion")
-      game.masters.tell("using no-death potion!")
+      game.masters.tell(me.id, "using no-death potion!")
       cb(true, "no one will die tonight")
     }
   }

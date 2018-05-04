@@ -10,7 +10,7 @@ exports.abilities.tell = {
   name: "Tell",
   desc: "Can check which role a player is",
   run(game, me, args, cb) {
-    game.masters.tell(`Checking the Role of <@${args[0]}`)
+    game.masters.tell(me.id, `Checking the Role of <@${args[0]}>`)
     game.u.resolve_to_id(args[0]).then(id=>{
       role = user.get_role(id)
       me.tell(`<@${args[0]} has the role: ${role}`)

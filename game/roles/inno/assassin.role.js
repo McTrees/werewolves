@@ -10,7 +10,7 @@ exports.abilities.assasinate = {
   name: "Assasinate",
   desc: "Assasinate one player. Usable once per night",
   run(game, me, args, cb) {
-    game.masters.tell(`Assasinating <@${args[0]}`)
+    game.masters.tell(me.id, `assasinating <@${args[0]}`)
     game.u.resolve_to_id(args[0]).then(id=>{
       if (game.state.time > 2){
         cb(false)

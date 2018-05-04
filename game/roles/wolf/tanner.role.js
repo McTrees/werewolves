@@ -10,7 +10,7 @@ exports.abilities.disguise = {
   name: "disguise",
   desc: "disguise peeps",
   run(game, me, args, cb) {
-    game.masters.tell(`disguiseing <@${args[0]}> as ${args[1]}`)
+    game.masters.tell(me.id, `disguiseing <@${args[0]}> as ${args[1]}`)
     game.u.resolve_to_id(args[0]).then(id=>{
       game.rels.add_rel(id, "disguised_as", args[1])
       cb(true)

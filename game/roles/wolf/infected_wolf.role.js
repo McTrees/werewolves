@@ -10,7 +10,7 @@ exports.abilities.curse = {
     allow_day: false
   },
   run(game, me, args, cb) {
-    game.masters.tell(`attempting to infect ${args[0]}`)
+    game.masters.tell(me.id, `attempting to infect ${args[0]}`)
     game.u.resolve_to_id(args[0]).then(t => {
       p = game.player(t)
       if (p.role == "wolf/werewolf") {

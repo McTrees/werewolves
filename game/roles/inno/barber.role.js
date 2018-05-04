@@ -9,14 +9,14 @@ exports.abilities.kill = {
     allow_night : false
   },
   run(game, me, args, cb) {
-    game.masters.tell(`Barber-killing <@${args[0]}>`)
+    game.masters.tell(me.id, `barber-killing <@${args[0]}>`)
     game.u.resolve_to_id(args[0]).then(id=>{
       if (game.state.time == 1){
         cb(false)
         me.tell(`You can't kill on the first day`)
       }else{
         if (args[1] == true){
-          game.masters.tell(`The barber would like be announced`)
+          game.masters.tell(me.id, `the barber would like be announced`)
           me.tell(`You will be announced as barber`)
         } else{
           me.tell(`You won't be announced as barber`)
