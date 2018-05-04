@@ -6,7 +6,7 @@ exports.description = "Kills a single wolf per 2 nights"
 exports.abilities = {}
 exports.abilities.kill = {
   name: "kill",
-  desc: "Kill anyone (Can be werewolf; doesn't have to be)",
+  desc: "Kill a werewolf",
   timings : {
     periods : 4,
     allow_day : false
@@ -15,7 +15,7 @@ exports.abilities.kill = {
     game.masters.tell(me.id, `attempting to white wolf kill ${args[0]}`)
     game.u.resolve_to_id(args[0]).then(t=> {
       p = game.player(t)
-      game.add_to_kill_q(args[0], "ww", client)
+      game.add_to_kill_q(args[0], "whitew", client)
     })
   }
 }
