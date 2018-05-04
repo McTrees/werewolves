@@ -1,3 +1,5 @@
+// this is the !role command
+// role definitions are in /game/roles
 const role_manager = require("../game/role_manager")
 const config = require("../config")
 
