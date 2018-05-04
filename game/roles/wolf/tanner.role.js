@@ -1,5 +1,5 @@
 exports.name = "Tanner"
-exports.description = "Disguises peeps"
+exports.description = "Can disguise anyone as another role for a night"
 
 exports.abilities = {} //Because Javascript
 exports.abilities.disguise = {
