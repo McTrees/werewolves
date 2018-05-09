@@ -15,13 +15,13 @@ exports.abilities.sprinkle = {
       var pl = game.player(id)
       pl.role.then(r=>{
         if (r.startsWith("wolf/")){
-          game.kill(id)
+          game.kill(id, "priest")
           cb(true, "that player was on the werewolf team and will now die")
         } else {
-          game.kill(me.id)
+          game.kill(me.id, "priest")
           cb(true, "uh oh! that player was not on the werewolf team, so you'll die instead!")
         }
-      })  
+      })
     }).catch(()=>{
       cb(false, "could not find that player")
     })

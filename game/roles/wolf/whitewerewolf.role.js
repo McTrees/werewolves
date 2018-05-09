@@ -19,7 +19,7 @@ exports.abilities.kill = {
       p = game.player(t)
       p.role.then(r=>{
         if (wolfpack_roles.includes(r)) {
-          game.kill(t)
+          game.kill(t, "whitew")
           cb(true, `successfully killed ${p}`)
         } else {
           cb(fals, `${p} is not in the wolf pack, so you can't kill them`)
