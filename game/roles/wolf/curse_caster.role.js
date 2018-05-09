@@ -24,6 +24,8 @@ exports.abilities.curse = {
           cb(true, `Your curse result is **negative**. ${p} wasn't an innocent, so they haven't been cursed!`)
         }
       }
+    }).catch(()=>{
+      cb(false, "Could not find that person")
     })
   }
 }
