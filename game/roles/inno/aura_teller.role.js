@@ -1,7 +1,7 @@
 exports.name = "Aura Teller"
 exports.description = "Can check whether a player is in the wolf pack"
 
-const wolfpack_roles = ["werewolf","sacred_werewolf","white_werewolf"]
+const wolfpack_roles = require("../util_fns").wolfpack_roles
 
 exports.abilities = {} //Because Javascript
 exports.abilities.tell = {

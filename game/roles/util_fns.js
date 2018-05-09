@@ -18,3 +18,11 @@ exports.disguised_role = function(player_id) {
   // otherwise, return their actual role
   // as the role id string
 }
+
+exports.wolfpack_roles = [ // aura teller, amongst other things
+  "wolf/werewolf",
+  "wolf/sacredwolf",
+  "wolf/whitewerewolf",
+  "wolf/infected_wolf",
+  "wolf/bloodybutcher"
+]
