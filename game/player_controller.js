@@ -9,9 +9,7 @@ class PlayerController {
   }
   get role() {
     return new Promise(function(resolve, reject) {
-      user.get_role(this.id).then(role=>{
-        resolve(role)
-      })
+      user.get_role(this.id).then(resolve)
     }.bind(this));
   }
   set role(v) {
