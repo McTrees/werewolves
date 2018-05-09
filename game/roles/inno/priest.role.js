@@ -13,13 +13,15 @@ exports.abilities.sprinkle = {
     game.masters.tell(me.id, `sprinkling <@${args[0]}>`)
     game.u.resolve_to_id(args[0]).then(id=>{
       var pl = game.player(id)
-      if (pl.role.startsWith("wolf/")){
-        game.kill(id)
-        cb(true, "that player was on the werewolf team and will now die")
-      } else {
-        game.kill(me.id)
-        cb(true, "uh oh! that player was not on the werewolf team, so you'll die instead!")
-      }
+      pl.role.then(r=>{
+        if (r.startsWith("wolf/")){
+          game.kill(id)
+          cb(true, "that player was on the werewolf team and will now die")
+        } else {
+          game.kill(me.id)
+          cb(true, "uh oh! that player was not on the werewolf team, so you'll die instead!")
+        }
+      })  
     }).catch(()=>{
       cb(false, "could not find that player")
     })
