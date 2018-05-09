@@ -17,5 +17,4 @@ exports.disguised_role = function(player_id) {
   // if a player is disguised, return their disguised role
   // otherwise, return their actual role
   // as the role id string
-
 }
