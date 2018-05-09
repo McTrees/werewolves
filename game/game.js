@@ -1,4 +1,3 @@
-const events = require("events")
 const config = require("../config")
 const fs = require("fs")
 const channel = require("../channel/channel_handler")
