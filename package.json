@@ -4,7 +4,9 @@
   "description": "werewolves bot",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "author": "",
   "repository": "https://github.com/mctrees/werewolves/",
@@ -16,6 +18,8 @@
     "https": "^1.0.0",
     "npm": "^5.7.1",
     "raven": "^2.4.1",
-    "sqlite3": "^4.0.0"
-  }
+    "sqlite3": "^4.0.0",
+    "snyk": "^1.88.1"
+  },
+  "snyk": true
 }
